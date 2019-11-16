@@ -1,0 +1,7 @@
+#编译判题模块的系统参数等
+mysql_config:
+  server: 129.28.178.16
+  port: 3306
+  name: online_judge
+  user_name: online_judge
+  password: yb123
