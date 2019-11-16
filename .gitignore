@@ -1,6 +1,8 @@
 #pythonEnviroment
 /venv
 /.idea
+/compile/venv
+/compile/.idea
 
 # Python:
 *.py[cod]
