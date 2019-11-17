@@ -27,9 +27,7 @@ def open_yaml_file(f_name):
 def get_mysql_info():
     file = open_yaml_file(file_name)
     config = yaml.load(file.read(), Loader=yaml.FullLoader)
-    mysql_config = config["mysql_config"]
-    return mysql_config["server"], mysql_config["port"], mysql_config["name"], mysql_config["user_name"], mysql_config["password"]
-
+    return config["mysql_config"]
 
 
 
