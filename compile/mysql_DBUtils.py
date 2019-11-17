@@ -4,7 +4,7 @@ import pymysql
 from pymysql.cursors import DictCursor
 from DBUtils.PooledDB import PooledDB
 
-import load_yaml
+import sys_config
 
 
 class BasePyMysqlPool(object):
@@ -27,8 +27,8 @@ class MyPyMysqlPool(BasePyMysqlPool):
     # 连接池对象
     __pool = None
 
-    def __init__(self, conf_name=None):
-        self.conf = load_yaml.get_mysql_info()
+    def __init__(self):
+        self.conf = sys_config.Config.get_mysql_info()
         super(MyPyMysqlPool, self).__init__(**self.conf)
         # 数据库构造函数，从连接池中取出连接，并生成操作游标
         self._conn = self.__get_conn()
