@@ -1,4 +1,4 @@
-#编译判题模块的系统参数等
+#mysql连接信息
 mysql_config:
   server: 129.28.178.16
   port: 3306
