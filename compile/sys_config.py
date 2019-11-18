@@ -1,4 +1,4 @@
-# coding:utf-8
+# -*- coding:utf-8 -*-
 
 import yaml
 import os
@@ -24,8 +24,8 @@ class Config(object):
             # open方法打开直接读出来
             file = open(yaml_path, 'r', encoding='utf-8')
         except FileExistsError as err:
-            logging.error("file open error:"+str(err))
-            print("file open error:"+str(err))
+            logger = logging.getLogger("sys_logger")
+            logger.error("file open error:"+str(err))
         return file
 
     def get_mysql_info(self):
