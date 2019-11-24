@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import pymysql
 from pymysql.cursors import DictCursor
@@ -21,8 +21,8 @@ class BasePyMysqlPool(object):
 class MyPyMysqlPool(BasePyMysqlPool):
     """
     MYSQL数据库对象，负责产生数据库连接 , 此类中的连接采用连接池实现
-        获取连接对象：conn = Mysql.getConn()
-        释放连接对象;conn.close()或del conn
+    获取连接对象：conn = Mysql.getConn()
+    释放连接对象;conn.close()或del conn
     """
     # 连接池对象
     __pool = None
