@@ -5,7 +5,7 @@ def init_logger(name):
     logger = logging.getLogger(name)
 
     stream_handler = logging.StreamHandler()
-    file_handler = logging.FileHandler(filename="sys.log")
+    file_handler = logging.FileHandler(filename="log/sys.log")
 
     logger.setLevel(logging.DEBUG)
     stream_handler.setLevel(logging.WARNING)

@@ -5,3 +5,8 @@ mysql_config:
   db_name: online_judge
   user: online_judge
   password: yb123
+
+#题目的存储信息
+problem_config:
+  work_dir: solution
+  data_dir: problem

@@ -23,3 +23,6 @@ deploy_key_rsa
 
 #log
 *.log
+
+#problem
+/compile/solution

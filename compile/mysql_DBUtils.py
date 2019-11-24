@@ -28,7 +28,8 @@ class MyPyMysqlPool(BasePyMysqlPool):
     __pool = None
 
     def __init__(self):
-        self.conf = sys_config.Config.get_mysql_info()
+        cfg = sys_config.Config()
+        self.conf = cfg.get_mysql_info()
         super(MyPyMysqlPool, self).__init__(**self.conf)
         # 数据库构造函数，从连接池中取出连接，并生成操作游标
         self._conn = self.__get_conn()
@@ -174,5 +175,14 @@ class MyPyMysqlPool(BasePyMysqlPool):
             self.end('rollback')
         self._cursor.close()
         self._conn.close()
+
+
+if __name__ == '__main__':
+    mysql = MyPyMysqlPool()
+    sqlAll = "select * from user;"
+    result = mysql.get_all(sqlAll)
+    print(result)
+    # 释放资源
+    mysql.dispose()
 
 

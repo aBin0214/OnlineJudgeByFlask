@@ -8,6 +8,17 @@ import logging
 class Config(object):
     def __init__(self):
         self.file_name = "sys_config.yaml"
+        problem_config = self.get_problem_info()
+        self.__work_dir = problem_config["work_dir"]  # 代表类的私有属性
+        self.__data_dir = problem_config["data_dir"]
+
+    @property
+    def work_dir(self):
+        return self.__work_dir
+
+    @property
+    def data_dir(self):
+        self.__data_dir
 
     @staticmethod
     def open_yaml_file(f_name):
@@ -25,7 +36,7 @@ class Config(object):
             file = open(yaml_path, 'r', encoding='utf-8')
         except FileExistsError as err:
             logger = logging.getLogger("sys_logger")
-            logger.error("file open error:"+str(err))
+            logger.error("file open error:" + str(err))
         return file
 
     def get_mysql_info(self):
@@ -37,8 +48,11 @@ class Config(object):
         config = yaml.load(file.read(), Loader=yaml.FullLoader)
         return config["mysql_config"]
 
-
-
-
-
-
+    def get_problem_info(self):
+        """
+        获得题目的工作路径和测试数据的路径
+        :return:
+        """
+        file = Config.open_yaml_file(self.file_name)
+        config = yaml.load(file.read(), Loader=yaml.FullLoader)
+        return config["problem_config"]
