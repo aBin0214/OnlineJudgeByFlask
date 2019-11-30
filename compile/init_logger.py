@@ -14,7 +14,7 @@ def init_logger(name):
     stream_handler.setLevel(logging.WARNING)
     file_handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter("(%(asctime)s)--%(name)s--%(levelname)s:%(message)s")
+    formatter = logging.Formatter("(%(asctime)s)--%(name)s--%(levelname)s: %(message)s")
     stream_handler.setFormatter(formatter)
     file_handler.setFormatter(formatter)
 
