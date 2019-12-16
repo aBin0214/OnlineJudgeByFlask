@@ -43,11 +43,9 @@ def execute_compile(solution_id, language):
     out, err = p.communicate()  # 获取编译错误信息
     write_error(dir_work, out, err)
     if p.returncode == 0:  # 返回值为0,编译成功
-        print("编译成功")
-        logger.info("run_id:{} compile success".format(solution_id))
+        logger.info("solution_id({}) compile success".format(solution_id))
         return True
-    print("编译失败")
-    logger.info("run_id:{} compile failure".format(solution_id))
+    logger.info("solution_id({}) compile failure".format(solution_id))
     return False
 
 

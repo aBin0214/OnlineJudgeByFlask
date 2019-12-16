@@ -11,10 +11,10 @@ def init_logger(name):
     file_handler = logging.FileHandler(filename="log/sys.log")
 
     logger.setLevel(logging.DEBUG)
-    stream_handler.setLevel(logging.WARNING)
-    file_handler.setLevel(logging.DEBUG)
+    stream_handler.setLevel(logging.INFO)
+    file_handler.setLevel(logging.INFO)
 
-    formatter = logging.Formatter("(%(asctime)s)--%(name)s--%(levelname)s: %(message)s")
+    formatter = logging.Formatter("(%(asctime)s)--%(filename)s--%(funcName)s--%(lineno)d: %(message)s")
     stream_handler.setFormatter(formatter)
     file_handler.setFormatter(formatter)
 

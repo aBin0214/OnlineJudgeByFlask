@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import mysql_DBUtils
-import logging
-import sys_config
 import os
+import logging
+
+import mysql_DBUtils
+import sys_config
 
 
 def get_code(solution_id, problem_id, pro_lang):
@@ -28,25 +29,18 @@ def get_code(solution_id, problem_id, pro_lang):
         'python3': 'main.py',
         "haskell": "main.hs"
     }
-    # select_code_sql = "select id_solution,id_problem,name_language,submit_content \
-    #                     from solution,pro_language \
-    #                     where solution.id_language = pro_language.id_language \
-    #                     and state = 8;"
-    select_code_sql = "select submit_content \
-                        from online_judge.solution,online_judge.pro_language \
-                        where solution.id_language = pro_language.id_language \
-                        and state = 8 and id_solution = {}"
+    select_code_sql = "select submit_content from solution where id_solution = {} limit 1;"
 
     mysql = mysql_DBUtils.MyPyMysqlPool()
     result = mysql.get_one(select_code_sql.format(solution_id))
     logger = logging.getLogger("sys_logger")
-    if result is not None:
+    if result is not None and result is not False:
         code = result["submit_content"]
     else:
         logger.error("cannot get code of run_id {}".format(solution_id))
         return False
+    cfg = sys_config.Config()
     try:
-        cfg = sys_config.Config()
         work_path = os.path.join(
             cfg.work_dir,
             str(solution_id))
@@ -67,13 +61,14 @@ def get_code(solution_id, problem_id, pro_lang):
         f = open(real_path, 'w')
         try:
             f.write(code)
+            logger.info("solution_id({}) write code to file success".format(solution_id))
         except IOError as e:
             logger.error("%s can't write code to file" % solution_id)
             f.close()
             return False
         f.close()
     except OSError as e:
-        logger.error(e)
+        logger.error("系统错误：", e)
         return False
     return True
 

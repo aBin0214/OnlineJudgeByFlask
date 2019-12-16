@@ -15,7 +15,5 @@ def low_level():
     try:
         os.setuid(int(os.popen("id -u %s" % "nobody").read()))
     except OSError:
-        logger = logging.getLogger("sys_logger")
-        logger.error("please run this program as root!")
-        sys.exit(-1)
+        pass
 

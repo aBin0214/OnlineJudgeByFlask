@@ -10,3 +10,8 @@ mysql_config:
 problem_config:
   work_dir: solution
   data_dir: problem
+
+#队列的信息
+thread_config:
+  queue_size: 20
+  count_thread: 5

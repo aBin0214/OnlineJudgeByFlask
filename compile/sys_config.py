@@ -12,6 +12,9 @@ class Config(object):
         problem_config = self.get_problem_info()
         self.__work_dir = problem_config["work_dir"]  # 代表类的私有属性
         self.__data_dir = problem_config["data_dir"]
+        thread_config = self.get_thread_info()
+        self.__queue_size = thread_config["queue_size"]
+        self.__count_thread = thread_config["count_thread"]
 
     @property
     def work_dir(self):
@@ -19,7 +22,15 @@ class Config(object):
 
     @property
     def data_dir(self):
-        self.__data_dir
+        return self.__data_dir
+
+    @property
+    def queue_size(self):
+        return self.__queue_size
+
+    @property
+    def count_thread(self):
+        return self.__count_thread
 
     @staticmethod
     def open_yaml_file(f_name):
@@ -57,3 +68,12 @@ class Config(object):
         file = Config.open_yaml_file(self.file_name)
         config = yaml.load(file.read(), Loader=yaml.FullLoader)
         return config["problem_config"]
+
+    def get_thread_info(self):
+        """
+        获得工作队列的相关数量
+        :return:
+        """
+        file = Config.open_yaml_file(self.file_name)
+        config = yaml.load(file.read(), Loader=yaml.FullLoader)
+        return config["thread_config"]

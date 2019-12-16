@@ -127,7 +127,7 @@ class MyPyMysqlPool(BasePyMysqlPool):
         """
         @summary: 更新数据表记录
         @param sql: SQL格式及条件，使用(%s,%s)
-        @param param: 要更新的  值 tuple/list
+        @param param: 要更新的值 tuple/list
         @return: count 受影响的行数
         """
         return self.__query(sql, param)
@@ -136,7 +136,7 @@ class MyPyMysqlPool(BasePyMysqlPool):
         """
         @summary: 更新数据表记录
         @param sql: SQL格式及条件，使用(%s,%s)
-        @param param: 要更新的  值 tuple/list
+        @param param: 要更新的值 tuple/list
         @return: count 受影响的行数
         """
         return self.__query(sql, param)
@@ -145,7 +145,7 @@ class MyPyMysqlPool(BasePyMysqlPool):
         """
         @summary: 删除数据表记录
         @param sql: SQL格式及条件，使用(%s,%s)
-        @param param: 要删除的条件 值 tuple/list
+        @param param: 要删除的条件值 tuple/list
         @return: count 受影响的行数
         """
         return self.__query(sql, param)
