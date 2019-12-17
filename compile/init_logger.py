@@ -5,6 +5,11 @@ import logging.handlers
 
 
 def init_logger(name):
+    """
+    初始化logger
+    :param name:
+    :return:
+    """
     logger = logging.getLogger(name)
 
     stream_handler = logging.StreamHandler()
