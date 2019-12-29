@@ -1,0 +1,7 @@
+#mysql连接信息
+mysql_config:
+  host: 129.28.178.16
+  port: 3306
+  db_name: online_judge
+  user: online_judge
+  password: yb123

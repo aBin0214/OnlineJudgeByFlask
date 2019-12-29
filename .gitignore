@@ -26,3 +26,6 @@ deploy_key_rsa
 
 #problem
 /compile/solution
+
+#vscode
+/.vscode

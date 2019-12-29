@@ -2,6 +2,15 @@
 # -*- coding:utf-8 -*-
 
 import logging.handlers
+import os
+import time
+
+
+def make_dir(make_dir_path):
+    path = make_dir_path.strip()
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return path
 
 
 def init_logger(name):
@@ -13,13 +22,18 @@ def init_logger(name):
     logger = logging.getLogger(name)
 
     stream_handler = logging.StreamHandler()
-    file_handler = logging.FileHandler(filename="log/sys.log")
+
+    log_dir_name = "logs"
+    make_dir(log_dir_name)
+    log_file_name = 'backstage-' + time.strftime('%Y-%m-%d', time.localtime(time.time())) + '.log'
+    log_file_str = log_dir_name + os.sep + log_file_name
+    file_handler = logging.FileHandler(log_file_str, encoding='UTF-8')
 
     logger.setLevel(logging.DEBUG)
     stream_handler.setLevel(logging.INFO)
     file_handler.setLevel(logging.INFO)
 
-    formatter = logging.Formatter("(%(asctime)s)--%(filename)s--%(funcName)s--%(lineno)d: %(message)s")
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s : %(message)s")
     stream_handler.setFormatter(formatter)
     file_handler.setFormatter(formatter)
 
