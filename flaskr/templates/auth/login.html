@@ -1,19 +1,13 @@
 {% extends 'base.html' %}
 
+{% block title %}Login{% endblock title %}
+
 {% block content %}
-  <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Log In">
-  </form>
-  <!-- {% from 'bootstrap/form.html' import render_field %}
-  <form method="post">
-      {{ form.csrf_token() }}
-      {{ render_field(form.username) }}
-      {{ render_field(form.password) }}
-      {{ render_field(form.password) }}
-      {{ render_field(form.submit) }}
-  </form> -->
+{% from 'bootstrap/form.html' import render_field %}
+<form method="post">
+  {{ user.csrf_token() }}
+  {{ render_field(user.username) }}
+  {{ render_field(user.password) }}
+  {{ render_field(user.submit) }}
+</form>
 {% endblock %}

@@ -56,11 +56,9 @@
 	</ul>
 </nav> -->
 <section class="content">
-	<!-- {% for message in get_flashed_messages() %}
+	{% for message in get_flashed_messages() %}
 	<div class="flash">{{ message }}</div>
-	{% endfor %} -->
-	{% from 'bootstrap/utils.html' import render_flashed_messages %}
-	{{ render_messages() }}
+	{% endfor %}
 	{% block content %}{% endblock %}
 	{% block scripts %}
 	<!-- Optional JavaScript -->

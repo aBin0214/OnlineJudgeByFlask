@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 
+{% block title %}Register{% endblock title %}
+
 {% block content %}
-  <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username">
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password">
-    <label for="password">Confirm Password</label>
-    <input type="password" name="confirm_password" id="confirm_password"><br/>
-    <input type="submit" value="Register">
-  </form>
+{% from 'bootstrap/form.html' import render_field %}
+<form method="post">
+  {{ user.csrf_token() }}
+  {{ render_field(user.username) }}
+  {{ render_field(user.password) }}
+  {{ render_field(user.confirm_password) }}
+  {{ render_field(user.submit) }}
+</form>
 {% endblock %}

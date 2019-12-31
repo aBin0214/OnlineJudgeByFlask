@@ -52,8 +52,3 @@ def create_app(test_config=None):
     bootstrap = Bootstrap(app)
 
     return app
-
-
-
-
-

@@ -7,6 +7,8 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from . import mysql_DBUtils
+from . import FromUitl
+
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -42,7 +44,8 @@ def register():
             return redirect(url_for('auth.login'))
         flash(error)
         db.dispose()
-    return render_template('auth/register.html')
+    user = FromUitl.UserFrom()
+    return render_template('auth/register.html',user=user)
 
 
 @bp.route('/login', methods=('GET', 'POST'))
@@ -62,7 +65,7 @@ def login():
 
         if user is False:
             error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], generate_password_hash(password)):
+        elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
 
         if error is None:
@@ -73,7 +76,8 @@ def login():
 
         flash(error)
         db.dispose()
-    return render_template('auth/login.html')
+    user = FromUitl.UserFrom()
+    return render_template('auth/login.html',user = user)
 
 
 def load_logged_in_user():
