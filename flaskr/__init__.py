@@ -36,17 +36,21 @@ def create_app(test_config=None):
         pass
 
     # 设置全局的注册模块
-    from . import init_logger
-    init_logger.init_logger()
+    from . import LoggerUtils
+    LoggerUtils.init_logger()
 
     # 注册一个蓝图，用于登录和注册
     from . import auth
     app.register_blueprint(auth.bp)
 
-    # 注册一个蓝图，用于登录和注册
+    # 注册一个蓝图，用于显示网站基本信息
     from . import home
     app.register_blueprint(home.bp)
     app.add_url_rule('/', endpoint='index')
+
+    #注册一个蓝图，用于显示题目信息
+    from . import problems
+    app.register_blueprint(problems.bp)
 
     from flask_bootstrap import Bootstrap
     bootstrap = Bootstrap(app)

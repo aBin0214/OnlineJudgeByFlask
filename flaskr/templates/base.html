@@ -17,7 +17,7 @@
 		<div class="col-6">
 			<div class="navbar-nav mr-auto">
 				{{ render_nav_item('home.index', 'Home') }}
-				{{ render_nav_item('auth.register', 'Problems') }}
+				{{ render_nav_item('problems.problemSet', 'Problems') }}
 				{{ render_nav_item('auth.register', 'Contests') }}
 				{{ render_nav_item('auth.register', 'Status') }}
 				{{ render_nav_item('auth.register', 'About') }}
@@ -36,25 +36,6 @@
 		</div>
 	</div>
 </nav>
-<!-- <nav>
-	<h1>My Online judge</h1>
-	<ul>
-		<li><span><a href="{{url_for('home.index')}}">Home</a></span></li>
-		<li><span><a>Problems</a></span></li>
-		<li><span><a>Contests</a></span></li>
-		<li><span><a>Status</a></span></li>
-		<li><span><a>About</a></span></li>
-	</ul>
-	<ul>
-		{% if g.user %}
-		<li><span>{{ g.user['username'] }}</span></li>
-		<li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
-		{% else %}
-		<li><a href="{{ url_for('auth.register') }}">Register</a></li>
-		<li><a href="{{ url_for('auth.login') }}">Log In</a></li>
-		{% endif %}
-	</ul>
-</nav> -->
 <section class="content">
 	{% for message in get_flashed_messages() %}
 	<div class="flash">{{ message }}</div>

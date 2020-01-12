@@ -7,10 +7,9 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from flaskr.auth import login_required
-from . import mysql_DBUtils
+from . import MysqlUtils
 
 bp = Blueprint('home', __name__)
-
 
 @bp.route("/")
 def index():

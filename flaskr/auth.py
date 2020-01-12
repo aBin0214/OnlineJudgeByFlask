@@ -6,11 +6,12 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from . import mysql_DBUtils
-from . import FromUitl
+from . import MysqlUtils
+from . import FormUtils
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
 
 # bp.route 关联了 URL /register 和 register 视图函数。
 # 当 Flask 收到一个指向 /auth/register 的请求时就会调用 register 视图并把其返回值作为响应。
@@ -44,7 +45,7 @@ def register():
             return redirect(url_for('auth.login'))
         flash(error)
         db.dispose()
-    user = FromUitl.UserFrom()
+    user = FormUtils.UserFrom()
     return render_template('auth/register.html',user=user)
 
 
@@ -76,7 +77,7 @@ def login():
 
         flash(error)
         db.dispose()
-    user = FromUitl.UserFrom()
+    user = FormUtils.UserFrom()
     return render_template('auth/login.html',user = user)
 
 

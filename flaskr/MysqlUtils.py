@@ -6,7 +6,6 @@ from DBUtils.PooledDB import PooledDB
 
 from . import sys_config
 
-
 class BasePyMysqlPool(object):
     def __init__(self, host, port, user, password, db_name):
         self.db_host = host
