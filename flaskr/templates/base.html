@@ -9,30 +9,25 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 	<div class="row">
-		<div class="col-3">
-			<div class="navbar-nav mr-auto">
-				{{ render_nav_item('home.index', 'My Online judge') }}
-			</div>
-		</div>
-		<div class="col-6">
-			<div class="navbar-nav mr-auto">
-				{{ render_nav_item('home.index', 'Home') }}
-				{{ render_nav_item('problems.problemSet', 'Problems') }}
-				{{ render_nav_item('auth.register', 'Contests') }}
-				{{ render_nav_item('auth.register', 'Status') }}
-				{{ render_nav_item('auth.register', 'About') }}
-			</div>
-		</div>
-		<div class="col-3">
-			<div class="navbar-nav mr-auto">
-				{% if g.user %}
-				{{ g.user['username'] }}
-				{{ render_nav_item('auth.logout', 'LogOut') }}
-				{% else %}
-				{{ render_nav_item('auth.register', 'Register') }}
-				{{ render_nav_item('auth.login', 'Login') }}
-				{% endif %}
-			</div>
+		<div class="navbar-nav navbar-expand-lg navbar-light bg-light ml-3">
+			{{ render_nav_item('home.index', 'My Online judge') }}
+			{{ render_nav_item('home.index', 'Home') }}
+			{{ render_nav_item('problems.problemSet', 'Problems') }}
+			{{ render_nav_item('auth.register', 'Contests') }}
+			{{ render_nav_item('auth.register', 'Status') }}
+			{{ render_nav_item('auth.register', 'About') }}
+
+			{% if g.user %}
+			{{ g.user['username'] }}
+			{{ render_nav_item('auth.logout', 'LogOut') }}
+			{% else %}
+			{{ render_nav_item('auth.register', 'Register') }}
+			{{ render_nav_item('auth.login', 'Login') }}
+			{% endif %}
+			<form class="form-inline my-2 my-lg-0">
+				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+			</form>
 		</div>
 	</div>
 </nav>

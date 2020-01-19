@@ -3,12 +3,19 @@
 {% block title %}Register{% endblock title %}
 
 {% block content %}
-{% from 'bootstrap/form.html' import render_field %}
-<form method="post">
-  {{ user.csrf_token() }}
-  {{ render_field(user.username) }}
-  {{ render_field(user.password) }}
-  {{ render_field(user.confirm_password) }}
-  {{ render_field(user.submit) }}
-</form>
+<div class="card m-4">
+  <div class="card-header">
+      User Register
+  </div>
+  <div class="card-body">
+  {% from 'bootstrap/form.html' import render_field %}
+  <form method="post">
+    {{ user.csrf_token() }}
+    {{ render_field(user.username) }}
+    {{ render_field(user.password) }}
+    {{ render_field(user.confirm_password) }}
+    {{ render_field(user.submit) }}
+  </form>
+  </div>
+</div>
 {% endblock %}

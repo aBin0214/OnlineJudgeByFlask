@@ -3,7 +3,79 @@
 {% block title %}home{% endblock title %}
 
 {% block content %}
-    <div>
-        <span>welcome to the My-Online-judge</span>
+<div class="jumbotron m-4">
+  <h1 class="display-4">Welcome To The My-Online-judge</h1>
+  <p class="lead">
+    This is a my online-judge website , Here you can train your algorithms and improve your logical thinking ability .
+    <br />From now on, take action to become stronger !
+  </p>
+  <hr class="my-4">
+  <p>In the home page, you can learn the following information .</p>
+  <a class="btn btn-outline-success" href="#News" role="button">News</a>
+  <a class="btn btn-outline-success" href="#FAQ" role="button">Frequently Asked Questions</a>
+</div>
+<!-- <div class="card m-4" id="News" name="News">
+  <div class="card-header">
+    News
+  </div>
+  <div class="card-body">
+  </div>
+</div> -->
+<div class="card m-4" id="FAQ" name="FAQ">
+  <div class="card-header">
+    Frequently Asked Questions
+  </div>
+  <div class="card-body">
+    <p>
+      <a class="btn btn-outline-success" data-toggle="collapse" href="#IO" role="button" aria-expanded="false" aria-controls="collapseExample">
+        About Input and Output
+      </a>
+      <a class="btn btn-outline-success" data-toggle="collapse" href="#AC" role="button" aria-expanded="false" aria-controls="collapseExample">
+        About Compilers
+      </a>
+      <a class="btn btn-outline-success" data-toggle="collapse" href="#AJR" role="button" aria-expanded="false" aria-controls="collapseExample">
+        About Judge Reply
+      </a>
+      <a class="btn btn-outline-success" data-toggle="collapse" href="#AJ" role="button" aria-expanded="false" aria-controls="collapseExample">
+        About Java
+      </a>
+    </p>
+    <div class="collapse show" id="IO" data-parent="#FAQ">
+      <div class="card card-body">
+        <h4>where is the input and output?</h4>
+        <p>Your program shall read input from stdin('Standard Input') and write output to stdout('Standard Output').For
+          example,you can use 'scanf' in C or 'cin' in C++ to read from stdin,and use 'printf' in C or 'cout' in C++ to
+          write to stdout.
+          User programs are not allowed to open and read from/write to files, you will get a "Runtime Error" if you try to
+          do so.</p>
+        <p>Here is a sample solution for problem 1001 using C++:</p>      
+      </div>
     </div>
+    <div class="collapse" id="AC" data-parent="#FAQ">
+      <div class="card card-body">
+      <h4>What is the compiler the judge is using and what are the compiler options?</h4>
+      <p>The online judge system is running on Linux. We are using GNU GCC/G++ for C/C++, Free Pascal for Pascal and
+        OpenJDK 1.8 for Java. The supported compilers and the compiling options are listed in the following table.</p>
+      </div>
+    </div>
+    <div class="collapse" id="AJR" data-parent="#FAQ">
+      <div class="card card-body">
+        <h4>About Judge Reply</h4>
+        <p>What is the meaning of the judge's reply XXXXX?</p>      
+      </div>
+    </div>
+    <div class="collapse" id="AJ" data-parent="#FAQ">
+      <div class="card card-body">
+        <h4>Which Java classes can I use?</h4>
+        <p>You can only use classes in those packages: java.lang, java.io, java.nio, java.math, java.util, java.text and
+          java.net. You are not allowed to catch any Error in your try-catch, read, write or create any file, or create
+          Socket, etc. In one word, don't do anything other than solving the problem.</p>
+        <h4>How to submit a Java solution?</h4>
+        <p>See the sample solution above. Basically you should submit a single source file which contains a public class
+          Main and it should have a method with signature public static void main(String[] args) which is the entry of
+          your program.</p>    
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

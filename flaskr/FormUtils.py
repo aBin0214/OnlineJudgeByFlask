@@ -18,39 +18,39 @@ class UserFrom(FlaskForm):
     render_kw=None, HTML属性 参数
     """
     username = wtforms.StringField(
-        label="用户名",
+        label="Username",
         render_kw={
             "class": "form-control",
-            "placeholder": "用户名"
+            "placeholder": "Please enter your username."
         },
         validators=[
-            validators.DataRequired("用户名不可以为空")
+            validators.DataRequired("The username cannot be empty !")
         ]
     )
 
     password = wtforms.PasswordField(
-        label="密码",
+        label="Password",
         render_kw={
             "class": "form-control",
-            "placeholder": "密码"
+            "placeholder": "Please enter your password."
         },
         validators=[
-            validators.DataRequired("密码不可以为空") 
+            validators.DataRequired("The password cannot be empty !") 
         ]
     )
     confirm_password = wtforms.PasswordField(
-        label="确认密码",
+        label="Comfirm Password",
         render_kw={
             "class": "form-control",
-            "placeholder": "确认密码"
+            "placeholder": "Please enter your password again."
         },
         validators=[
-            validators.DataRequired("密码不可以为空") 
+            validators.DataRequired("The two passwords you entered did not match !") 
         ]
     )
 
     submit = wtforms.SubmitField(
-        label="提交",
+        label="Submit",
         render_kw={
             "class": "btn btn-primary btn-block",
         },
