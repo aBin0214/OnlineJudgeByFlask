@@ -10,7 +10,6 @@ __init__.py有两个作用：
 import os
 from flask import Flask
 
-
 def create_app(test_config=None):
     """
     创建并配置app
@@ -52,6 +51,7 @@ def create_app(test_config=None):
     from . import problems
     app.register_blueprint(problems.bp)
 
+    #注册一个蓝图，用于加载bootStrap
     from flask_bootstrap import Bootstrap
     bootstrap = Bootstrap(app)
 
