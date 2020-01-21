@@ -45,6 +45,7 @@ def getProblemsByTheme(currentPage,problemTheme):
         where problem.id_problem = tag_problem.id_problem \
         and tag.id_tag = tag_problem.id_tag \
         and tag.name_tag = '{theme}' limit {start},{end}".format(theme=problemTheme,start=start,end=end)
+    problems = None
     try:
         problems = db.get_all(sql)
     except:

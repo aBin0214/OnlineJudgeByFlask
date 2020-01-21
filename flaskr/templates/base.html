@@ -1,41 +1,48 @@
 <!doctype html>
 <title>{% block title %}{% endblock title %} - MyOJ</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='codeHighlight.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 {% block styles %}
 <!-- Bootstrap CSS -->
 {{ bootstrap.load_css() }}
 {% endblock %}
 {% from 'bootstrap/nav.html' import render_nav_item %}
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-	<div class="row">
-		<div class="navbar-nav navbar-expand-lg navbar-light bg-light ml-3">
-			{{ render_nav_item('home.index', 'My Online judge') }}
-			{{ render_nav_item('home.index', 'Home') }}
-			{{ render_nav_item('problems.problemSet', 'Problems') }}
-			{{ render_nav_item('auth.register', 'Contests') }}
-			{{ render_nav_item('auth.register', 'Status') }}
-			{{ render_nav_item('auth.register', 'About') }}
-
-			{% if g.user %}
-			{{ g.user['username'] }}
-			{{ render_nav_item('auth.logout', 'LogOut') }}
-			{% else %}
-			{{ render_nav_item('auth.register', 'Register') }}
-			{{ render_nav_item('auth.login', 'Login') }}
-			{% endif %}
-			<form class="form-inline my-2 my-lg-0">
-				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-			</form>
-		</div>
+<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+	<a class="navbar-brand" href="{{url_for('home.index')}}">My Online Judge</a>
+	<!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	  <span class="navbar-toggler-icon"></span>
+	</button> -->
+  
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+	  <ul class="navbar-nav mr-auto">
+		<li>{{ render_nav_item('home.index', 'Home') }}</li>
+		<li>{{ render_nav_item('problems.problemSet', 'Problems') }}</li>
+		<li>{{ render_nav_item('auth.register', 'Contests') }}</li>
+		<li>{{ render_nav_item('auth.register', 'Status') }}</li>
+	  </ul>
+	  <form class="form-inline ml-auto">
+		<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+		<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+	  </form>
+	  <ul class="navbar-nav ml-3">
+		{% if g.user %}
+		<li>{{ g.user['username'] }}</li>
+		<li>{{ render_nav_item('auth.logout', 'LogOut') }}</li>
+		{% else %}
+		<li>{{ render_nav_item('auth.login', 'Login') }}</li>
+		<li>{{ render_nav_item('auth.register', 'Register') }}</li>
+		{% endif %}
+	  </ul>
 	</div>
-</nav>
+  </nav>
 <section class="content">
 	{% for message in get_flashed_messages() %}
 	<div class="flash">{{ message }}</div>
 	{% endfor %}
+	<div id="container">
 	{% block content %}{% endblock %}
+	</div>
 	{% block scripts %}
 	<!-- Optional JavaScript -->
 	{{ bootstrap.load_js() }}

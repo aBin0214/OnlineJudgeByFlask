@@ -3,7 +3,7 @@
 {% block title %}home{% endblock title %}
 
 {% block content %}
-<div class="jumbotron m-4">
+<div class="jumbotron m-4 shadow">
   <h1 class="display-4">Welcome To The My-Online-judge</h1>
   <p class="lead">
     This is a my online-judge website , Here you can train your algorithms and improve your logical thinking ability .
@@ -14,15 +14,15 @@
   <a class="btn btn-outline-success" href="#News" role="button">News</a>
   <a class="btn btn-outline-success" href="#FAQ" role="button">Frequently Asked Questions</a>
 </div>
-<div class="card m-4" id="News" name="News">
-  <div class="card-header">
+<div class="card m-4 border-0 shadow" id="News" name="News">
+  <div class="card-header bg-white">
     News
   </div>
   <div class="card-body">
   </div>
 </div>
-<div class="card m-4" id="FAQ" name="FAQ">
-  <div class="card-header">
+<div class="card m-4 border-0 shadow" id="FAQ" name="FAQ">
+  <div class="card-header bg-white">
     Frequently Asked Questions
   </div>
   <div class="card-body">
@@ -121,12 +121,50 @@ class="o">.</span><span class="n">stdin</span><span class="p">:</span>
         <h4>What is the compiler the judge is using and what are the compiler options?</h4>
         <p>The online judge system is running on Linux. We are using GNU GCC/G++ for C/C++, Free Pascal for Pascal and
           OpenJDK 1.8 for Java. The supported compilers and the compiling options are listed in the following table.</p>
-      </div>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Compiler</th>
+                <th scope="col">Version</th>
+                <th scope="col">Compiler commands</th>
+              </tr>
+            </thead>
+            {% for info in compileInfo %}
+            <tbody>
+                <a>
+                <tr>
+                  <td>{{info["name_language"]}}</td>
+                  <td>{{info["version"]}}</td>
+                  <td>{{info["cmd"]}}</td>
+                </tr>
+                </a>
+            </tbody>
+            {% endfor %}
+          </table>
+        </div>
     </div>
     <div class="collapse" id="AJR" data-parent="#FAQ">
       <div class="card card-body">
         <h4>About Judge Reply</h4>
         <p>What is the meaning of the judge's reply XXXXX?</p>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Judge Reply</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          {% for rd in resultsDes %}
+          <tbody>
+              <a>
+              <tr>
+                <td>{{rd["name_result"]}}</td>
+                <td>{{rd["description"]}}</td>
+              </tr>
+              </a>
+          </tbody>
+          {% endfor %}
+        </table>
       </div>
     </div>
     <div class="collapse" id="AJ" data-parent="#FAQ">
