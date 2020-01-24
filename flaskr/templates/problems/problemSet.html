@@ -3,65 +3,64 @@
 {% block title %}Problems{% endblock title %}
 
 {% block content %}
-  <div class="card m-4 border-0 shadow">
-    <div class="card-header bg-white">
-            My OJ Practice
-        </div>
-        <div class="card-body">
-        <nav aria-label="...">
-          <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item active" aria-current="page">
-              <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link" href="#">Next</a>
-            </li>
-          </ul>
-        </nav>
-        <table class="table table-hover">
-            <thead>
-              <tr>
-                <th scope="col">Solved</th>
-                <th scope="col">Label</th>
-                <th scope="col">Title</th>
-                <th scope="col">Radio(AC/ALL)</th>
-              </tr>
-            </thead>
-            {% for problem in problems %}
-            <tbody>
-                <a>
-                <tr>
-                  <th scope="row"></th>
-                  <td>{{problem["id_problem"]}}</td>
-                  <td>{{problem["title"]}}</td>
-                  <td>{{problem["accepted_count"]}}</td>
-                </tr>
-                </a>
-            </tbody>
-            {% endfor %}
-          </table>
-          <nav aria-label="...">
-            <ul class="pagination justify-content-center">
-              <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">1</a></li>
-              <li class="page-item active" aria-current="page">
-                <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item">
-                <a class="page-link" href="#">Next</a>
-              </li>
-            </ul>
-          </nav>
-          {% from 'bootstrap/pagination.html' import render_pager %}
-          {{ render_pager(1,align="center") }}
-        </div>
-    </div>
+<div class="card m-4 border-0 shadow">
+  <div class="card-header bg-white">
+    My OJ Practice
+  </div>
+  <div class="card-body">
+    <nav aria-label="...">
+      <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item active" aria-current="page">
+          <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+    </nav>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Solved</th>
+          <th scope="col">Label</th>
+          <th scope="col">Title</th>
+          <th scope="col">Radio(AC/ALL)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for problem in problems %}
+        <!--  -->
+        <tr >
+            <th scope="row"></th>
+            <td><a href="{{url_for('problems.problemDetail',problemNo=problem['id_problem'])}}">{{problem["id_problem"]}}</a></td>
+            <td>{{problem["title"]}}</td>
+            <td>{{problem["accepted_count"]}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <nav aria-label="...">
+      <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item active" aria-current="page">
+          <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+    </nav>
+    {% from 'bootstrap/pagination.html' import render_pager %}
+    {{ render_pager(pagination=pagenate,align="center") }}
+  </div>
+</div>
 {% endblock %}

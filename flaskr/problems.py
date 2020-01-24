@@ -4,6 +4,7 @@ import functools
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app
 )
+from flask_paginate import Pagination,get_page_parameter
 
 from . import MysqlUtils
 
@@ -21,22 +22,32 @@ def problemSet():
         if session.get("contextId") == 0:
             session["totalCount"] = getCount(session.get("problemTheme"))
     currentPage = int(session.get("currentPage"))
+    pageSize = 20
     problemTheme = session.get("problemTheme")
-    problems = getProblemsByTheme(currentPage,problemTheme)
+    problems = getProblemsByTheme(currentPage,problemTheme,pageSize)
     idx = 0
     for problem in problems:
         problemId = problem["id_problem"]
         problems[idx]["accepted_count"] = getAcceptedCount(problemId)
         problems[idx]["submit_count"] = getSubmitCount(problemId)
         idx += 1
-    return render_template("problems/problemSet.html",problems=problems)
+    total = session.get("totalCount")//pageSize;
+    total = total if session.get("totalCount")%pageSize == 0 else total+1;
+    pagenate = Pagination(page=currentPage,total=total)
+    return render_template("problems/problemSet.html",problems=problems,pagenate=pagenate)
 
 
-def getProblemsByTheme(currentPage,problemTheme):
+@bp.route("/problemDetail/<problemNo>")
+def problemDetail(problemNo):
+
+    return render_template("problems/oneProblem.html")
+
+
+def getProblemsByTheme(currentPage,problemTheme,pageSize):
     db = MysqlUtils.MyPyMysqlPool()
     sql = ""
-    start = (currentPage-1)*20;
-    end = min(currentPage*20-1,int(session.get("totalCount")))
+    start = (currentPage-1)*pageSize;
+    end = min(currentPage*pageSize-1,int(session.get("totalCount")))
     if problemTheme == "All":
         sql = "select id_problem,title from problem limit {start},{end};".format(start=start,end=end)
     else:

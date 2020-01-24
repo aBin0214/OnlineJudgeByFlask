@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Problems{% endblock title %}
+{% block extraJs %}
+<script src="{{ url_for('static', filename='monaco-editor-0.19.3/package/min/vs/loader.js') }}"></script>
+<script src="{{ url_for('static', filename='js/monacoEditor.js') }}"></script>
+<!-- <script>
+	require.config({ paths: { 'vs': "{{ url_for('static', filename='monaco-editor-0.19.3/package/min/vs') }}" }});
+	require(["vs/editor/editor.main"], function() {
+		var editor = monaco.editor.create(document.getElementById('monaco'), {
+			value: [
+				'function x() {',
+				'\tconsole.log("Hello world!");',
+				'}'
+			].join('\n'),
+			language: 'javascript'
+		});
+	});
+</script> -->
+{% endblock %}
+
+{% block content %}
+<div class="card m-4 border-0 shadow">
+    <div class="card-header bg-white">
+        No: 1 Title: A + B Problem
+    </div>
+    <div class="card-body">
+    </div>
+</div>
+<div class="card m-4 border-0 shadow">
+    <div class="card-header bg-white">
+        Submit Your Answer
+    </div>
+    <div class="card-body">
+        <div id="monacoEditor" style="height: 20rem;">
+
+        </div>
+    </div>
+</div>
+{% endblock%}

@@ -129,17 +129,15 @@ class="o">.</span><span class="n">stdin</span><span class="p">:</span>
                 <th scope="col">Compiler commands</th>
               </tr>
             </thead>
-            {% for info in compileInfo %}
             <tbody>
-                <a>
+            {% for info in compileInfo %}
                 <tr>
                   <td>{{info["name_language"]}}</td>
                   <td>{{info["version"]}}</td>
                   <td>{{info["cmd"]}}</td>
                 </tr>
-                </a>
-            </tbody>
             {% endfor %}
+            </tbody>
           </table>
         </div>
     </div>
@@ -154,16 +152,14 @@ class="o">.</span><span class="n">stdin</span><span class="p">:</span>
               <th scope="col">Description</th>
             </tr>
           </thead>
-          {% for rd in resultsDes %}
           <tbody>
-              <a>
+          {% for rd in resultsDes %}
               <tr>
                 <td>{{rd["name_result"]}}</td>
                 <td>{{rd["description"]}}</td>
               </tr>
-              </a>
-          </tbody>
           {% endfor %}
+          </tbody>
         </table>
       </div>
     </div>
