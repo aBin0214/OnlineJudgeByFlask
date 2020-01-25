@@ -3,20 +3,47 @@
 {% block title %}Problems{% endblock title %}
 {% block extraJs %}
 <script src="{{ url_for('static', filename='monaco-editor-0.19.3/package/min/vs/loader.js') }}"></script>
-<script src="{{ url_for('static', filename='js/monacoEditor.js') }}"></script>
-<!-- <script>
-	require.config({ paths: { 'vs': "{{ url_for('static', filename='monaco-editor-0.19.3/package/min/vs') }}" }});
-	require(["vs/editor/editor.main"], function() {
-		var editor = monaco.editor.create(document.getElementById('monaco'), {
-			value: [
-				'function x() {',
-				'\tconsole.log("Hello world!");',
-				'}'
-			].join('\n'),
-			language: 'javascript'
-		});
-	});
-</script> -->
+<!-- <script src="{{ url_for('static', filename='js/monacoEditor.js') }}" type="application/javascript"></script> -->
+<script>
+    var glbMonaco = null;
+    var glbEditor = null;
+    this.initEditor();
+    
+    function initEditor() {
+        require.config({
+            paths: {
+                'vs': "{{ url_for('static', filename='monaco-editor-0.19.3/package/min/vs') }}"
+            }
+        });
+        require(["vs/editor/editor.main"], function () {
+            var editor = monaco.editor.create(document.getElementById('monacoEditor'), {
+                value: [
+                    '#include <stdio.h>',
+                    'int main(){',
+                    '}'
+                ].join('\n'),
+                language: 'c',
+                theme: "vs-light"
+            });
+            glbMonaco = monaco;
+            glbEditor = editor;
+        });
+    }
+    
+    function changeEditor() {
+        var selectLanguage = document.getElementById('selectLanguage');
+        var index = selectLanguage.selectedIndex;
+        var value = selectLanguage.options[index].value;
+        glbMonaco.editor.setModelLanguage(glbEditor.getModel(),value);
+    }
+
+    function changeTheme(){
+        var selectTheme = document.getElementById('selectTheme');
+        var index = selectTheme.selectedIndex;
+        var value = selectTheme.options[index].value;
+        glbMonaco.editor.setTheme(value);
+    }
+</script>
 {% endblock %}
 
 {% block content %}
@@ -28,13 +55,29 @@
     </div>
 </div>
 <div class="card m-4 border-0 shadow">
-    <div class="card-header bg-white">
+    <!-- <div class="card-header bg-white">
         Submit Your Answer
-    </div>
+    </div> -->
     <div class="card-body">
-        <div id="monacoEditor" style="height: 20rem;">
-
-        </div>
+        <form method="post">
+            <div class="form-row">
+                <label class="ml-1">Language:</label>
+                <select id="selectLanguage" onchange="changeEditor();" class="form-control form-control-sm col-md-2 mb-3 ml-1">
+                    <option value="c" selected>C</option>
+                    <option value="cpp">C++</option>
+                    <option value="python">Python2</option>
+                    <option value="python">Python3</option>
+                    <option value="java">Java</option>
+                </select>
+                <label class="ml-3">Theme:</label>
+                <select id="selectTheme" onchange="changeTheme();" class="form-control form-control-sm col-md-2 mb-3 ml-1">
+                    <option value="vs-light" selected>vs-light</option>
+                    <option value="vs-dark">vs-dark</option>
+                </select>
+            </div>
+            <div id="monacoEditor" style="height: 25rem;" class="border"></div>
+            <a class="btn btn-success my-3" href="#" role="button">Submit</a>
+        </form>
     </div>
 </div>
 {% endblock%}

@@ -39,7 +39,9 @@ def problemSet():
 
 @bp.route("/problemDetail/<problemNo>")
 def problemDetail(problemNo):
-
+    if request.method == 'POST':
+        print(11111)
+        pass
     return render_template("problems/oneProblem.html")
 
 
