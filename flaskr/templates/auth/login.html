@@ -8,12 +8,15 @@
       User Login
   </div>
   <div class="card-body">
+  {% for message in get_flashed_messages() %}
+  <div class="flash alert alert-danger" role="alert">{{ message }}</div>
+  {% endfor %}
   {% from 'bootstrap/form.html' import render_field %}
   <form method="post">
     {{ user.csrf_token() }}
     {{ render_field(user.username) }}
     {{ render_field(user.password) }}
-    {{ render_field(user.submit) }}
+    <button class="btn btn-success" type="submit">Submit</button>
   </form>
   </div>
 </div>

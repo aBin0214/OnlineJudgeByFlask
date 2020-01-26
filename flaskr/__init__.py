@@ -39,17 +39,21 @@ def create_app(test_config=None):
     LoggerUtils.init_logger()
 
     # 注册一个蓝图，用于登录和注册
-    from . import auth
-    app.register_blueprint(auth.bp)
+    from . import authBlueprint
+    app.register_blueprint(authBlueprint.bp)
 
-    # 注册一个蓝图，用于显示网站基本信息
-    from . import home
-    app.register_blueprint(home.bp)
+    # 用于显示网站基本信息
+    from . import homeBlueprint
+    app.register_blueprint(homeBlueprint.bp)
     app.add_url_rule('/', endpoint='index')
 
-    #注册一个蓝图，用于显示题目信息
-    from . import problems
-    app.register_blueprint(problems.bp)
+    # 用于显示题集信息
+    from . import problemsBlueprint
+    app.register_blueprint(problemsBlueprint.bp)
+
+    # 用于显示题目的详细信息
+    from . import proDetailBlueprint
+    app.register_blueprint(proDetailBlueprint.bp)
 
     #注册一个蓝图，用于加载bootStrap
     from flask_bootstrap import Bootstrap

@@ -6,7 +6,7 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.auth import login_required
+from flaskr.authBlueprint import login_required
 from . import MysqlUtils
 
 bp = Blueprint('home', __name__)

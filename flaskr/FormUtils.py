@@ -22,10 +22,7 @@ class UserFrom(FlaskForm):
         render_kw={
             "class": "form-control",
             "placeholder": "Please enter your username."
-        },
-        validators=[
-            validators.DataRequired("The username cannot be empty !")
-        ]
+        }
     )
 
     password = wtforms.PasswordField(
@@ -33,25 +30,12 @@ class UserFrom(FlaskForm):
         render_kw={
             "class": "form-control",
             "placeholder": "Please enter your password."
-        },
-        validators=[
-            validators.DataRequired("The password cannot be empty !") 
-        ]
+        }
     )
     confirm_password = wtforms.PasswordField(
         label="Comfirm Password",
         render_kw={
             "class": "form-control",
             "placeholder": "Please enter your password again."
-        },
-        validators=[
-            validators.DataRequired("The two passwords you entered did not match !") 
-        ]
-    )
-
-    submit = wtforms.SubmitField(
-        label="Submit",
-        render_kw={
-            "class": "btn btn-primary btn-block",
-        },
+        }
     )

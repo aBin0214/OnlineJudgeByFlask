@@ -28,8 +28,8 @@
 			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 		</form>
 		<ul class="navbar-nav ml-3">
-			{% if g.user %}
-			<li>{{ g.user['username'] }}</li>
+			{% if session.get('id_user') %}
+			<li class="mr-1 mt-2"><a>{{ session.get('username') }}</a></li>
 			<li>{{ render_nav_item('auth.logout', 'LogOut') }}</li>
 			{% else %}
 			<li>{{ render_nav_item('auth.login', 'Login') }}</li>
@@ -39,9 +39,6 @@
 	</div>
 </nav>
 <section class="content">
-	{% for message in get_flashed_messages() %}
-	<div class="flash">{{ message }}</div>
-	{% endfor %}
 	<div id="container">
 		{% block content %}{% endblock %}
 	</div>

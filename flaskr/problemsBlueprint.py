@@ -37,14 +37,6 @@ def problemSet():
     return render_template("problems/problemSet.html",problems=problems,pagenate=pagenate)
 
 
-@bp.route("/problemDetail/<problemNo>")
-def problemDetail(problemNo):
-    if request.method == 'POST':
-        print(11111)
-        pass
-    return render_template("problems/oneProblem.html")
-
-
 def getProblemsByTheme(currentPage,problemTheme,pageSize):
     db = MysqlUtils.MyPyMysqlPool()
     sql = ""
