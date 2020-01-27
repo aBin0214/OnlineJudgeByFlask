@@ -8,22 +8,7 @@
     My OJ Practice
   </div>
   <div class="card-body">
-    <nav aria-label="...">
-      <ul class="pagination justify-content-center">
-        <li class="page-item disabled">
-          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item active" aria-current="page">
-          <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-          <a class="page-link" href="#">Next</a>
-        </li>
-      </ul>
-    </nav>
-    <table class="table table-hover">
+    <table class="table table-hover border-0">
       <thead>
         <tr>
           <th scope="col">Solved</th>
@@ -59,8 +44,6 @@
         </li>
       </ul>
     </nav>
-    {% from 'bootstrap/pagination.html' import render_pager %}
-    {{ render_pager(pagination=pagenate,align="center") }}
   </div>
 </div>
 {% endblock %}

@@ -58,6 +58,9 @@
 </div>
 <div class="card m-4 border-0 shadow">
     <div class="card-body">
+        {% for message in get_flashed_messages() %}
+        <div class="flash alert alert-danger" role="alert">{{ message }}</div>
+        {% endfor %}
         <form method="post">
             <div class="form-row">
                 <label class="ml-1">Language:</label>

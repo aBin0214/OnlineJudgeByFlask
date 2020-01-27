@@ -13,6 +13,7 @@ bp = Blueprint('home', __name__)
 
 @bp.route("/")
 def index():
+    g.active = "Home"
     compileInfo = getCompileInfo()
     resultsDes = getResultDes()
     return render_template("home/home.html",compileInfo=compileInfo,resultsDes=resultsDes)

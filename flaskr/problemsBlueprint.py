@@ -4,7 +4,6 @@ import functools
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app
 )
-from flask_paginate import Pagination,get_page_parameter
 
 from . import MysqlUtils
 
@@ -12,6 +11,7 @@ bp = Blueprint('problems', __name__, url_prefix='/problems')
 
 @bp.route("/problemSet")
 def problemSet():
+    g.active = "Problems"
     if session.get("currentPage") is None:
         session["currentPage"] = 1
     if session.get("problemTheme") is None:
@@ -33,8 +33,7 @@ def problemSet():
         idx += 1
     total = session.get("totalCount")//pageSize;
     total = total if session.get("totalCount")%pageSize == 0 else total+1;
-    pagenate = Pagination(page=currentPage,total=total)
-    return render_template("problems/problemSet.html",problems=problems,pagenate=pagenate)
+    return render_template("problems/problemSet.html",problems=problems)
 
 
 def getProblemsByTheme(currentPage,problemTheme,pageSize):

@@ -51,12 +51,12 @@ def create_app(test_config=None):
     from . import problemsBlueprint
     app.register_blueprint(problemsBlueprint.bp)
 
+    # 用户显示比赛信息
+    from . import contestsBlueprint
+    app.register_blueprint(contestsBlueprint.bp)
+
     # 用于显示题目的详细信息
     from . import proDetailBlueprint
     app.register_blueprint(proDetailBlueprint.bp)
-
-    #注册一个蓝图，用于加载bootStrap
-    from flask_bootstrap import Bootstrap
-    bootstrap = Bootstrap(app)
 
     return app

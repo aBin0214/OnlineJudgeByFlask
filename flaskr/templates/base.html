@@ -5,45 +5,74 @@
 {% block extraJs %}
 {% endblock %}
 {% block styles %}
-<!-- Bootstrap CSS -->
-{{ bootstrap.load_css() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-4.4.1/bootstrap-4.4.1-dist/css/bootstrap.css') }}">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
 {% endblock %}
-{% from 'bootstrap/nav.html' import render_nav_item %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
 	<a class="navbar-brand" href="{{url_for('home.index')}}">My Online Judge</a>
-	<!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-	  <span class="navbar-toggler-icon"></span>
-	</button> -->
-
-	<div class="collapse navbar-collapse" id="navbarSupportedContent">
-		<ul class="navbar-nav mr-auto">
-			<li>{{ render_nav_item('home.index', 'Home') }}</li>
-			<li>{{ render_nav_item('problems.problemSet', 'Problems') }}</li>
-			<li>{{ render_nav_item('auth.register', 'Contests') }}</li>
-			<li>{{ render_nav_item('auth.register', 'Status') }}</li>
-		</ul>
-		<form class="form-inline ml-auto">
-			<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-		</form>
-		<ul class="navbar-nav ml-3">
-			{% if session.get('id_user') %}
-			<li class="mr-1 mt-2"><a>{{ session.get('username') }}</a></li>
-			<li>{{ render_nav_item('auth.logout', 'LogOut') }}</li>
-			{% else %}
-			<li>{{ render_nav_item('auth.login', 'Login') }}</li>
-			<li>{{ render_nav_item('auth.register', 'Register') }}</li>
-			{% endif %}
-		</ul>
-	</div>
+	<ul class="nav nav-pills mr-auto">
+		<li>
+			{%if g.active == 'Home'%}
+				<a class="nav-item nav-link active" href="{{url_for('home.index')}}">Home</a>
+			{%else%}
+				<a class="nav-item nav-link" href="{{url_for('home.index')}}">Home</a>
+			{%endif%}
+		</li>
+		<li>
+			{%if g.active == 'Problems'%}
+				<a class="nav-item nav-link active" href="{{url_for('problems.problemSet')}}">Problems</a>
+			{%else%}
+				<a class="nav-item nav-link" href="{{url_for('problems.problemSet')}}">Problems</a>
+			{%endif%}
+		</li>
+		<li>
+			{%if g.active == 'Contests'%}
+				<a class="nav-item nav-link active" href="{{url_for('contests.contestSet')}}">Contests</a>			
+			{%else%}
+				<a class="nav-item nav-link" href="{{url_for('contests.contestSet')}}">Contests</a>			
+			{%endif%}
+		</li>
+	</ul>
+	<form class="form-inline ml-auto">
+		<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+		<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+	</form>
+	<ul class="nav nav-pills ml-3 .text-success">
+		{% if session.get('id_user') %}
+		<li class="mr-1 mt-2"><a>{{ session.get('username') }}</a></li>
+		<li>
+			{%if g.active == 'LogOut'%}
+				<a class="nav-item nav-link active" href="{{url_for('auth.logout')}}">LogOut</a>			
+			{%else%}
+				<a class="nav-item nav-link" href="{{url_for('auth.logout')}}">LogOut</a>			
+			{%endif%}
+		</li>
+		{% else %}
+		<li>
+			{%if g.active == 'Login'%}
+				<a class="nav-item nav-link active" href="{{url_for('auth.login')}}">Login</a>			
+			{%else%}
+				<a class="nav-item nav-link" href="{{url_for('auth.login')}}">Login</a>			
+			{%endif%}
+		</li>
+		<li>
+			{%if g.active == 'Register'%}
+				<a class="nav-item nav-link active" href="{{url_for('auth.register')}}">Register</a>			
+			{%else%}
+				<a class="nav-item nav-link" href="{{url_for('auth.register')}}">Register</a>			
+			{%endif%}
+		</li>
+		{% endif %}
+	</ul>
 </nav>
 <section class="content">
 	<div id="container">
 		{% block content %}{% endblock %}
 	</div>
 	{% block scripts %}
-	<!-- Optional JavaScript -->
-	{{ bootstrap.load_js() }}
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 	{% endblock %}
 </section>

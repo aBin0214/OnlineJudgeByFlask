@@ -11,11 +11,11 @@
   {% for message in get_flashed_messages() %}
   <div class="flash alert alert-danger" role="alert">{{ message }}</div>
   {% endfor %}
-  {% from 'bootstrap/form.html' import render_field %}
   <form method="post">
-    {{ user.csrf_token() }}
-    {{ render_field(user.username) }}
-    {{ render_field(user.password) }}
+    <label>Username:</label>
+    <input type="text" class="form-control mt-1 mb-3" name="username" placeholder="Please enter your username.">
+    <label>Password:</label>
+    <input type="password" class="form-control mt-1 mb-3" name="password" placeholder="Please enter your password.">
     <button class="btn btn-success" type="submit">Submit</button>
   </form>
   </div>
