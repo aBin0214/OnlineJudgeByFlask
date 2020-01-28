@@ -34,3 +34,6 @@ html{
     background-color: #fafafa;
 }
 
+.tr_link:hover{
+    cursor:pointer;
+}

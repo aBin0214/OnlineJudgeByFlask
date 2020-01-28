@@ -9,46 +9,60 @@ from . import MysqlUtils
 
 bp = Blueprint('problems', __name__, url_prefix='/problems')
 
+@bp.route("/problemSet/<int:currentPage>")
 @bp.route("/problemSet")
-def problemSet():
+def problemSet(currentPage=1):
     g.active = "Problems"
-    if session.get("currentPage") is None:
-        session["currentPage"] = 1
+
+    session['currentPage'] = currentPage
+    # if session.get("currentPage") is None:
+    #     session["currentPage"] = 1
     if session.get("problemTheme") is None:
         session["problemTheme"] = "All"
-    if session.get("contextId") is None:
-        session["contextId"] = 0
-    if session.get("totalCount") is None:
-        if session.get("contextId") == 0:
-            session["totalCount"] = getCount(session.get("problemTheme"))
+    if session.get("contestId") is None:
+        session["contestId"] = 1
+    if session.get("pageSize") is None:
+        session['pageSize'] = 20
+    session['pageSize'] = 20
+    
+    totalCount = getCount(session.get("problemTheme"))
+    total = totalCount//session.get("pageSize")
+    total = total if totalCount%session.get("pageSize") == 0 else total+1
+    session['totalPage'] = total
+
     currentPage = int(session.get("currentPage"))
-    pageSize = 20
     problemTheme = session.get("problemTheme")
-    problems = getProblemsByTheme(currentPage,problemTheme,pageSize)
+    problems = getProblemsByTheme(currentPage,problemTheme,session.get("pageSize"))
+
+    print("当前页数：",currentPage)
+    print("总页数：",session.get("totalPage"))
     idx = 0
     for problem in problems:
-        problemId = problem["id_problem"]
+        problemId = problem["id_contest_problem"]
         problems[idx]["accepted_count"] = getAcceptedCount(problemId)
         problems[idx]["submit_count"] = getSubmitCount(problemId)
         idx += 1
-    total = session.get("totalCount")//pageSize;
-    total = total if session.get("totalCount")%pageSize == 0 else total+1;
     return render_template("problems/problemSet.html",problems=problems)
 
 
 def getProblemsByTheme(currentPage,problemTheme,pageSize):
     db = MysqlUtils.MyPyMysqlPool()
     sql = ""
-    start = (currentPage-1)*pageSize;
-    end = min(currentPage*pageSize-1,int(session.get("totalCount")))
+    start = (currentPage-1)*pageSize
     if problemTheme == "All":
-        sql = "select id_problem,title from problem limit {start},{end};".format(start=start,end=end)
+        sql = "select id_contest_problem,title \
+        from contest_problem,problem \
+        where contest_problem.id_contest = '{id_contest}' \
+        and contest_problem.id_problem = problem.id_problem\
+        limit {start},{pageSize};".format(id_contest=1,start=start,pageSize=pageSize)
     else:
-        sql = "select problem.id_problem,title \
-        from online_judge.problem , online_judge.tag, online_judge.tag_problem \
-        where problem.id_problem = tag_problem.id_problem \
+        sql = "select id_contest_problem,title \
+        from problem,tag,tag_problem,contest_problem \
+        where contest_problem.id_contest = '{id_contest}' \
+        and contest_problem.id_problem = problem.id_problem \
+        and problem.id_problem = tag_problem.id_problem \
         and tag.id_tag = tag_problem.id_tag \
-        and tag.name_tag = '{theme}' limit {start},{end}".format(theme=problemTheme,start=start,end=end)
+        and tag.name_tag = '{theme}' limit {start},{pageSize}".format(id_contest=1,theme=problemTheme,start=start,pageSize=pageSize)
     problems = None
     try:
         problems = db.get_all(sql)
@@ -62,11 +76,13 @@ def getCount(problemTheme):
     db = MysqlUtils.MyPyMysqlPool()
     sql = "";
     if problemTheme == "All":
-        sql = "select count(id_problem) as cnt from problem limit 1"
+        sql = "select count(id_contest_problem) as cnt from online_judge.contest_problem where id_contest = '1'"
     else:
-        sql = "select count(problem.id_problem) as cnt \
-        from problem,tag_problem, tag \
-        where problem.id_problem = tag_problem.id_problem \
+        sql = "select count(contest_problem.id_contest_problem) as cnt \
+        from contest_problem,problem,tag_problem,tag \
+        where contest_problem.id_contest = '1' \
+        and contest_problem.id_problem = problem.id_problem \
+        and problem.id_problem = tag_problem.id_problem \
         and tag.id_tag = tag_problem.id_tag \
         and tag.name_tag = '{}' limit 1".format(problemTheme);
     try:
@@ -80,12 +96,10 @@ def getCount(problemTheme):
 def getAcceptedCount(problemId):
     db = MysqlUtils.MyPyMysqlPool()
     sql = "select count(id_solution) as cnt \
-    from online_judge.solution as s,online_judge.context_problem as c, \
-    online_judge.result_des as r \
-    where s.id_context_problem = c.id_context_problem \
-    and s.state = r.id_result_des \
+    from online_judge.solution as s,online_judge.result_des as r \
+    where s.state = r.id_result_des \
     and r.name_result = \"Accepted\" \
-    and c.id_problem = {}".format(problemId);
+    and s.id_contest_problem = {}".format(problemId);
     try:
         res = db.get_one(sql)
     except:
@@ -97,9 +111,8 @@ def getAcceptedCount(problemId):
 def getSubmitCount(problemId):
     db = MysqlUtils.MyPyMysqlPool()
     sql = "select count(id_solution) as cnt \
-    from online_judge.solution as s,online_judge.context_problem as c \
-    where s.id_context_problem = c.id_context_problem \
-    and c.id_problem = {}".format(problemId);
+    from online_judge.solution as s \
+    where s.id_contest_problem = {}".format(problemId);
     try:
         res = db.get_one(sql)
     except:
@@ -108,6 +121,6 @@ def getSubmitCount(problemId):
         db.dispose()
     return res["cnt"]
 
-def getProblemsByContext(context):
+def getProblemsBycontest(contest):
     pass
 

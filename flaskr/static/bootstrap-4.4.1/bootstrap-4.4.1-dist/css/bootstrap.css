@@ -1694,9 +1694,13 @@ pre code {
 }
 
 .table th,
-.table td {
+.table td{
   padding: 0.75rem;
   vertical-align: top;
+}
+
+.table tbody th,
+.table tbody td{
   border-top: 1px solid #dee2e6;
 }
 
@@ -5122,7 +5126,7 @@ a.badge:hover, a.badge:focus {
 
 .badge-primary {
   color: #fff;
-  background-color: #28a745;
+  background-color: #007bff;
 }
 
 a.badge-primary:hover, a.badge-primary:focus {
