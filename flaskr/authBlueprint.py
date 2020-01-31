@@ -19,7 +19,6 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 def register():
     """
     注册
-    :return:
     """
     g.active="Register"
     if request.method == 'POST':
@@ -59,7 +58,6 @@ def register():
 def login():
     """
     登录
-    :return:
     """
     g.active="Login"
     if request.method == 'POST':
@@ -92,7 +90,6 @@ def login():
         db.dispose()
     return render_template('auth/login.html')
 
-
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
@@ -106,7 +103,6 @@ def login_required(view):
 def logout():
     """
     登出
-    :return:
     """
     session.clear()
     return redirect(url_for('index'))

@@ -1,0 +1,193 @@
+.highlight_code .hll {
+    background-color: #ffffcc
+}
+
+.highlight_code {
+    background: #f8f8f8;
+    padding-left: 1rem;
+    padding-right:1rem;
+    padding-top:1rem;
+    border-radius:0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.highlight_code .c {
+    color: #008000
+}
+
+/* Comment */
+.highlight_code .err {
+    border: 1px solid #FF0000
+}
+
+/* Error */
+.highlight_code .k {
+    color: #0000ff
+}
+
+/* Keyword */
+.highlight_code .ch {
+    color: #008000
+}
+
+/* Comment.Hashbang */
+.highlight_code .cm {
+    color: #008000
+}
+
+/* Comment.Multiline */
+.highlight_code .cp {
+    color: #0000ff
+}
+
+/* Comment.Preproc */
+.highlight_code .cpf {
+    color: #008000
+}
+
+/* Comment.PreprocFile */
+.highlight_code .c1 {
+    color: #008000
+}
+
+/* Comment.Single */
+.highlight_code .cs {
+    color: #008000
+}
+
+/* Comment.Special */
+.highlight_code .ge {
+    font-style: italic
+}
+
+/* Generic.Emph */
+.highlight_code .gh {
+    font-weight: bold
+}
+
+/* Generic.Heading */
+.highlight_code .gp {
+    font-weight: bold
+}
+
+/* Generic.Prompt */
+.highlight_code .gs {
+    font-weight: bold
+}
+
+/* Generic.Strong */
+.highlight_code .gu {
+    font-weight: bold
+}
+
+/* Generic.Subheading */
+.highlight_code .kc {
+    color: #0000ff
+}
+
+/* Keyword.Constant */
+.highlight_code .kd {
+    color: #0000ff
+}
+
+/* Keyword.Declaration */
+.highlight_code .kn {
+    color: #0000ff
+}
+
+/* Keyword.Namespace */
+.highlight_code .kp {
+    color: #0000ff
+}
+
+/* Keyword.Pseudo */
+.highlight_code .kr {
+    color: #0000ff
+}
+
+/* Keyword.Reserved */
+.highlight_code .kt {
+    color: #2b91af
+}
+
+/* Keyword.Type */
+.highlight_code .s {
+    color: #a31515
+}
+
+/* Literal.String */
+.highlight_code .nc {
+    color: #2b91af
+}
+
+/* Name.Class */
+.highlight_code .ow {
+    color: #0000ff
+}
+
+/* Operator.Word */
+.highlight_code .sa {
+    color: #a31515
+}
+
+/* Literal.String.Affix */
+.highlight_code .sb {
+    color: #a31515
+}
+
+/* Literal.String.Backtick */
+.highlight_code .sc {
+    color: #a31515
+}
+
+/* Literal.String.Char */
+.highlight_code .dl {
+    color: #a31515
+}
+
+/* Literal.String.Delimiter */
+.highlight_code .sd {
+    color: #a31515
+}
+
+/* Literal.String.Doc */
+.highlight_code .s2 {
+    color: #a31515
+}
+
+/* Literal.String.Double */
+.highlight_code .se {
+    color: #a31515
+}
+
+/* Literal.String.Escape */
+.highlight_code .sh {
+    color: #a31515
+}
+
+/* Literal.String.Heredoc */
+.highlight_code .si {
+    color: #a31515
+}
+
+/* Literal.String.Interpol */
+.highlight_code .sx {
+    color: #a31515
+}
+
+/* Literal.String.Other */
+.highlight_code .sr {
+    color: #a31515
+}
+
+/* Literal.String.Regex */
+.highlight_code .s1 {
+    color: #a31515
+}
+
+/* Literal.String.Single */
+.highlight_code .ss {
+    color: #a31515
+}
+
+/* Literal.String.Symbol */

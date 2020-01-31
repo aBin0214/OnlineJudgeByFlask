@@ -10,7 +10,7 @@ from pygments.styles import STYLE_MAP
 class CodeHighlight():
     @staticmethod
     def getHtmlFormatter():
-        return HtmlFormatter(cssclass="highlight_code",linenos='inline')
+        return HtmlFormatter(cssclass="highlight_code",style='vs')
 
     @staticmethod
     def getLexer(language):
@@ -35,15 +35,15 @@ class CodeHighlight():
 
 if __name__ == "__main__":
     code = r"""
-    #include <iostream>
-    using namespace std;
+    #include <stdio.h>
 
     int main()
     {
         int a,b;
-        while(cin >> a >> b)
-            cout << a+b << endl;
+        while(scanf("%d %d",&a, &b) != EOF)
+            printf("%d\n",a+b);
+        return 0;
     }
     """
-    print(CodeHighlight.codeTranslate(code,"cpp"))
+    print(CodeHighlight.codeTranslate(code,"c"))
     # print(CodeHighlight.getStyleCss())

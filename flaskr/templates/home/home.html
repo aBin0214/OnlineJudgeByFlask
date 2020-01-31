@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 
 {% block title %}home{% endblock title %}
+{% block extraJs %}
+<script>
+  function setFAQ(faq){
+    var idList = new Array('IO','AC','AJR','AJ');
+    for(var id of idList){
+      var a = document.getElementById(id);
+      if(id === faq){
+        a.setAttribute('class',"btn btn-success");
+      }else{
+        a.setAttribute('class',"btn btn-outline-success");
+      }
+    }
+  }
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="jumbotron m-4 shadow">
@@ -27,20 +42,16 @@
   </div>
   <div class="card-body">
     <p>
-      <a class="btn btn-outline-success" data-toggle="collapse" href="#IO" role="button" aria-expanded="false"
-        aria-controls="collapseExample">
+      <a class="btn btn-success" data-toggle="collapse" href="#IO" role="button" id="IO" onclick="setFAQ('IO');">
         About Input and Output
       </a>
-      <a class="btn btn-outline-success" data-toggle="collapse" href="#AC" role="button" aria-expanded="false"
-        aria-controls="collapseExample">
+      <a class="btn btn-outline-success" data-toggle="collapse" href="#AC" role="button" id="AC" onclick="setFAQ('AC');">
         About Compilers
       </a>
-      <a class="btn btn-outline-success" data-toggle="collapse" href="#AJR" role="button" aria-expanded="false"
-        aria-controls="collapseExample">
+      <a class="btn btn-outline-success" data-toggle="collapse" href="#AJR" role="button" id="AJR" onclick="setFAQ('AJR');">
         About Judge Reply
       </a>
-      <a class="btn btn-outline-success" data-toggle="collapse" href="#AJ" role="button" aria-expanded="false"
-        aria-controls="collapseExample">
+      <a class="btn btn-outline-success" data-toggle="collapse" href="#AJ" role="button" id="AJ" onclick="setFAQ('AJ');">
         About Java
       </a>
     </p>
@@ -55,63 +66,64 @@
           do so.</p>
         <p>Here is a sample solution for problem 1001 using C++:</p>
         <div class="highlight_code">
-<pre><span></span><span class="lineno">1 </span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="lineno">2 </span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-<span class="lineno">3 </span>
-<span class="lineno">4 </span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="lineno">5 </span><span class="p">{</span>
-<span class="lineno">6 </span>    <span class="kt">int</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
-<span class="lineno">7 </span>    <span class="k">while</span><span class="p">(</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">)</span>
-<span class="lineno">8 </span>        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-<span class="lineno">9 </span><span class="p">}</span>
+<pre>
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">)</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
 </pre>
         </div>
         <p>Here is a sample solution for problem 1001 using C:</p>
         <div class="highlight_code">
-<pre><span></span><span class="lineno">1 </span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
-<span class="lineno">2 </span>
-<span class="lineno">3 </span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="lineno">4 </span><span class="p">{</span>
-<span class="lineno">5 </span>    <span class="kt">int</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
-<span class="lineno">6 </span>    <span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span
-class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span> <span class="o">!=</span> <span class="n">EOF</span><span class="p">)</span>
-<span class="lineno">7 </span>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>
-<span class="lineno">8 </span>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="lineno">9 </span><span class="p">}</span>
+<pre>
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span> <span class="o">!=</span> <span class="n">EOF</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre>
         </div>
         <p>Here is a sample solution for problem 1001 using Java:</p>
         <div class="highlight_code">
-<pre><span></span><span class="lineno"> 1 </span><span class="kn">import</span> <span class="nn">java.util.Scanner</span><span class="p">;</span>
-<span class="lineno"> 2 </span>
-<span class="lineno"> 3 </span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="p">{</span>
-<span class="lineno"> 4 </span>        <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
-<span class="lineno"> 5 </span>                <span class="n">Scanner</span> <span class="n">in</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scanner</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">in</span><span class="p">);</span>
-<span class="lineno"> 6 </span>                <span class="k">while</span> <span class="p">(</span><span class="n">in</span><span class="p">.</span><span class="na">hasNextInt</span><span class="p">())</span> <span class="p">{</span>
-<span class="lineno"> 7 </span>                        <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">in</span><span class="p">.</span><span class="na">nextInt</span><span class="p">();</span>
-<span class="lineno"> 8 </span>                        <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">in</span><span class="p">.</span><span class="na">nextInt</span><span class="p">();</span>
-<span class="lineno"> 9 </span>                        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
-<span class="lineno">10 </span>                <span class="p">}</span>
-<span class="lineno">11 </span>        <span class="p">}</span>
-<span class="lineno">12 </span><span class="p">}</span>
+<pre><span></span><span class="kn">import</span> <span class="nn">java.util.Scanner</span><span class="p">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="p">{</span>
+        <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">Scanner</span> <span class="n">in</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scanner</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">in</span><span class="p">);</span>
+                <span class="k">while</span> <span class="p">(</span><span class="n">in</span><span class="p">.</span><span class="na">hasNextInt</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">in</span><span class="p">.</span><span class="na">nextInt</span><span class="p">();</span>
+                        <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">in</span><span class="p">.</span><span class="na">nextInt</span><span class="p">();</span>
+                        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+<span class="p">}</span>
 </pre>
         </div>
         <p>Here is a sample solution for problem 1001 using Python2:</p>
         <div class="highlight_code">
-<pre><span></span><span class="lineno">1 </span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="lineno">2 </span><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span
+<pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span
 class="o">.</span><span class="n">stdin</span><span class="p">:</span>
-<span class="lineno">3 </span>    <span class="n">a</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-<span class="lineno">4 </span>    <span class="nb">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="nb">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </pre>
         </div>
         <p>Here is a sample solution for problem 1001 using Python3:</p>
         <div class="highlight_code">
-<pre><span></span><span class="lineno">1 </span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="lineno">2 </span><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span
+<pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span
 class="o">.</span><span class="n">stdin</span><span class="p">:</span>
-<span class="lineno">3 </span>    <span class="n">a</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-<span class="lineno">4 </span>    <span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 </pre>
         </div>
       </div>

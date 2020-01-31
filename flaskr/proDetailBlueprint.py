@@ -12,6 +12,7 @@ from . import MysqlUtils
 
 @bp.route("/problemDetail/<proNo>", methods=('GET', 'POST'))
 def problemDetail(proNo):
+    g.active = 'Problems'
     languages = getLanguages()
     if request.method == 'POST':
         if session.get('id_user') is None:
@@ -54,3 +55,6 @@ def getLanguages():
     finally:
         db.dispose()
     return languages
+
+def getProblemInfo():
+    pass

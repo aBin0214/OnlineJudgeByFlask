@@ -26,7 +26,7 @@
             <tr class="tr_link"
               onclick="window.location.href = '../../proDetail/problemDetail/'+{{problem['id_contest_problem']}}">
               <th scope="row"></th>
-              <td>{{problem["id_contest_problem"]}}</td>
+              <td>{{problem["serial"]}}</td>
               <td>{{problem["title"]}}</td>
               <td>
                 {%if problem["accepted_count"] == 0%}
@@ -48,12 +48,12 @@
   <div class="col-md-2">
     <div class="card border-0 shadow mb-4">
       <div class="card-body">
-         <h5>My-OJ Problem Set</h5>
-         <p>Status: <span class="badge badge-primary">Always Run</span></p>
+         <h5>{{contestInfo["title"]}}</h5>
+         Status:&nbsp;<span class="badge badge-primary">Always Run</span><br/>
+         Created By:&nbsp;<span>{{contestInfo["belong"]}}</span><br/>
       </div>
     </div>
     <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
-      <a class="nav-link" href="#" role="tab">Information</a>
       <a class="nav-link active" href="#" role="tab">Problems</a>
       <a class="nav-link" href="#" role="tab">Ranklist</a>
       <a class="nav-link" href="#" role="tab">Submissions</a>
@@ -63,14 +63,12 @@
         Tags
       </div>
       <div class="card-body">
-        <span class="badge badge-pill badge-primary">Math</span>
-        <span class="badge badge-pill badge-secondary">Tree</span>
-        <span class="badge badge-pill badge-success">Dp</span>
-        <span class="badge badge-pill badge-danger">Greed</span>
-        <span class="badge badge-pill badge-warning">Graph</span>
-        <span class="badge badge-pill badge-info">Info</span>
-        <span class="badge badge-pill badge-light">Light</span>
-        <span class="badge badge-pill badge-dark">Dark</span>
+        {% import "macro/colorBadge.html" as cB %}
+        <label>当前tag:</label>{{ cB.cBadge(-1,session.get("problemTag"),'#')}}
+        <br/>
+        {% for tagItem in tags %}
+        {{ cB.cBadge(tagItem['id_tag'],tagItem['name_tag'],url_for('problems.problemSetTag',tag=tagItem['name_tag']))}}
+        {% endfor%}
       </div>
     </div>
   </div>
