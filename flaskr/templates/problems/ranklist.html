@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Ranklist{% endblock title %}
+
+{% block content %}
+<div class="row ml-2 mr-2">
+  <div class="col-md-10">
+    <div class="card border-0 shadow">
+      <!-- <div class="card-header bg-white">
+        My OJ Practice
+      </div> -->
+      <div class="card-body">
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card border-0 shadow mb-4">
+      <div class="card-body">
+         <h5>{{contestInfo["title"]}}</h5>
+         Status:&nbsp;<span class="badge badge-primary">Always Run</span><br/>
+         Created By:&nbsp;<span>{{contestInfo["belong"]}}</span><br/>
+      </div>
+    </div>
+    <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
+      <a class="nav-link" href="{{url_for('problems.problemSet')}}" role="tab">Problems</a>
+      <a class="nav-link active" href="#" role="tab">Ranklist</a>
+      <a class="nav-link" href="{{url_for('problems.submissions')}}" role="tab">Submissions</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

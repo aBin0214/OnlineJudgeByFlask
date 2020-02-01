@@ -4,9 +4,7 @@
 
 .highlight_code {
     background: #f8f8f8;
-    padding-left: 1rem;
-    padding-right:1rem;
-    padding-top:1rem;
+    padding: 1rem;
     border-radius:0.5rem;
     margin-bottom: 0.5rem;
 }

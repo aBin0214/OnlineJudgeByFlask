@@ -10,8 +10,6 @@
         My OJ Practice
       </div> -->
       <div class="card-body">
-        {% import "macro/page.html" as pg %}
-        {{ pg.page(session.get("currentPage"),session.get("totalPage"),'problems.problemSet') }}
         <table class="table table-hover border-0">
           <thead>
             <tr>
@@ -41,7 +39,7 @@
           </tbody>
         </table>
         {% import "macro/page.html" as pg %}
-        {{ pg.page(session.get("currentPage"),session.get("totalPage"),'problems.problemSet') }}
+        {{ pg.page(session.get("currentPage_pro"),session.get("totalPage_pro"),'problems.problemSet') }}
       </div>
     </div>
   </div>
@@ -55,8 +53,8 @@
     </div>
     <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
       <a class="nav-link active" href="#" role="tab">Problems</a>
-      <a class="nav-link" href="#" role="tab">Ranklist</a>
-      <a class="nav-link" href="#" role="tab">Submissions</a>
+      <a class="nav-link" href="{{url_for('problems.ranklist')}}" role="tab">Ranklist</a>
+      <a class="nav-link" href="{{url_for('problems.submissions')}}" role="tab">Submissions</a>
     </div>
     <div class="card border-0 shadow">
       <div class="card-header bg-white">
@@ -64,7 +62,7 @@
       </div>
       <div class="card-body">
         {% import "macro/colorBadge.html" as cB %}
-        <label>当前tag:</label>{{ cB.cBadge(-1,session.get("problemTag"),'#')}}
+        <label>当前tag:</label>{{ cB.cBadge(-1,session.get("problemTag_pro"),'#')}}
         <br/>
         {% for tagItem in tags %}
         {{ cB.cBadge(tagItem['id_tag'],tagItem['name_tag'],url_for('problems.problemSetTag',tag=tagItem['name_tag']))}}

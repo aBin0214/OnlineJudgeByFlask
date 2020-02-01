@@ -13,21 +13,21 @@
 	<a class="navbar-brand" href="{{url_for('home.index')}}">My Online Judge</a>
 	<ul class="nav nav-pills mr-auto">
 		<li>
-			{%if g.active == 'Home'%}
+			{%if session.get('active') == 'Home'%}
 				<a class="nav-item nav-link active" href="{{url_for('home.index')}}">Home</a>
 			{%else%}
 				<a class="nav-item nav-link" href="{{url_for('home.index')}}">Home</a>
 			{%endif%}
 		</li>
 		<li>
-			{%if g.active == 'Problems'%}
+			{%if session.get('active') == 'Problems'%}
 				<a class="nav-item nav-link active" href="{{url_for('problems.problemSet')}}">Problems</a>
 			{%else%}
 				<a class="nav-item nav-link" href="{{url_for('problems.problemSet')}}">Problems</a>
 			{%endif%}
 		</li>
 		<li>
-			{%if g.active == 'Contests'%}
+			{%if session.get('active') == 'Contests'%}
 				<a class="nav-item nav-link active" href="{{url_for('contests.contestSet')}}">Contests</a>			
 			{%else%}
 				<a class="nav-item nav-link" href="{{url_for('contests.contestSet')}}">Contests</a>			
@@ -42,7 +42,7 @@
 		{% if session.get('id_user') %}
 		<li class="mr-1 mt-2"><a>{{ session.get('username') }}</a></li>
 		<li>
-			{%if g.active == 'LogOut'%}
+			{%if session.get('active') == 'LogOut'%}
 				<a class="nav-item nav-link active" href="{{url_for('auth.logout')}}">LogOut</a>			
 			{%else%}
 				<a class="nav-item nav-link" href="{{url_for('auth.logout')}}">LogOut</a>			
@@ -50,7 +50,7 @@
 		</li>
 		{% else %}
 		<li>
-			{%if g.active == 'Login'%}
+			{%if session.get('active') == 'Login'%}
 				<a class="nav-item nav-link active" href="{{url_for('auth.login')}}">Login</a>			
 			{%else%}
 				<a class="nav-item nav-link" href="{{url_for('auth.login')}}">Login</a>			
@@ -59,7 +59,7 @@
 		<li>
 		</li>
 		<li>
-			{%if g.active == 'Register'%}
+			{%if session.get('active') == 'Register'%}
 				<a class="nav-item nav-link active" href="{{url_for('auth.register')}}">Register</a>			
 			{%else%}
 				<a class="nav-item nav-link" href="{{url_for('auth.register')}}">Register</a>			

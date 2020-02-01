@@ -12,7 +12,7 @@ bp = Blueprint('contests', __name__, url_prefix='/contests')
 @bp.route("/contestSet")
 @bp.route("/contestSet/<currentPage>")
 def contestSet(currentPage=1):
-    g.active = "Contests"
+    session['active'] = "Contests"
     session['currentPage_con'] = currentPage
     if session.get("contextId_con") is None:
         session["contextId_con"] = 1

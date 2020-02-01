@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for,session
 )
 from werkzeug.exceptions import abort
 
@@ -13,7 +13,7 @@ bp = Blueprint('home', __name__)
 
 @bp.route("/")
 def index():
-    g.active = "Home"
+    session['active'] = "Home"
     compileInfo = getCompileInfo()
     resultsDes = getResultDes()
     return render_template("home/home.html",compileInfo=compileInfo,resultsDes=resultsDes)

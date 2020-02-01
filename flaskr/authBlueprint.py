@@ -20,7 +20,7 @@ def register():
     """
     注册
     """
-    g.active="Register"
+    session['active'] = "Register"
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -59,7 +59,7 @@ def login():
     """
     登录
     """
-    g.active="Login"
+    session['active'] = "Login"
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']

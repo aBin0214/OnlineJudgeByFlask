@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Submissions{% endblock title %}
+
+{% block extraJs %}
+<script>
+  function showCode(idx) {
+    console.log(idx);
+    var submissions = {{submissions|tojson|safe}};
+    var idList = ['submit_time', 'judge_status', 'problem_serial',
+      'name_language', 'run_time', 'run_memory', 'username','id_solution'
+    ]
+    for (var id of idList) {
+      var tmp = document.getElementById(id);
+      tmp.innerHTML = submissions[idx][id];
+    }
+    var isShare = document.getElementById('is_share');
+    var submitContent = document.getElementById('hl_code');
+    if (submissions[idx]['is_share'] === 1) {
+      isShare.innerHTML = "true";
+      submitContent.innerHTML = submissions[idx]['hl_code'];
+    } else {
+      isShare.innerHTML = "false";
+      submitContent.innerHTML = '';
+    }
+
+    //var idUser = document.getElementById('id_user');
+    //isUser.setAttribute('href',);
+    var id_contest_problem = document.getElementById('id_contest_problem');
+    id_contest_problem.setAttribute('href', '../../proDetail/problemDetail/' + submissions[idx]['id_contest_problem']);
+    $('#showCode').modal();
+  }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row ml-2 mr-2">
+  <div class="col-md-10">
+    <div class="card border-0 shadow">
+      <!-- <div class="card-header bg-white">
+        My OJ Practice
+      </div> -->
+      <div class="card-body">
+        <table class="table table-hover border-0">
+          <thead>
+            <tr>
+              <th scope="col">Run ID</th>
+              <th scope="col">Submit Time</th>
+              <th scope="col">Judge Status</th>
+              <th scope="col">Problem</th>
+              <th scope="col">Language</th>
+              <th scope="col">Run time(ms)</th>
+              <th scope="col">Run Memory(kb)</th>
+              <th scope="col">User</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for submission in submissions %}
+            <tr class="tr_link" onclick="showCode('{{loop.index-1}}');">
+              <td>#{{submission["id_solution"]}}</td>
+              <td>{{submission["submit_time"]}}</td>
+              <td>{{submission["judge_status"]}}</td>
+              <td>{{submission["problem_serial"]}}
+              </td>
+              <td>{{submission["name_language"]}}</td>
+              <td>{{submission["run_time"]}}</td>
+              <td>{{submission["run_memory"]}}</td>
+              <td>{{submission["username"]}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% import "macro/page.html" as pg %}
+        {{ pg.page(session.get("currentPage_sub"),session.get("totalPage_sub"),'problems.submissions') }}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card border-0 shadow mb-4">
+      <div class="card-body">
+        <h5>{{contestInfo["title"]}}</h5>
+        Status:&nbsp;<span class="badge badge-primary">Always Run</span><br />
+        Created By:&nbsp;<span>{{contestInfo["belong"]}}</span><br />
+      </div>
+    </div>
+    <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
+      <a class="nav-link" href="{{url_for('problems.problemSet')}}" role="tab">Problems</a>
+      <a class="nav-link" href="{{url_for('problems.ranklist')}}" role="tab">Ranklist</a>
+      <a class="nav-link active" href="#" role="tab">Submissions</a>
+    </div>
+  </div>
+</div>
+<div id="showCode" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog"
+  aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header pl-4 pr-4">
+        <h5 class="modal-title" id="exampleModalLabel">
+          #<span id="id_solution"></span>&nbsp;|&nbsp;
+          <a href="#" id="id_user"><span id="username"></span></a>'s solution for problem
+          [<a href="#" id="id_contest_problem"><span id="problem_serial"></span></a>]
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body justify-content-center p-4">
+      <table class="table table-bordered table-sm ">
+        <thead>
+          <tr>
+            <th scope="col">Submit Time</th>
+            <th scope="col">Judge Status</th>
+            <th scope="col">Language</th>
+            <th scope="col">Run time(ms)</th>
+            <th scope="col">Run Memory(kb)</th>
+            <th scope="col">Is Share</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="submit_time"></td>
+            <td id="judge_status"></td>
+            <td id="name_language"></td>
+            <td id="run_time"></td>
+            <td id="run_memory"></td>
+            <td id="is_share"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="hl_code"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
