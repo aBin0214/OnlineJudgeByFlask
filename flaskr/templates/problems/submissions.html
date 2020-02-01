@@ -7,13 +7,17 @@
   function showCode(idx) {
     console.log(idx);
     var submissions = {{submissions|tojson|safe}};
-    var idList = ['submit_time', 'judge_status', 'problem_serial',
+    var idList = ['submit_time', 'judge_status',
       'name_language', 'run_time', 'run_memory', 'username','id_solution'
     ]
     for (var id of idList) {
       var tmp = document.getElementById(id);
       tmp.innerHTML = submissions[idx][id];
     }
+    'problem_serial';
+    var problemSerial = document.getElementById('problem_serial');
+    problemSerial.innerHTML = 'problem-'+submissions[idx]['problem_serial'];
+
     var isShare = document.getElementById('is_share');
     var submitContent = document.getElementById('hl_code');
     if (submissions[idx]['is_share'] === 1) {
@@ -97,7 +101,7 @@
       <div class="modal-header pl-4 pr-4">
         <h5 class="modal-title" id="exampleModalLabel">
           #<span id="id_solution"></span>&nbsp;|&nbsp;
-          <a href="#" id="id_user"><span id="username"></span></a>'s solution for problem
+          <a href="#" id="id_user"><span id="username"></span></a><span>'s solution for&nbsp;</span>
           [<a href="#" id="id_contest_problem"><span id="problem_serial"></span></a>]
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">

@@ -6,10 +6,27 @@
 <div class="row ml-2 mr-2">
   <div class="col-md-10">
     <div class="card border-0 shadow">
-      <!-- <div class="card-header bg-white">
-        My OJ Practice
-      </div> -->
       <div class="card-body">
+        <table class="table table-hover border-0">
+          <thead>
+            <tr>
+              <th scope="col">Rank List</th>
+              <th scope="col">User</th>
+              <th scope="col">Accepted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rankItem in ranklist %}
+            <tr>
+              <td scope="row">{{loop.index}}</td>
+              <td><a href="#">{{rankItem["username"]}}</a></td>
+              <td>{{rankItem["cnt"]}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% import "macro/page.html" as pg %}
+        {{ pg.page(session.get("currentPage_rank"),session.get("totalPage_rank"),'#') }}
       </div>
     </div>
   </div>

@@ -43,10 +43,22 @@ def problemSet(currentPage=1):
 
     return render_template("problems/problemSet.html",problems=problems,tags = tags,contestInfo = contestInfo)
 
+@bp.route("/ranklist/<int:currentPage>")
 @bp.route("/ranklist")
-def ranklist():
+def ranklist(currentPage=1):
+    session['currentPage_rank'] = currentPage
+    if session.get("pageSize_rank") is None:
+        session['pageSize_rank'] = 20
+
+    totalCount = getRanklistCount(session.get("contestId_pro"))
+    total = totalCount//session.get("pageSize_rank")
+    total = total if totalCount%session.get("pageSize_rank") == 0 else total+1
+    session['totalPage_rank'] = total
+
     contestInfo = getContestInfo(session.get("contestId_pro"))
-    return render_template("problems/ranklist.html",contestInfo = contestInfo)
+    ranklist = getRanklist(session.get("contestId_pro"))
+
+    return render_template("problems/ranklist.html",contestInfo = contestInfo,ranklist=ranklist)
 
 
 @bp.route("/submissions/<int:currentPage>")
@@ -154,12 +166,32 @@ def getSubmissions(contestId,currentPage,pageSize):
     finally:
         db.dispose()
     return submissions
+    
+def getRanklist(contestId):
+    db = MysqlUtils.MyPyMysqlPool()
+    sql = "select u.id_user,u.username,count(distinct s.id_contest_problem) as cnt \
+        from online_judge.user as u,online_judge.solution as s,online_judge.contest_problem as cp \
+        where u.id_user = s.id_user \
+        and cp.id_contest_problem = s.id_contest_problem \
+        and s.state = 11 \
+        and cp.id_contest = '{id_contest}' \
+        group by s.id_user \
+        order by cnt desc;".format(id_contest=contestId)
+    print(sql)
+    ranklist = None
+    try:
+        ranklist = db.get_all(sql)
+    except:
+        current_app.logger.error("get ranklist failure !")
+    finally:
+        db.dispose()
+    return ranklist
 
 def getProblemCount(problemTag):
     db = MysqlUtils.MyPyMysqlPool()
     sql = "";
     if problemTag == "All":
-        sql = "select count(id_contest_problem) as cnt from online_judge.contest_problem where id_contest = '1'"
+        sql = "select count(id_contest_problem) as cnt from contest_problem where id_contest = '1'"
     else:
         sql = "select count(contest_problem.id_contest_problem) as cnt \
         from contest_problem,problem,tag_problem,tag \
@@ -179,7 +211,7 @@ def getProblemCount(problemTag):
 def getSubmissionCount(contestId):
     db = MysqlUtils.MyPyMysqlPool()
     sql = "select count(id_solution) as cnt \
-    from online_judge.solution as s,online_judge.contest_problem as cp\
+    from solution as s,contest_problem as cp\
     where  s.id_contest_problem = cp.id_contest_problem\
     and cp.id_contest = '{id_contest}' limit 1;".format(id_contest=contestId)
     try:
@@ -190,10 +222,25 @@ def getSubmissionCount(contestId):
         db.dispose()
     return res["cnt"]
 
+def getRanklistCount(contestId):
+    db = MysqlUtils.MyPyMysqlPool()
+    sql = "select count(distinct s.id_user) as cnt \
+        from solution as s,contest_problem as cp \
+        where cp.id_contest_problem = s.id_contest_problem \
+        and s.state = 11 \
+        and cp.id_contest = {id_contest};".format(id_contest=contestId)
+    try:
+        res = db.get_one(sql)
+    except:
+        current_app.logger.error("get ranklist count failure !")
+    finally:
+        db.dispose()
+    return res["cnt"]
+
 def getAcceptedCount(problemId):
     db = MysqlUtils.MyPyMysqlPool()
     sql = "select count(id_solution) as cnt \
-    from online_judge.solution as s,online_judge.result_des as r \
+    from solution as s,result_des as r \
     where s.state = r.id_result_des \
     and r.name_result = \"Accepted\" \
     and s.id_contest_problem = {}".format(problemId);
@@ -208,7 +255,7 @@ def getAcceptedCount(problemId):
 def getSubmitCount(problemId):
     db = MysqlUtils.MyPyMysqlPool()
     sql = "select count(id_solution) as cnt \
-    from online_judge.solution as s \
+    from solution as s \
     where s.id_contest_problem = {}".format(problemId);
     try:
         res = db.get_one(sql)
