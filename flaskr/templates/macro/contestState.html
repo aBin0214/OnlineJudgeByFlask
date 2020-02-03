@@ -1,11 +1,43 @@
-{% macro state(curDatetime,startDatetime,endDatetime) -%}
-    {% set diff_start = curDatetime - startDatetime %}
-    {% set diff_end = curDatetime-endDatetime %}
-    {% if diff_start.days*86400 + diff_start.seconds < 0 %}
-    <span class="badge badge-secondary">loading</span>
-    {% elif diff_start.days*86400 + diff_start.seconds > 0 and diff_end.days*86400 + diff_end.seconds <= 0%}
-    <span class="badge badge-success">started</span>
-    {% elif diff_end.days*86400 + diff_end.seconds > 0%}
-    <span class="badge badge-danger">Ended</span>
-    {% endif%}
+{% macro state(id,startTimeStr,endTimeStr) -%}
+{% set countdownId = ('contestState_'+id|string) %}
+<span id="{{countdownId}}">...</span>
+<script>
+    (function (id,startTimeStr,endTimeStr){
+        var countdown = document.getElementById(id);
+        console.log(countdown);
+        setInterval(function () {
+            var nowTime = new Date();
+            var startTime = new Date(startTimeStr);
+            var endTime = new Date(endTimeStr);
+            startTime.setHours(startTime.getHours()-8);
+            endTime.setHours(endTime.getHours() - 8);
+
+            var num_start_end = endTime.getTime() - startTime.getTime();
+            if(num_start_end >= 1000*365*24*60*60*1000){
+                countdown.setAttribute("class",'badge badge-primary');
+                countdown.innerHTML = 'Alway Run';
+                return ;
+            }
+
+            var num_start_now = startTime.getTime() - nowTime.getTime();
+            var num_end_now = endTime.getTime() - nowTime.getTime();
+
+            if(num_start_now > 0){
+                countdown.setAttribute("class",'badge badge-secondary');
+                countdown.innerHTML = 'Loading';
+            }
+
+            if(num_start_now <= 0 && num_end_now > 0){
+                countdown.setAttribute("class",'badge badge-success');
+                countdown.innerHTML = 'Started';
+            }
+
+            if(num_end_now <= 0){
+                countdown.setAttribute("class",'badge badge-danger');
+                countdown.innerHTML = 'Ended';
+                return ;
+            }
+        }, 1000);
+    })({{countdownId|tojson}},{{startTimeStr|tojson}},{{endTimeStr|tojson}});
+</script>   
 {%- endmacro %}

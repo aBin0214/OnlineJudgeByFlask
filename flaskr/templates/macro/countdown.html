@@ -1,0 +1,36 @@
+{% macro run(id,startTimeStr) -%}
+<span id="{{id}}"></span>
+<script>
+(function (id,endTimeStr){
+    var countdown = document.getElementById(id);
+    setInterval(function () {
+        var startTime = new Date();
+        var endTime = new Date(endTimeStr);
+        endTime.setHours(endTime.getHours() - 8);
+        var num = endTime.getTime() - startTime.getTime();
+
+        console.log(num);
+
+        if(num <= 0){
+            return ;
+        }
+
+        var hour = parseInt(num / (60 * 60 * 1000));
+        num = num % (60 * 60 * 1000);
+        var minute = parseInt(num / (60 * 1000));
+        num = num % (60 * 1000);
+        var second = parseInt(num / 1000);
+
+        var addPreZero = function(num,len) {
+            var t = (num + '').length,
+                s = '';
+            for (var i = 0; i < len - t; i++) {
+                s += '0';
+            }
+            return s + num;
+        }
+        countdown.innerHTML = addPreZero(hour,2) + ":" + addPreZero(minute,2) + ":" + addPreZero(second,2);
+    }, 100);
+})({{id|tojson}},{{startTimeStr|tojson}});
+</script>
+{%- endmacro %}

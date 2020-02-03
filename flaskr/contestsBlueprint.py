@@ -26,9 +26,8 @@ def contestSet(currentPage=1):
     session['totalPage_con'] = total
 
     contestSet = getContestSet(session.get('currentPage_con'),session.get('pageSize_con'))
-    curDatetime = datetime.datetime.now()
         
-    return render_template("contests/contestSet.html",contestSet=contestSet,curDatetime=curDatetime)
+    return render_template("contests/contestSet.html",contestSet=contestSet,datetime=datetime.datetime)
 
 def getContestSet(currentPage,pageSize):
     db = MysqlUtils.MyPyMysqlPool()
