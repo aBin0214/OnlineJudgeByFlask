@@ -51,7 +51,7 @@
 {% block content %}
 <div class="card m-4 border-0 shadow">
     <div class="card-header bg-white">
-        No: 1 Title: A + B Problem
+        <span>{{problemInfo['title']}}</span>
     </div>
     <div class="card-body">
     </div>
@@ -61,7 +61,7 @@
         {% for message in get_flashed_messages() %}
         <div class="flash alert alert-danger" role="alert">{{ message }}</div>
         {% endfor %}
-        <form method="post">
+        <form method="post" action="{{url_for('proDetail.problemDetail',proNo=problemInfo['id_contest_problem'])}}">
             <div class="form-row">
                 <label class="ml-1">Language:</label>
                 <select id="selectLanguage" name="selectLanguage" onchange="changeEditor();" class="form-control form-control-sm col-md-2 mb-3 ml-1">

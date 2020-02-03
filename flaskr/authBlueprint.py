@@ -54,8 +54,8 @@ def register():
     return render_template('auth/register.html')
 
 
-@bp.route('/login', methods=('GET', 'POST'))
-def login():
+@bp.route('/login/next', methods=('GET', 'POST'))
+def login(next='/'):
     """
     登录
     """
@@ -85,9 +85,12 @@ def login():
             session["username"] = user['username']
             session['password'] = user['password']
             db.dispose()
+            if next != '/':
+                return redirect(url_for(next))
             return redirect(url_for('index'))
         flash(error)
         db.dispose()
+
     return render_template('auth/login.html')
 
 def login_required(view):
@@ -99,11 +102,13 @@ def login_required(view):
     return wrapped_view
 
 
-@bp.route('/logout')
-def logout():
+@bp.route('/logout/next')
+def logout(next='/'):
     """
     登出
     """
     session.clear()
+    if next != '/':
+        return redirect(url_for(next))
     return redirect(url_for('index'))
 

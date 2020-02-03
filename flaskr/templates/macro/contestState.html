@@ -1,0 +1,11 @@
+{% macro state(curDatetime,startDatetime,endDatetime) -%}
+    {% set diff_start = curDatetime - startDatetime %}
+    {% set diff_end = curDatetime-endDatetime %}
+    {% if diff_start.days*86400 + diff_start.seconds < 0 %}
+    <span class="badge badge-secondary">loading</span>
+    {% elif diff_start.days*86400 + diff_start.seconds > 0 and diff_end.days*86400 + diff_end.seconds <= 0%}
+    <span class="badge badge-success">started</span>
+    {% elif diff_end.days*86400 + diff_end.seconds > 0%}
+    <span class="badge badge-danger">Ended</span>
+    {% endif%}
+{%- endmacro %}

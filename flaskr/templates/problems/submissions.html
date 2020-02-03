@@ -45,6 +45,7 @@
         My OJ Practice
       </div> -->
       <div class="card-body">
+        {% if session.get("totalPage_sub") != 0 %}
         <table class="table table-hover border-0">
           <thead>
             <tr>
@@ -59,23 +60,24 @@
             </tr>
           </thead>
           <tbody>
-            {% for submission in submissions %}
-            <tr class="tr_link" onclick="showCode('{{loop.index-1}}');">
-              <td>#{{submission["id_solution"]}}</td>
-              <td>{{submission["submit_time"]}}</td>
-              <td>{{submission["judge_status"]}}</td>
-              <td>{{submission["problem_serial"]}}
-              </td>
-              <td>{{submission["name_language"]}}</td>
-              <td>{{submission["run_time"]}}</td>
-              <td>{{submission["run_memory"]}}</td>
-              <td>{{submission["username"]}}</td>
-            </tr>
-            {% endfor %}
+              {% for submission in submissions %}
+              <tr class="tr_link" onclick="showCode('{{loop.index-1}}');">
+                <td>#{{submission["id_solution"]}}</td>
+                <td>{{submission["submit_time"]}}</td>
+                <td>{{submission["judge_status"]}}</td>
+                <td>{{submission["problem_serial"]}}
+                </td>
+                <td>{{submission["name_language"]}}</td>
+                <td>{{submission["run_time"]}}</td>
+                <td>{{submission["run_memory"]}}</td>
+                <td>{{submission["username"]}}</td>
+              </tr>
+              {% endfor %}
           </tbody>
         </table>
         {% import "macro/page.html" as pg %}
         {{ pg.page(session.get("currentPage_sub"),session.get("totalPage_sub"),'problems.submissions') }}
+        {% endif %}
       </div>
     </div>
   </div>

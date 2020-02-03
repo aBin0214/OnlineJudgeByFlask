@@ -51,12 +51,14 @@ def ranklist(currentPage=1):
         session['pageSize_rank'] = 20
 
     totalCount = getRanklistCount(session.get("contestId_pro"))
+    print(totalCount);
     total = totalCount//session.get("pageSize_rank")
     total = total if totalCount%session.get("pageSize_rank") == 0 else total+1
     session['totalPage_rank'] = total
 
     contestInfo = getContestInfo(session.get("contestId_pro"))
     ranklist = getRanklist(session.get("contestId_pro"))
+    print(ranklist)
 
     return render_template("problems/ranklist.html",contestInfo = contestInfo,ranklist=ranklist)
 
@@ -177,7 +179,6 @@ def getRanklist(contestId):
         and cp.id_contest = '{id_contest}' \
         group by s.id_user \
         order by cnt desc;".format(id_contest=contestId)
-    print(sql)
     ranklist = None
     try:
         ranklist = db.get_all(sql)

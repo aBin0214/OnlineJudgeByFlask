@@ -7,6 +7,7 @@
   <div class="col-md-10">
     <div class="card border-0 shadow">
       <div class="card-body">
+        {% if session.get("totalPage_rank") != 0 %}
         <table class="table table-hover border-0">
           <thead>
             <tr>
@@ -23,10 +24,12 @@
               <td>{{rankItem["cnt"]}}</td>
             </tr>
             {% endfor %}
+            
           </tbody>
         </table>
         {% import "macro/page.html" as pg %}
         {{ pg.page(session.get("currentPage_rank"),session.get("totalPage_rank"),'#') }}
+        {% endif %}
       </div>
     </div>
   </div>
