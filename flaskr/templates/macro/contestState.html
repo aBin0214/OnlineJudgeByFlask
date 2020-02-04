@@ -1,10 +1,9 @@
 {% macro state(id,startTimeStr,endTimeStr) -%}
-{% set countdownId = ('contestState_'+id|string) %}
-<span id="{{countdownId}}">...</span>
+{% set contestStateId = ('contestState_'+id|string) %}
+<span id="{{contestStateId}}">...</span>
 <script>
     (function (id,startTimeStr,endTimeStr){
-        var countdown = document.getElementById(id);
-        console.log(countdown);
+        var contestState = document.getElementById(id);
         setInterval(function () {
             var nowTime = new Date();
             var startTime = new Date(startTimeStr);
@@ -14,8 +13,8 @@
 
             var num_start_end = endTime.getTime() - startTime.getTime();
             if(num_start_end >= 1000*365*24*60*60*1000){
-                countdown.setAttribute("class",'badge badge-primary');
-                countdown.innerHTML = 'Alway Run';
+                contestState.setAttribute("class",'badge badge-primary');
+                contestState.innerHTML = 'Alway Run';
                 return ;
             }
 
@@ -23,21 +22,21 @@
             var num_end_now = endTime.getTime() - nowTime.getTime();
 
             if(num_start_now > 0){
-                countdown.setAttribute("class",'badge badge-secondary');
-                countdown.innerHTML = 'Loading';
+                contestState.setAttribute("class",'badge badge-secondary');
+                contestState.innerHTML = 'Loading';
             }
 
             if(num_start_now <= 0 && num_end_now > 0){
-                countdown.setAttribute("class",'badge badge-success');
-                countdown.innerHTML = 'Started';
+                contestState.setAttribute("class",'badge badge-success');
+                contestState.innerHTML = 'Started';
             }
 
             if(num_end_now <= 0){
-                countdown.setAttribute("class",'badge badge-danger');
-                countdown.innerHTML = 'Ended';
+                contestState.setAttribute("class",'badge badge-danger');
+                contestState.innerHTML = 'Ended';
                 return ;
             }
-        }, 1000);
-    })({{countdownId|tojson}},{{startTimeStr|tojson}},{{endTimeStr|tojson}});
+        }, 100);
+    })({{contestStateId|tojson}},{{startTimeStr|tojson}},{{endTimeStr|tojson}});
 </script>   
 {%- endmacro %}

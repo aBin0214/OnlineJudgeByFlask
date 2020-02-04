@@ -1,36 +1,60 @@
-{% macro run(id,startTimeStr) -%}
+{% macro run(id,startTimeStr,endTimeStr) -%}
 <span id="{{id}}"></span>
 <script>
-(function (id,endTimeStr){
+(function (id,startTimeStr,endTimeStr){
     var countdown = document.getElementById(id);
-    setInterval(function () {
-        var startTime = new Date();
-        var endTime = new Date(endTimeStr);
-        endTime.setHours(endTime.getHours() - 8);
-        var num = endTime.getTime() - startTime.getTime();
-
-        console.log(num);
-
-        if(num <= 0){
-            return ;
+    var countdownTip = document.getElementById(id+"_tip");
+    var addPreZero = function(num,len) {
+        var t = (num + '').length,
+            s = '';
+        for (var i = 0; i < len - t; i++) {
+            s += '0';
         }
-
+        return s + num;
+    }
+    var getTime = function(num){
         var hour = parseInt(num / (60 * 60 * 1000));
         num = num % (60 * 60 * 1000);
         var minute = parseInt(num / (60 * 1000));
         num = num % (60 * 1000);
         var second = parseInt(num / 1000);
 
-        var addPreZero = function(num,len) {
-            var t = (num + '').length,
-                s = '';
-            for (var i = 0; i < len - t; i++) {
-                s += '0';
+        return addPreZero(hour,2) + ":" + addPreZero(minute,2) + ":" + addPreZero(second,2);
+    }
+    setInterval(function () {
+        var nowTime = new Date();
+        var startTime = new Date(startTimeStr);
+        var endTime = new Date(endTimeStr);
+
+        endTime.setHours(endTime.getHours() - 8);
+        startTime.setHours(startTime.getHours() - 8);
+
+        var num_start_end = endTime.getTime() - startTime.getTime();
+        var num_start_now = startTime.getTime() - nowTime.getTime();
+        var num_end_now = endTime.getTime() - nowTime.getTime();
+
+        //console.log(num_start_end,num_start_now,num_end_now);
+        if(num_start_end >= 1000*365*24*60*60*1000 || num_end_now <= 0){
+            countdown.innerHTML = '';
+            if(countdownTip !== null || countdownTip !== undefined){
+                countdownTip.innerHTML = '';
             }
-            return s + num;
+            return ;
         }
-        countdown.innerHTML = addPreZero(hour,2) + ":" + addPreZero(minute,2) + ":" + addPreZero(second,2);
+
+        if(num_start_now > 0){
+            countdown.innerHTML = getTime(num_start_now);
+            if(countdownTip !== null || countdownTip !== undefined){
+                countdownTip.innerHTML = 'Start Countdown:';
+            }
+        }
+        if(num_start_now <= 0 && num_end_now > 0){
+            countdown.innerHTML = getTime(num_end_now)+'';
+            if(countdownTip !== null || countdownTip !== undefined){
+                countdownTip.innerHTML = 'End Countdown:';
+            }
+        }
     }, 100);
-})({{id|tojson}},{{startTimeStr|tojson}});
+})({{id|tojson}},{{startTimeStr|tojson}},{{endTimeStr|tojson}});
 </script>
 {%- endmacro %}

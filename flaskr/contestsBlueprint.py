@@ -5,13 +5,14 @@ import datetime
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app
 )
+from werkzeug.security import check_password_hash
 
 from . import MysqlUtils
 
 bp = Blueprint('contests', __name__, url_prefix='/contests')
 
 @bp.route("/contestSet")
-@bp.route("/contestSet/<currentPage>")
+@bp.route("/contestSet/<int:currentPage>")
 def contestSet(currentPage=1):
     session['active'] = "Contests"
     session['currentPage_con'] = currentPage
@@ -28,6 +29,32 @@ def contestSet(currentPage=1):
     contestSet = getContestSet(session.get('currentPage_con'),session.get('pageSize_con'))
         
     return render_template("contests/contestSet.html",contestSet=contestSet,datetime=datetime.datetime)
+
+@bp.route("/contest/<int:contestId>/<string:next>", methods=['POST'])
+@bp.route("/contest/<int:contestId>")
+def contest(contestId,next='/'):
+    if request.method == 'POST':
+        password = request.form['contest_password']
+        print(password)
+        error = None
+        if password is None or password == '':
+            error = 'Password is required.'
+        
+        db = MysqlUtils.MyPyMysqlPool()
+        if error is None:
+            contest = db.get_one(
+                'SELECT password FROM contest WHERE id_contest = {id_contest} limit 1'.format(id_contest=contestId)
+            )
+            if password is False:
+                error = 'Incorrect contestId.'
+            elif not check_password_hash(contest['password'], password):
+                error = 'Incorrect password.'
+        if error is not None:
+            flash(error)
+            return redirect(url_for(next))
+    session['contestId_pro'] = contestId
+    return redirect(url_for('problems.problemSet'));
+
 
 def getContestSet(currentPage,pageSize):
     db = MysqlUtils.MyPyMysqlPool()

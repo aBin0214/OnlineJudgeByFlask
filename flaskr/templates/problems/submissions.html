@@ -45,21 +45,21 @@
         My OJ Practice
       </div> -->
       <div class="card-body">
-        {% if session.get("totalPage_sub") != 0 %}
         <table class="table table-hover border-0">
-          <thead>
+          <thead class="text-black-50">
             <tr>
-              <th scope="col">Run ID</th>
-              <th scope="col">Submit Time</th>
-              <th scope="col">Judge Status</th>
-              <th scope="col">Problem</th>
-              <th scope="col">Language</th>
-              <th scope="col">Run time(ms)</th>
-              <th scope="col">Run Memory(kb)</th>
-              <th scope="col">User</th>
+              <td scope="col">Run ID</td>
+              <td scope="col">Submit Time</td>
+              <td scope="col">Judge Status</td>
+              <td scope="col">Problem</td>
+              <td scope="col">Language</td>
+              <td scope="col">Run time(ms)</td>
+              <td scope="col">Run Memory(kb)</td>
+              <td scope="col">User</td>
             </tr>
           </thead>
           <tbody>
+              {% if session.get("totalPage_sub") != 0 %}
               {% for submission in submissions %}
               <tr class="tr_link" onclick="showCode('{{loop.index-1}}');">
                 <td>#{{submission["id_solution"]}}</td>
@@ -73,20 +73,17 @@
                 <td>{{submission["username"]}}</td>
               </tr>
               {% endfor %}
+              {% endif %}
           </tbody>
         </table>
         {% import "macro/page.html" as pg %}
         {{ pg.page(session.get("currentPage_sub"),session.get("totalPage_sub"),'problems.submissions') }}
-        {% endif %}
       </div>
     </div>
   </div>
   <div class="col-md-2">
     <div class="card border-0 shadow mb-4">
       <div class="card-body">
-        <h5>{{contestInfo["title"]}}</h5>
-        Status:&nbsp;<span class="badge badge-primary">Always Run</span><br />
-        Created By:&nbsp;<span>{{contestInfo["belong"]}}</span><br />
       </div>
     </div>
     <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
@@ -96,8 +93,7 @@
     </div>
   </div>
 </div>
-<div id="showCode" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog"
-  aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+<div id="showCode" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header pl-4 pr-4">

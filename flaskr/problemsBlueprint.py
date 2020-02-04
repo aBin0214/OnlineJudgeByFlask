@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import functools
+import datetime
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app
 )
@@ -13,35 +14,38 @@ bp = Blueprint('problems', __name__, url_prefix='/problems')
 @bp.route("/problemSet/<int:currentPage>")
 @bp.route("/problemSet")
 def problemSet(currentPage=1):
-    session['active'] = "Problems"
+    if session.get("contestId_pro") == 1:
+        session['active'] = "Problems"
+    else:
+        session['active'] = "Contests"
 
     session['currentPage_pro'] = currentPage
     if session.get("problemTag_pro") is None:
         session["problemTag_pro"] = "All"
-    if session.get("contestId_pro") is None:
-        session["contestId_pro"] = 1
     if session.get("pageSize_pro") is None:
         session['pageSize_pro'] = 20
     
-    totalCount = getProblemCount(session.get("problemTag_pro"))
+    totalCount = getProblemCount(session.get("contestId_pro"),session.get("problemTag_pro"))
     total = totalCount//session.get("pageSize_pro")
-    total = total if totalCount%session.get("pageSize_pro") == 0 else total+1
+    total = total if totalCount%session.get("pageSize_pro") == 0 or totalCount == 0 else total+1
     session['totalPage_pro'] = total
 
     currentPage = int(session.get("currentPage_pro"))
     problemTag = session.get("problemTag_pro")
-    problems = getProblemsByTag(currentPage,problemTag,session.get("pageSize_pro"))
+    problems = getProblemsByTag(session.get("contestId_pro"),currentPage,problemTag,session.get("pageSize_pro"))
     idx = 0
-    for problem in problems:
-        problemId = problem["id_contest_problem"]
-        problems[idx]["accepted_count"] = getAcceptedCount(problemId)
-        problems[idx]["submit_count"] = getSubmitCount(problemId)
-        idx += 1
+    
+    if problems is not False:
+        for problem in problems:
+            problemId = problem["id_contest_problem"]
+            problems[idx]["accepted_count"] = getAcceptedCount(problemId)
+            problems[idx]["submit_count"] = getSubmitCount(problemId)
+            idx += 1
     
     tags = getAllTag()
     contestInfo = getContestInfo(session.get("contestId_pro"))
 
-    return render_template("problems/problemSet.html",problems=problems,tags = tags,contestInfo = contestInfo)
+    return render_template("problems/problemSet.html",problems=problems,tags = tags,contestInfo = contestInfo,datetime=datetime.datetime)
 
 @bp.route("/ranklist/<int:currentPage>")
 @bp.route("/ranklist")
@@ -51,14 +55,14 @@ def ranklist(currentPage=1):
         session['pageSize_rank'] = 20
 
     totalCount = getRanklistCount(session.get("contestId_pro"))
-    print(totalCount);
     total = totalCount//session.get("pageSize_rank")
-    total = total if totalCount%session.get("pageSize_rank") == 0 else total+1
+    total = total if totalCount%session.get("pageSize_rank") == 0 or totalCount == 0 else total+1
     session['totalPage_rank'] = total
+    if totalCount == 0:
+        session['totalPage_rank'] = 0
 
     contestInfo = getContestInfo(session.get("contestId_pro"))
     ranklist = getRanklist(session.get("contestId_pro"))
-    print(ranklist)
 
     return render_template("problems/ranklist.html",contestInfo = contestInfo,ranklist=ranklist)
 
@@ -72,14 +76,18 @@ def submissions(currentPage=1):
 
     totalCount = getSubmissionCount(session.get("contestId_pro"))
     total = totalCount//session.get("pageSize_sub")
-    total = total if totalCount%session.get("pageSize_sub") == 0 else total+1
+    total = total if totalCount%session.get("pageSize_sub") == 0 or totalCount == 0 else total+1
     session['totalPage_sub'] = total
+    if totalCount == 0:
+        session['totalPage_sub'] = 0
 
     contestInfo = getContestInfo(session.get("contestId_pro"))
     
     submissions = getSubmissions(session.get("contestId_pro"),currentPage,session.get("pageSize_sub"))
-    for submission in submissions:
-        submission['hl_code'] = CodeHighlightUtils.CodeHighlight.codeTranslate(submission['submit_content'],submission['monaco_editor_val']);
+
+    if submissions is not False:
+        for submission in submissions:
+            submission['hl_code'] = CodeHighlightUtils.CodeHighlight.codeTranslate(submission['submit_content'],submission['monaco_editor_val']);
 
     return render_template("problems/submissions.html",contestInfo = contestInfo,submissions=submissions)
 
@@ -90,7 +98,7 @@ def problemSetTag(tag):
 
 def getContestInfo(id_contest):
     db = MysqlUtils.MyPyMysqlPool()
-    sql = "SELECT title,introduction,start_time,end_time,is_practice,is_practice,username as belong,is_pravite,user.password \
+    sql = "SELECT id_contest,title,introduction,start_time,end_time,is_practice,is_practice,username as belong,is_private,user.password \
         FROM contest,user \
         where contest.belong = user.id_user \
         and id_contest = {id_contest} \
@@ -118,16 +126,16 @@ def getAllTag():
     tags.reverse()
     return tags
 
-def getProblemsByTag(currentPage,problemTag,pageSize):
+def getProblemsByTag(contestId,currentPage,problemTag,pageSize):
     db = MysqlUtils.MyPyMysqlPool()
     sql = ""
     start = (currentPage-1)*pageSize
-    if problemTag == "All":
+    if contestId != 1 or (contestId == 1 and problemTag == "All"):
         sql = "select id_contest_problem,title,serial \
         from contest_problem,problem \
         where contest_problem.id_contest = '{id_contest}' \
         and contest_problem.id_problem = problem.id_problem\
-        limit {start},{pageSize};".format(id_contest=1,start=start,pageSize=pageSize)
+        limit {start},{pageSize};".format(id_contest=contestId,start=start,pageSize=pageSize)
     else:
         sql = "select id_contest_problem,title,serial \
         from problem,tag,tag_problem,contest_problem \
@@ -188,23 +196,23 @@ def getRanklist(contestId):
         db.dispose()
     return ranklist
 
-def getProblemCount(problemTag):
+def getProblemCount(contestId,problemTag):
     db = MysqlUtils.MyPyMysqlPool()
     sql = "";
     if problemTag == "All":
-        sql = "select count(id_contest_problem) as cnt from contest_problem where id_contest = '1'"
+        sql = "select count(id_contest_problem) as cnt from contest_problem where id_contest = {contestId}".format(contestId=contestId)
     else:
         sql = "select count(contest_problem.id_contest_problem) as cnt \
         from contest_problem,problem,tag_problem,tag \
-        where contest_problem.id_contest = '1' \
+        where contest_problem.id_contest = {contestId} \
         and contest_problem.id_problem = problem.id_problem \
         and problem.id_problem = tag_problem.id_problem \
         and tag.id_tag = tag_problem.id_tag \
-        and tag.name_tag = '{}' limit 1".format(problemTag);
+        and tag.name_tag = '{problemTag}' limit 1".format(contestId=1,problemTag=problemTag)
     try:
         res = db.get_one(sql)
     except:
-        current_app.logger.error("get problem count failure !")
+        current_app.logger.error("get contest-{}'s problem count failure !".format(contestId))
     finally:
         db.dispose()
     return res["cnt"]

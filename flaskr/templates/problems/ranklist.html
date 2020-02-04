@@ -7,16 +7,16 @@
   <div class="col-md-10">
     <div class="card border-0 shadow">
       <div class="card-body">
-        {% if session.get("totalPage_rank") != 0 %}
         <table class="table table-hover border-0">
-          <thead>
+          <thead class="text-black-50">
             <tr>
-              <th scope="col">Rank List</th>
-              <th scope="col">User</th>
-              <th scope="col">Accepted</th>
+              <td scope="col">Rank List</td>
+              <td scope="col">User</td>
+              <td scope="col">Accepted</td>
             </tr>
           </thead>
           <tbody>
+            {% if session.get("totalPage_rank") != 0 %}
             {% for rankItem in ranklist %}
             <tr>
               <td scope="row">{{loop.index}}</td>
@@ -24,21 +24,17 @@
               <td>{{rankItem["cnt"]}}</td>
             </tr>
             {% endfor %}
-            
+            {% endif %}
           </tbody>
         </table>
         {% import "macro/page.html" as pg %}
         {{ pg.page(session.get("currentPage_rank"),session.get("totalPage_rank"),'#') }}
-        {% endif %}
       </div>
     </div>
   </div>
   <div class="col-md-2">
     <div class="card border-0 shadow mb-4">
       <div class="card-body">
-         <h5>{{contestInfo["title"]}}</h5>
-         Status:&nbsp;<span class="badge badge-primary">Always Run</span><br/>
-         Created By:&nbsp;<span>{{contestInfo["belong"]}}</span><br/>
       </div>
     </div>
     <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
