@@ -4,40 +4,25 @@
 
 {% block extraJs %}
 <script>
-  function showVerify(idx) {
-    var contestSet = {{contestSet|tojson|safe}};
-    console.log(contestSet[idx]);
-
-    "{% set id_user = session.get('id_user') %}";
-    var id_user = {{id_user|tojson|safe}};
-
-    if (id_user === null) {
-      alert('Please log in first!');
-      return;
-    }
-
-    var nowTime = new Date();
-    var startTime = new Date(contestSet[idx]['start_time']);
-    startTime.setHours(startTime.getHours()-8)
-    
-    var num = startTime.getTime() - nowTime.getTime();
-    if (num > 0) {
-      alert("The contest hasn't started yet");
-      return;
-    }
-
-    if (contestSet[idx]['is_private'] === 0) { //如果不是私密的，不用输入密码
-      window.location.href = "./contest/"+contestSet[idx]['id_contest'];
-      return ;
-    }
-
-    var contest_title = document.getElementById('contest_title');
-    contest_title.innerHTML = contestSet[idx]['title'];
-
-    var verify_form = document.getElementById('verify_form');
-    verify_form.setAttribute("action","./contest/"+contestSet[idx]['id_contest']+"/contests.contestSet");
-    $('#contestVerify').modal();
-  }
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+  $(function() {
+    $('a.contest').bind('click', function() {
+      var contestId = $(this).attr('contestId');
+      console.log(contestId);
+      $.ajax({
+        url:$SCRIPT_ROOT+"/contests/contestPermission/"+contestId,     
+        dataType:"json",                                           
+        type:"GET",
+        success:function(data){
+            if(data["result"] === 'success'){
+              $("#contest_title").text(data['title']);
+              $("#verify_form").attr($SCRIPT_ROOT+data['nextUrl']);
+              $('#contestVerify').modal()
+            }
+        }
+      });
+    });
+  });
 </script>
 {% endblock %}
 
@@ -57,8 +42,8 @@
       {% endif %}
       <div class="row col-md-12">
         <div class="col-md-10">
-          <a onclick="javascript:showVerify({{loop.index-1}});return false;" href="#"><span
-              style="font-size: large;">{{contest["title"]}}</span></a>
+          <a class="contest" contestId="{{contest['id_contest']}}" href="#"><span
+            style="font-size: large;">{{contest["title"]}}</span></a>
           {% if contest['is_private'] == 1 %}
           <img src="{{url_for('static',filename='img/private.png')}}" class="mb-2" width="16rem" height="16rem">
           {% endif %}<br />

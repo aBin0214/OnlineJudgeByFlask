@@ -3,7 +3,7 @@
 import functools
 import datetime
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app,jsonify
 )
 from werkzeug.security import check_password_hash
 
@@ -50,11 +50,19 @@ def contest(contestId,next='/'):
             elif not check_password_hash(contest['password'], password):
                 error = 'Incorrect password.'
         if error is not None:
-            flash(error)
+            flash(error,'danger')
             return redirect(url_for(next))
     session['contestId_pro'] = contestId
     return redirect(url_for('problems.problemSet'));
 
+@bp.route("/contestPermission/<int:contestId>", methods=['POST','GET'])
+def contestPermission(contestId):
+    contestInfo = getContestInfo(contestId)
+    return jsonify({
+        "result":"success",
+        "title":contestInfo["title"],
+        "nextUrl":url_for("contests.contestPermission",contestId=contestId)
+    })
 
 def getContestSet(currentPage,pageSize):
     db = MysqlUtils.MyPyMysqlPool()
@@ -84,3 +92,19 @@ def getContestCount():
     finally:
         db.dispose()
     return res["cnt"]
+
+def getContestInfo(id_contest):
+    db = MysqlUtils.MyPyMysqlPool()
+    sql = "SELECT id_contest,title,introduction,start_time,end_time,is_practice,is_practice,username as belong,is_private,user.password \
+        FROM contest,user \
+        where contest.belong = user.id_user \
+        and id_contest = {id_contest} \
+        limit 1".format(id_contest=id_contest)
+    contestInfo = None
+    try:
+        contestInfo = db.get_one(sql)
+    except:
+        current_app.logger.error("get contest infomation failure !")
+    finally:
+        db.dispose()
+    return contestInfo

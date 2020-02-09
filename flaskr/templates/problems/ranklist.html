@@ -1,47 +1,27 @@
-{% extends 'base.html' %}
+{% extends 'problems/contestBase.html' %}
 
-{% block title %}Ranklist{% endblock title %}
-
-{% block content %}
-<div class="row ml-2 mr-2">
-  <div class="col-md-10">
-    <div class="card border-0 shadow">
-      <div class="card-body">
-        <table class="table table-hover border-0">
-          <thead class="text-black-50">
-            <tr>
-              <td scope="col">Rank List</td>
-              <td scope="col">User</td>
-              <td scope="col">Accepted</td>
-            </tr>
-          </thead>
-          <tbody>
-            {% if session.get("totalPage_rank") != 0 %}
-            {% for rankItem in ranklist %}
-            <tr>
-              <td scope="row">{{loop.index}}</td>
-              <td><a href="#">{{rankItem["username"]}}</a></td>
-              <td>{{rankItem["cnt"]}}</td>
-            </tr>
-            {% endfor %}
-            {% endif %}
-          </tbody>
-        </table>
-        {% import "macro/page.html" as pg %}
-        {{ pg.page(session.get("currentPage_rank"),session.get("totalPage_rank"),'#') }}
-      </div>
-    </div>
-  </div>
-  <div class="col-md-2">
-    <div class="card border-0 shadow mb-4">
-      <div class="card-body">
-      </div>
-    </div>
-    <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
-      <a class="nav-link" href="{{url_for('problems.problemSet')}}" role="tab">Problems</a>
-      <a class="nav-link active" href="#" role="tab">Ranklist</a>
-      <a class="nav-link" href="{{url_for('problems.submissions')}}" role="tab">Submissions</a>
-    </div>
-  </div>
-</div>
+{% block contest_content %}
+<table class="table table-hover border-0">
+  <thead class="text-black-50">
+    <tr>
+      <td scope="col">Rank List</td>
+      <td scope="col">User</td>
+      <td scope="col">Accepted</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% if session.get("totalPage_rank") != 0 %}
+    {% for rankItem in ranklist %}
+    <tr>
+      <td scope="row">{{loop.index}}</td>
+      <td><a href="#">{{rankItem["username"]}}</a></td>
+      <td>{{rankItem["cnt"]}}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+  </tbody>
+</table>
+{% import "macro/page.html" as pg %}
+{{ pg.page(session.get("currentPage_rank"),session.get("totalPage_rank"),'#') }}
 {% endblock %}
+

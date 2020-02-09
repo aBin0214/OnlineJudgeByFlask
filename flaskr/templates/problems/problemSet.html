@@ -1,98 +1,53 @@
-{% extends 'base.html' %}
+{% extends 'problems/contestBase.html' %}
 
-{% block title %}Problems{% endblock title %}
-
-{% block content %}
-<div class="row ml-2 mr-2">
-  <div class="col-md-10">
-    <div class="card border-0 shadow">
-      <!-- <div class="card-header bg-white">
-        My OJ Practice
-      </div> -->
-      <div class="card-body">
-        <table class="table table-hover border-0">
-          <thead class="text-black-50">
-            <tr>
-              <td scope="col">Solved</td>
-              <td scope="col">Label</td>
-              <td scope="col">Title</td>
-              <td scope="col">Radio(AC/ALL)</td>
-            </tr>
-          </thead>
-          <tbody>
-            {% if session.get("totalPage_pro") != 0 %}
-            {% for problem in problems %}
-            <tr class="tr_link"
-              onclick="window.location.href = '../../proDetail/problemDetail/'+{{problem['id_contest_problem']}}">
-              <th scope="row"></th>
-              <td>{{problem["serial"]}}</td>
-              <td>{{problem["title"]}}</td>
-              <td>
-                {%if problem["accepted_count"] == 0%}
-                0%
-                {%else%}
-                {{problem["accepted_count"]/problem["submit_count"]}}%
-                {%endif%}
-                ({{problem["accepted_count"]}}/{{problem["submit_count"]}})
-              </td>
-            </tr>
-            {% endfor %}
-            {% endif %}
-          </tbody>
-        </table>
-        {% import "macro/page.html" as pg %}
-        {{ pg.page(session.get("currentPage_pro"),session.get("totalPage_pro"),'problems.problemSet') }}
-      </div>
-    </div>
+{% block contest_content %}
+<table class="table table-hover border-0">
+  <thead class="text-black-50">
+    <tr>
+      <td scope="col">Solved</td>
+      <td scope="col">Label</td>
+      <td scope="col">Title</td>
+      <td scope="col">Radio(AC/ALL)</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% if session.get("totalPage_pro") != 0 %}
+    {% for problem in problems %}
+    <tr class="tr_link"
+      onclick="window.location.href = '../../proDetail/problemDetail/'+{{problem['id_contest_problem']}}">
+      <th scope="row"></th>
+      <td>{{problem["serial"]}}</td>
+      <td>{{problem["title"]}}</td>
+      <td>
+        {%if problem["accepted_count"] == 0%}
+        0%
+        {%else%}
+        {{problem["accepted_count"]/problem["submit_count"]}}%
+        {%endif%}
+        ({{problem["accepted_count"]}}/{{problem["submit_count"]}})
+      </td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+  </tbody>
+</table>
+{% import "macro/page.html" as pg %}
+{{ pg.page(session.get("currentPage_pro"),session.get("totalPage_pro"),'problems.problemSet') }}
+{% endblock %}
+{% block extraSidebar%}
+{% if contestInfo['id_contest'] == 1 %}
+<div class="card border-0 shadow">
+  <div class="card-header bg-white">
+    Tags
   </div>
-  <div class="col-md-2">
-    <div class="card border-0 shadow mb-4">
-      <div class="card-body">
-        <div class="media">
-          {% if contestInfo['is_practice'] != 1 %}
-          <img src="{{url_for('static',filename='img/contest.png')}}" class="mr-2 mt-2" width="25rem" height="25rem">
-          {% else %}
-          <img src="{{url_for('static',filename='img/practice.png')}}" class="mr-2 mt-1" width="25rem" height="25rem">
-          {% endif %}
-        <h5>{{contestInfo["title"]}}</h5>
-        </div>
-        <span>Created By:&nbsp;<span class="text-info">{{contestInfo["belong"]}}</span></span><br />
-        <span>Status:&nbsp;
-        {% import "macro/contestState.html" as cs %}
-        {{ cs.state(contestInfo['id_contest'],contestInfo['start_time'],contestInfo['end_time']) }}</span><br />
-        <span id="countdown{{contestInfo['id_contest']}}_tip">...&nbsp;</span>
-        <span class="text-success" style="font-size:small;">
-          {% import "macro/countdown.html" as cd %}
-          {{ cd.run('countdown'+contestInfo['id_contest']|string,contestInfo['start_time'],contestInfo['end_time']) }}
-        </span>
-        <hr/>
-        <span>Introduction:&nbsp;<span class="text-info">{{contestInfo["introduction"]}}</span></span><br/>
-        {% if contestInfo['id_contest'] != 1 %}
-          <span>Start Time:&nbsp;<span class="text-info" style="font-size: small;">{{contestInfo["start_time"].strftime('%Y-%m-%d %H:%M')}}</span></span><br/>
-          <span>End Time:&nbsp;<span class="text-info" style="font-size: small;">{{contestInfo["end_time"].strftime('%Y-%m-%d %H:%M')}}</span></span><br/>
-        {% endif %}
-      </div>
-    </div>
-    <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
-      <a class="nav-link active" href="#" role="tab">Problems</a>
-      <a class="nav-link" href="{{url_for('problems.ranklist')}}" role="tab">Ranklist</a>
-      <a class="nav-link" href="{{url_for('problems.submissions')}}" role="tab">Submissions</a>
-    </div>
-    {% if contestInfo['id_contest'] == 1 %}
-    <div class="card border-0 shadow">
-      <div class="card-header bg-white">
-        Tags
-      </div>
-      <div class="card-body">
-        {% import "macro/colorBadge.html" as cB %}
-        <label>当前tag:</label>{{ cB.cBadge(-1,session.get("problemTag_pro"),'#')}}
-        <br />
-        {% for tagItem in tags %}
-        {{ cB.cBadge(tagItem['id_tag'],tagItem['name_tag'],url_for('problems.problemSetTag',tag=tagItem['name_tag']))}}
-        {% endfor%}
-      </div>
-    </div>
-    {%endif%}
+  <div class="card-body">
+    {% import "macro/colorBadge.html" as cB %}
+    <label>当前tag:</label>{{ cB.cBadge(-1,session.get("problemTag_pro"),'#')}}
+    <br />
+    {% for tagItem in tags %}
+    {{ cB.cBadge(tagItem['id_tag'],tagItem['name_tag'],url_for('problems.problemSetTag',tag=tagItem['name_tag']))}}
+    {% endfor%}
   </div>
 </div>
+{%endif%}
 {% endblock %}

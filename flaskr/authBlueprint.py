@@ -48,8 +48,9 @@ def register():
                 current_app.logger.error(error)
             finally:
                 db.dispose()
+            flash('Registered successfully!','success')
             return redirect(url_for('auth.login'))
-        flash(error)
+        flash(error,'danger')
         db.dispose()
     return render_template('auth/register.html')
 
@@ -85,10 +86,11 @@ def login(next='/'):
             session["username"] = user['username']
             session['password'] = user['password']
             db.dispose()
+            flash('Login successfully!','success')
             if next != '/':
                 return redirect(url_for(next))
             return redirect(url_for('index'))
-        flash(error)
+        flash(error,'danger')
         db.dispose()
 
     return render_template('auth/login.html')

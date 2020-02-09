@@ -8,9 +8,6 @@
       User Register
   </div>
   <div class="card-body">
-  {% for message in get_flashed_messages() %}
-  <div class="flash alert alert-danger" role="alert">{{ message }}</div>
-  {% endfor %}
   <form method="post">
     <label>Username:</label>
     <input type="text" class="form-control mt-1 mb-3" name="username" placeholder="Please enter your username.">

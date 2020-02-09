@@ -7,6 +7,8 @@
   <div class="col-md-10">
     <div class="card border-0 shadow">
       <div class="card-body">
+        {% block contest_content %}
+        {% endblock %}
       </div>
     </div>
   </div>
@@ -19,33 +21,47 @@
           {% else %}
           <img src="{{url_for('static',filename='img/practice.png')}}" class="mr-2 mt-1" width="25rem" height="25rem">
           {% endif %}
-        <h5>{{contestInfo["title"]}}</h5>
+          <h5>{{contestInfo["title"]}}</h5>
         </div>
         <span>Created By:&nbsp;<span class="text-info">{{contestInfo["belong"]}}</span></span><br />
         <span>Status:&nbsp;
-        {% import "macro/contestState.html" as cs %}
-        {{ cs.state(contestInfo['id_contest'],contestInfo['start_time'],contestInfo['end_time']) }}</span><br />
+          {% import "macro/contestState.html" as cs %}
+          {{ cs.state(contestInfo['id_contest'],contestInfo['start_time'],contestInfo['end_time']) }}</span><br />
         <span id="countdown{{contestInfo['id_contest']}}_tip">...&nbsp;</span>
         <span class="text-success" style="font-size:small;">
           {% import "macro/countdown.html" as cd %}
           {{ cd.run('countdown'+contestInfo['id_contest']|string,contestInfo['start_time'],contestInfo['end_time']) }}
         </span>
-        <hr/>
-        <span>Introduction:&nbsp;<span class="text-info">{{contestInfo["introduction"]}}</span></span><br/>
+        <hr />
+        <span>Introduction:&nbsp;<span class="text-info">{{contestInfo["introduction"]}}</span></span><br />
         {% if contestInfo['id_contest'] != 1 %}
-          <span>Start Time:&nbsp;<span class="text-info" style="font-size: small;">{{contestInfo["start_time"].strftime('%Y-%m-%d %H:%M')}}</span></span><br/>
-          <span>End Time:&nbsp;<span class="text-info" style="font-size: small;">{{contestInfo["end_time"].strftime('%Y-%m-%d %H:%M')}}</span></span><br/>
+        <span>Start Time:&nbsp;<span class="text-info"
+            style="font-size: small;">{{contestInfo["start_time"].strftime('%Y-%m-%d %H:%M')}}</span></span><br />
+        <span>End Time:&nbsp;<span class="text-info"
+            style="font-size: small;">{{contestInfo["end_time"].strftime('%Y-%m-%d %H:%M')}}</span></span><br />
         {% endif %}
       </div>
     </div>
     <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
-      <a class="nav-link" href="#" role="tab">Problems</a>
+      {% if g.active == 'ProblemSet'%}
+      <a class="nav-link active" href="{{url_for('problems.problemSet')}}" role="tab">Problems</a>
+      {% else %}
+      <a class="nav-link" href="{{url_for('problems.problemSet')}}" role="tab">Problems</a>
+      {% endif %}
+      {% if g.active == 'Ranklist'%}
+      <a class="nav-link active" href="{{url_for('problems.ranklist')}}" role="tab">Ranklist</a>
+      {% else %}
       <a class="nav-link" href="{{url_for('problems.ranklist')}}" role="tab">Ranklist</a>
+      {% endif %}
+      {% if g.active == 'Submissions'%}
+      <a class="nav-link active" href="{{url_for('problems.submissions')}}" role="tab">Submissions</a>
+      {% else %}
       <a class="nav-link" href="{{url_for('problems.submissions')}}" role="tab">Submissions</a>
+      {% endif %}
     </div>
     {% block extraSidebar%}
     {% endblock %}
-    {% if contestInfo['id_contest'] == 1 %}
+
   </div>
 </div>
 {% endblock %}

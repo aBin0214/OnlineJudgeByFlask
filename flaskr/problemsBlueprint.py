@@ -14,6 +14,7 @@ bp = Blueprint('problems', __name__, url_prefix='/problems')
 @bp.route("/problemSet/<int:currentPage>")
 @bp.route("/problemSet")
 def problemSet(currentPage=1):
+    g.active = 'ProblemSet'
     if session.get("contestId_pro") == 1:
         session['active'] = "Problems"
     else:
@@ -50,6 +51,7 @@ def problemSet(currentPage=1):
 @bp.route("/ranklist/<int:currentPage>")
 @bp.route("/ranklist")
 def ranklist(currentPage=1):
+    g.active = 'Ranklist'
     session['currentPage_rank'] = currentPage
     if session.get("pageSize_rank") is None:
         session['pageSize_rank'] = 20
@@ -70,6 +72,7 @@ def ranklist(currentPage=1):
 @bp.route("/submissions/<int:currentPage>")
 @bp.route("/submissions")
 def submissions(currentPage=1):
+    g.active = 'Submissions'
     session['currentPage_sub'] = currentPage
     if session.get("pageSize_sub") is None:
         session['pageSize_sub'] = 20

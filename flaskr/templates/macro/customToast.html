@@ -1,0 +1,14 @@
+{% macro toast(category,title,message) -%} 
+<div class="toast ml-auto mr-auto" data-delay="20000">
+	<div class="toast-header">
+		<strong class="mr-auto text-{{category|lower}}">{{title}}</strong>
+		<small>just now</small>
+		<button type="button" class="ml-2 mb-1 close co" data-dismiss="toast">
+			<span>&times;</span>
+		</button>
+	</div>
+	<div class="toast-body">
+		{{message}}
+	</div>
+</div>
+{%- endmacro %}
