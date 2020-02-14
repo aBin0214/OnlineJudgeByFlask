@@ -47,6 +47,10 @@ def create_app(test_config=None):
     app.register_blueprint(homeBlueprint.bp)
     app.add_url_rule('/', endpoint='index')
 
+    #用于显示一些小功能
+    from . import baseBlueprint
+    app.register_blueprint(baseBlueprint.bp)
+
     # 用于显示题集信息
     from . import problemsBlueprint
     app.register_blueprint(problemsBlueprint.bp)

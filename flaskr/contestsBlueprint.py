@@ -30,38 +30,61 @@ def contestSet(currentPage=1):
         
     return render_template("contests/contestSet.html",contestSet=contestSet,datetime=datetime.datetime)
 
-@bp.route("/contest/<int:contestId>/<string:next>", methods=['POST'])
 @bp.route("/contest/<int:contestId>")
-def contest(contestId,next='/'):
-    if request.method == 'POST':
-        password = request.form['contest_password']
-        print(password)
-        error = None
-        if password is None or password == '':
-            error = 'Password is required.'
-        
-        db = MysqlUtils.MyPyMysqlPool()
-        if error is None:
-            contest = db.get_one(
-                'SELECT password FROM contest WHERE id_contest = {id_contest} limit 1'.format(id_contest=contestId)
-            )
-            if password is False:
-                error = 'Incorrect contestId.'
-            elif not check_password_hash(contest['password'], password):
-                error = 'Incorrect password.'
-        if error is not None:
-            flash(error,'danger')
-            return redirect(url_for(next))
+def contest(contestId):
     session['contestId_pro'] = contestId
     return redirect(url_for('problems.problemSet'));
 
-@bp.route("/contestPermission/<int:contestId>", methods=['POST','GET'])
+@bp.route("/contestPermission/<int:contestId>", methods=['GET'])
 def contestPermission(contestId):
     contestInfo = getContestInfo(contestId)
+    error = None
+    if session.get('id_user') is None or session.get('id_user') == '':
+        error = "Please log in first!"
+        flash(error,"danger")
+    if contestInfo['start_time'] > datetime.datetime.now():
+        error = "The contest hasn't started yet!"
+        flash(error,"danger")
+    if error == None:
+        if contestInfo["is_private"]:
+            return jsonify({
+                "result":"success",
+                "is_private":1,
+                "title":contestInfo["title"],
+                "nextUrl":url_for("contests.judgeContestPass")
+            })
+        else:
+            return jsonify({
+                "result":"success",
+                "is_private":0,
+                "nextUrl":url_for("contests.contest",contestId=contestId)
+            })
     return jsonify({
-        "result":"success",
-        "title":contestInfo["title"],
-        "nextUrl":url_for("contests.contestPermission",contestId=contestId)
+        "result":"failure",
+        "describe":error
+    })
+
+@bp.route("/judgeContestPass", methods=['POST'])
+def judgeContestPass():
+    contestId = request.form["contestId"]
+    password = request.form["password"]
+    contestInfo = getContestInfo(contestId)
+    error = None
+    if password is None or password == '':
+        error = "Password is required."
+        flash(error,'danger')
+
+    if error is None and check_password_hash(contestInfo['password'], password) is False:
+        error = 'Incorrect password.'
+        flash(error,"danger")
+    
+    if error == None:
+        return jsonify({
+            "result":"success",
+            "nextUrl":url_for("contests.contest",contestId=contestId)
+        })
+    return jsonify({
+        "result":"failure"
     })
 
 def getContestSet(currentPage,pageSize):

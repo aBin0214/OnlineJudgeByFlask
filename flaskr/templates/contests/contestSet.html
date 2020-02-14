@@ -7,18 +7,61 @@
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
   $(function() {
     $('a.contest').bind('click', function() {
-      var contestId = $(this).attr('contestId');
-      console.log(contestId);
+      var contestId = $(this).attr('id').split('=')[1];
       $.ajax({
         url:$SCRIPT_ROOT+"/contests/contestPermission/"+contestId,     
         dataType:"json",                                           
         type:"GET",
         success:function(data){
             if(data["result"] === 'success'){
-              $("#contest_title").text(data['title']);
-              $("#verify_form").attr($SCRIPT_ROOT+data['nextUrl']);
-              $('#contestVerify').modal()
+              if(data["is_private"] === 1){
+                $("#contest_title").text(data['title']);
+                $("#verify_form").attr("action",data['nextUrl']+"?"+contestId);
+                $('#contestVerify').modal();
+              }else if(data["is_private"] === 0){
+                console.log(data["nextUrl"]);
+                $(location).attr('href', data['nextUrl']);
+              }
             }
+        },
+        complete:function(){
+          $.ajax({
+            url: $SCRIPT_ROOT+'/base/flashShow',
+            success: function (response) {
+                $('#toastPage').html(response);
+                $('.toast').toast('show')
+            }
+          })
+        }
+      });
+    });
+  });
+  $(function(){
+    $("#verify_form_submit").click(function () {
+      var next = $("#verify_form").attr("action").split('?');
+      $.ajax({
+        url:$SCRIPT_ROOT+next[0],     
+        dataType:"json",                                           
+        type:"POST",
+        data:{
+          "contestId":next[1],
+          "password":$("#contest_password").val()
+        },
+        success:function(data){
+          if(data["result"] === 'success'){
+            $(location).attr('href', data['nextUrl']);
+          }else if(data["result"] === 'failure'){
+            $('#contestVerify').modal('hide');
+          }
+        },
+        complete:function(){
+          $.ajax({
+            url: $SCRIPT_ROOT+'/base/flashShow',
+            success: function (response) {
+                $('#toastPage').html(response);
+                $('.toast').toast('show')
+            }
+          })
         }
       });
     });
@@ -42,7 +85,7 @@
       {% endif %}
       <div class="row col-md-12">
         <div class="col-md-10">
-          <a class="contest" contestId="{{contest['id_contest']}}" href="#"><span
+          <a class="contest" id="contestId={{contest['id_contest']}}" href="#"><span
             style="font-size: large;">{{contest["title"]}}</span></a>
           {% if contest['is_private'] == 1 %}
           <img src="{{url_for('static',filename='img/private.png')}}" class="mb-2" width="16rem" height="16rem">
@@ -88,10 +131,10 @@
         </button>
       </div>
       <div class="modal-body justify-content-center p-4">
-        <form id="verify_form" method="post">
-          <input type="password" class="form-control mt-1 mb-3" name="contest_password"
+        <form id="verify_form">
+          <input type="password" class="form-control mt-1 mb-3" name="contest_password" id="contest_password"
             placeholder="Please enter this contest's password.">
-          <button class="btn btn-success float-right" type="submit">Submit</button>
+          <button id="verify_form_submit" class="btn btn-success float-right" type="button">Submit</button>
         </form>
       </div>
     </div>

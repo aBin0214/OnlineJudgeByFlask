@@ -79,33 +79,21 @@
 	</ul>
 </nav>
 <div id="toastPage" class="fixed-top" style="margin-top: 2.2rem;">
-{% with messages = get_flashed_messages(with_categories=true) %}
-	{% if messages %}
-		{% for category, message in messages %}
-			{% if category == 'danger' %}
-			{% set title = 'Error!' %}
-			{% elif category == 'success'%}
-			{% set title = 'Success!' %}
-			{% elif category == 'info' %}
-			{% set title = 'Info!' %}
-			{% endif %}
-			{% import "macro/customToast.html" as ct %}
-			{{ ct.toast(category,title,message)}}
-		{% endfor %}
-	{% endif %}
-{% endwith %}
-{% if session.get('flash_error','') != '' %}
-{% set category = 'danger' %}
-{% set title = 'Error!' %}
-{% import "macro/customToast.html" as ct %}
-{{ ct.toast(category,title,session.pop('flash_error'))}}
-{% endif %}
+<script>
+	$(function(){
+			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		$.ajax({
+			url: $SCRIPT_ROOT+'/base/flashShow',
+			success: function (response) {
+				$('#toastPage').html(response);
+				$('.toast').toast('show')
+			}
+		})
+	});
+</script>
 </div>
 <section class="content">
 	<div id="container">
 		{% block content %}{% endblock %}
 	</div>
-	<script>
-		$('.toast').toast('show')
-	</script>
 </section>

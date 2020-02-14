@@ -36,12 +36,12 @@ def problemDetail(proNo):
                 sql = 'INSERT INTO solution (id_user,id_contest_problem,id_language,submit_content) VALUES (\'{}\',\'{}\',\'{}\',\'{}\')'\
                     .format(id_user, proNo,id_language,inputCode)
                 db.insert(sql)
+                flash('Answer submitted successfully!','success')
             except:
                 error = "user:{},problemNo:{}. submit answer failure".format(session.get("username"),proNo)
                 current_app.logger.error(error)
             finally:
                 db.dispose()
-    flash('Answer submitted successfully!','success')
     return render_template("proDetail/oneProblem.html",languages = languages,problemInfo=problemInfo)
 
 def getLanguages():

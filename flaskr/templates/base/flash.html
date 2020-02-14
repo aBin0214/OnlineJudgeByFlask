@@ -1,0 +1,15 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+	{% if messages %}
+		{% for category, message in messages %}
+			{% if category == 'danger' %}
+			{% set title = 'Error!' %}
+			{% elif category == 'success'%}
+			{% set title = 'Success!' %}
+			{% elif category == 'info' %}
+			{% set title = 'Info!' %}
+			{% endif %}
+			{% import "macro/customToast.html" as ct %}
+			{{ ct.toast(category,title,message)}}
+		{% endfor %}
+	{% endif %}
+{% endwith %}
