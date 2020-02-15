@@ -65,37 +65,18 @@ def submissions(currentPage=1):
     if totalCount == 0:
         session['totalPage_sub'] = 0
     
-    submissions = getSubmissions(session.get("contestId_pro"),currentPage,session.get("pageSize_sub"))
-
-    if submissions is not False:
-        for submission in submissions:
-            submission['hl_code'] = CodeHighlightUtils.CodeHighlight.codeTranslate(submission['submit_content'],submission['monaco_editor_val']);
-
-    return render_template("problems/submissions.html",submissions=submissions)
-
-@bp.route("/problemSetTag/<string:tag>")
-def problemSetTag(tag):
-    session['problemTag_pro'] = tag
-    return redirect(url_for('problems.problemSet'))
+    return render_template("problems/contestBase.html")
 
 @bp.route("/currentRanklist/<int:currentPage>")
 @bp.route("/currentRanklist")
 def currentRanklist(currentPage=1):
     g.active = 'Ranklist'
-    session['currentPage_curRank'] = currentPage
-    if session.get("pageSize_curRank") is None:
-        session['pageSize_curRank'] = 20
-
-    totalCount = getRanklistCount(session.get("contestId_pro"))
-    total = totalCount//session.get("pageSize_curRank")
-    total = total if totalCount%session.get("pageSize_curRank") == 0 or totalCount == 0 else total+1
-    session['totalPage_curRank'] = total
-    if totalCount == 0:
-        session['totalPage_curRank'] = 0
-
-    # ranklist = getRanklist(session.get("contestId_pro"))
-
     return render_template("problems/currentRanklist.html")
+
+@bp.route("/problemSetTag/<string:tag>")
+def problemSetTag(tag):
+    session['problemTag_pro'] = tag
+    return redirect(url_for('problems.problemSet'))
 
 @bp.route("/showContestInfo")
 def showContestInfo():
@@ -128,6 +109,18 @@ def showTagList():
 def showRanklist():
     ranklist = getRanklist(session.get("contestId_pro"))
     return render_template("problems/ranklist.html",ranklist=ranklist)
+
+@bp.route("/showSubmissionlist")
+def showSubmissionlist():
+    submissions = getSubmissions(session.get("contestId_pro"),session['currentPage_sub'],session.get("pageSize_sub"))
+    return render_template("problems/submissionList.html",submissions=submissions)
+
+@bp.route("/showSubmissionDetail/<int:solutionId>")
+def showSubmissionDetail(solutionId):
+    submission = getOneSubmission(solutionId)
+    if submission is not False:
+        submission['hl_code'] = CodeHighlightUtils.CodeHighlight.codeTranslate(submission['submit_content'],submission['monaco_editor_val'])
+    return render_template("problems/submissionDetail.html",submission=submission)
 
 def getContestInfo(id_contest):
     db = MysqlUtils.MyPyMysqlPool()
@@ -209,11 +202,34 @@ def getSubmissions(contestId,currentPage,pageSize):
     finally:
         db.dispose()
     return submissions
+
+def getOneSubmission(solutionId):
+    db = MysqlUtils.MyPyMysqlPool()
+    start = (session.get('currentPage_sub')-1)*session.get('pageSize_sub')
+    sql = 'select id_solution,submit_time,res.name_result as judge_status,cp.serial as problem_serial,cp.id_contest_problem,\
+    lang.name_language,lang.monaco_editor_val,s.run_time,s.run_memory,u.username,u.id_user,\
+    s.is_share,s.submit_content\
+    from solution as s,user as u,result_des as res,\
+    contest_problem as cp,pro_language as lang\
+    where s.id_user = u.id_user\
+    and s.state = res.id_result_des\
+    and s.id_contest_problem = cp.id_contest_problem\
+    and s.id_language = lang.id_language\
+    and s.id_solution = {solutionId}\
+    limit 1;'.format(solutionId=solutionId);
+    submission = None
+    try:
+        submissions = db.get_one(sql)
+    except:
+        current_app.logger.error("get solution-{}  failure !".format(solusionId))
+    finally:
+        db.dispose()
+    return submissions
     
 def getRanklist(contestId):
     db = MysqlUtils.MyPyMysqlPool()
     sql = "select u.id_user,u.username,count(distinct s.id_contest_problem) as cnt \
-        from online_judge.user as u,online_judge.solution as s,online_judge.contest_problem as cp \
+        from user as u,solution as s,contest_problem as cp \
         where u.id_user = s.id_user \
         and cp.id_contest_problem = s.id_contest_problem \
         and s.state = 11 \

@@ -28,7 +28,7 @@ def contestSet(currentPage=1):
 
     contestSet = getContestSet(session.get('currentPage_con'),session.get('pageSize_con'))
         
-    return render_template("contests/contestSet.html",contestSet=contestSet,datetime=datetime.datetime)
+    return render_template("contests/contestSet.html",contestSet=contestSet)
 
 @bp.route("/contest/<int:contestId>")
 def contest(contestId):
@@ -86,6 +86,11 @@ def judgeContestPass():
     return jsonify({
         "result":"failure"
     })
+
+@bp.route("/showContestList")
+def showContestList():
+    contestSet = getContestSet(session.get('currentPage_con'),session.get('pageSize_con'))
+    return render_template("contests/contestList.html",contestSet=contestSet)
 
 def getContestSet(currentPage,pageSize):
     db = MysqlUtils.MyPyMysqlPool()

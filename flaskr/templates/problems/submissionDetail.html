@@ -1,0 +1,50 @@
+<div id="showSubDetail" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog"
+  aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header pl-4 pr-4">
+        <h5 class="modal-title" id="exampleModalLabel">
+          #<span id="id_solution">{{submission["id_solution"]}}</span>&nbsp;|&nbsp;
+          <a href="#" id="id_user"><span id="username">{{submission["username"]}}</span></a><span>'s solution for&nbsp;</span>
+          [<a href="{{url_for('proDetail.problemDetail',proNo=submission['id_contest_problem'])}}" id="id_contest_problem"><span id="problem_serial">{{submission["problem_serial"]}}</span></a>]
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body justify-content-center p-4">
+      <table class="table table-bordered table-sm ">
+        <thead>
+          <tr>
+            <th scope="col">Submit Time</th>
+            <th scope="col">Judge Status</th>
+            <th scope="col">Language</th>
+            <th scope="col">Run time(ms)</th>
+            <th scope="col">Run Memory(kb)</th>
+            <th scope="col">Is Share</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="submit_time">{{submission["submit_time"]}}</td>
+            <td id="judge_status">{{submission["judge_status"]}}</td>
+            <td id="name_language">{{submission["name_language"]}}</td>
+            <td id="run_time">{{submission["run_time"]}}</td>
+            <td id="run_memory">{{submission["run_memory"]}}</td>
+            <td id="is_share">{{is_share}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="hl_code">
+          <script>
+              $(function(){
+                $hl_code = {{ submission['hl_code']|tojson|safe }};
+                console.log($hl_code);
+                $("#hl_code").html($hl_code);
+              });
+          </script>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -112,7 +112,29 @@
             ...
             </div>
           {% elif g.active == 'Submissions'%}
-          
+            <script>
+              $(function(){
+                $.ajax({
+                  url: $SCRIPT_ROOT+'/problems/showSubmissionlist',
+                  success: function (response) {
+                    $('#showSubmissionlist').html(response);
+                  }
+                })
+              });
+              function showSubDetail(submmisionId) {
+                $.ajax({
+                  url: $SCRIPT_ROOT+'/problems/showSubmissionDetail/'+submmisionId,
+                  success: function (response) {
+                    $('#showSubmissionDetail').html(response);
+                    $('#showSubDetail').modal('show');
+                  }
+                });
+              }
+          </script>
+          <div id="showSubmissionlist">
+          ...
+          </div>
+          <div id="showSubmissionDetail"></div>
           {% endif %}
         {% endblock %}
       </div>

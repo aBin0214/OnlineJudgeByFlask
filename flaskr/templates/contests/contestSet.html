@@ -6,7 +6,19 @@
 <script>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
   $(function() {
+    $.ajax({
+      url:$SCRIPT_ROOT+"/contests/showContestList", 
+      success:function(response){
+        $("#contestList").html(response);
+      },
+      complete:function(){
+        contestClick();
+      }
+    });
+  });
+  contestClick = function() {
     $('a.contest').bind('click', function() {
+      console.log("比赛被点击！");
       var contestId = $(this).attr('id').split('=')[1];
       $.ajax({
         url:$SCRIPT_ROOT+"/contests/contestPermission/"+contestId,     
@@ -19,23 +31,22 @@
                 $("#verify_form").attr("action",data['nextUrl']+"?"+contestId);
                 $('#contestVerify').modal();
               }else if(data["is_private"] === 0){
-                console.log(data["nextUrl"]);
                 $(location).attr('href', data['nextUrl']);
               }
             }
         },
         complete:function(){
           $.ajax({
-            url: $SCRIPT_ROOT+'/base/flashShow',
+            url: $SCRIPT_ROOT+'/base/showFlash',
             success: function (response) {
-                $('#toastPage').html(response);
+                $('#showFlash').html(response);
                 $('.toast').toast('show')
             }
           })
         }
       });
     });
-  });
+  }
   $(function(){
     $("#verify_form_submit").click(function () {
       var next = $("#verify_form").attr("action").split('?');
@@ -56,9 +67,9 @@
         },
         complete:function(){
           $.ajax({
-            url: $SCRIPT_ROOT+'/base/flashShow',
+            url: $SCRIPT_ROOT+'/base/showFlash',
             success: function (response) {
-                $('#toastPage').html(response);
+                $('#showFlash').html(response);
                 $('.toast').toast('show')
             }
           })
@@ -75,48 +86,9 @@
     <div class="mb-4">
       <span style="font-size: large;">All Contest</span>
     </div>
-    {% if session.get("totalPage_con") != 0 %}
-    {% for contest in contestSet %}
-    <div class="media">
-      {% if contest['is_practice'] != 1 %}
-      <img src="{{url_for('static',filename='img/contest.png')}}" class="mt-1 p-1" width="40rem" height="40rem">
-      {% else %}
-      <img src="{{url_for('static',filename='img/practice.png')}}" class="mt-1 p-1" width="40rem" height="40rem">
-      {% endif %}
-      <div class="row col-md-12">
-        <div class="col-md-10">
-          <a class="contest" id="contestId={{contest['id_contest']}}" href="#"><span
-            style="font-size: large;">{{contest["title"]}}</span></a>
-          {% if contest['is_private'] == 1 %}
-          <img src="{{url_for('static',filename='img/private.png')}}" class="mb-2" width="16rem" height="16rem">
-          {% endif %}<br />
-          <img src="{{url_for('static',filename='img/time.png')}}" width="18rem" height="18rem"><span
-            style="font-size: small;">{{contest["start_time"].strftime('%Y-%m-%d %H:%M')}}</span>
-          &nbsp;&nbsp;<img src="{{url_for('static',filename='img/duration.png')}}" width="15rem" height="15rem">
-          <span style="font-size: small;">
-            {% import "macro/timeDelta.html" as td %}
-            {{ td.duration(contest['start_time'],contest['end_time']) }}
-          </span>
-        </div>
-        <div class="col-md-2">
-          <h5 class="align-middle">
-            {% import "macro/contestState.html" as cs %}
-            {{ cs.state(contest['id_contest'],contest['start_time'],contest['end_time']) }}
-            <br />
-            <span style="font-size:small;" id="countdown{{loop.index}}_tip">...&nbsp;</span>
-            <span class="text-success" style="font-size:small;">
-              {% import "macro/countdown.html" as cd %}
-              {{ cd.run('countdown'+loop.index|string,contest['start_time'],contest['end_time']) }}
-            </span>
-          </h5>
-        </div>
-      </div>
+    <div id="contestList">
+      ...
     </div>
-    <hr class="mb-3">
-    {% endfor %}
-    {% import "macro/page.html" as pg %}
-    {{ pg.page(session.get("currentPage_con"),session.get("totalPage_con"),'#') }}
-    {% endif %}
   </div>
 </div>
 <div id="contestVerify" class="modal fade" tabindex="-1" role="dialog">
