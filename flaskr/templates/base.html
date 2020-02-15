@@ -49,35 +49,23 @@
 		<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 	</form> -->
 	<ul class="nav nav-pills ml-3 .text-success">
-		{% if session.get('id_user') %}
-		<li class="nav-item">
+		
+		<li class="login_or_username">
+			{% if session.get('id_user') %}
 			<a class="nav-item nav-link" href="#">{{ session.get('username') }}</a>
+			{% else %}
+			<a class="nav-item nav-link" href="#" onclick="login();">Login</a>
+			{% endif %}
 		</li>
-		<li>
-			{%if session.get('active') == 'LogOut'%}
-			<a class="nav-item nav-link active" href="{{url_for('auth.logout')}}">LogOut</a>
-			{%else%}
-			<a class="nav-item nav-link" href="{{url_for('auth.logout')}}">LogOut</a>
-			{%endif%}
+		<li class="logout_or_register">
+			{% if session.get('id_user') %}
+			<a class="nav-item nav-link" href="#" onclick="logout()">LogOut</a>
+			{% else %}
+			<a class="nav-item nav-link" href="#" onclick="register();">Register</a>
+			{% endif %}
+			
 		</li>
-		{% else %}
-		<li>
-			{%if session.get('active') == 'Login'%}
-			<a class="nav-item nav-link active" href="{{url_for('auth.login')}}">Login</a>
-			{%else%}
-			<a class="nav-item nav-link" href="{{url_for('auth.login')}}">Login</a>
-			{%endif%}
-		</li>
-		<li>
-		</li>
-		<li>
-			{%if session.get('active') == 'Register'%}
-			<a class="nav-item nav-link active" href="{{url_for('auth.register')}}">Register</a>
-			{%else%}
-			<a class="nav-item nav-link" href="{{url_for('auth.register')}}">Register</a>
-			{%endif%}
-		</li>
-		{% endif %}
+		
 	</ul>
 </nav>
 <div id="showFlash" class="fixed-top" style="margin-top: 2.2rem;">
@@ -99,3 +87,54 @@
 		{% block content %}{% endblock %}
 	</div>
 </section>
+<script>
+	function login(){
+		$.ajax({
+            url: $SCRIPT_ROOT+'/auth/showLogin',
+            success: function (response) {
+                $('#popUpBox').html(response);
+                $('#loginBox').modal('show')
+            }
+        })
+	}
+	function register(){
+		$.ajax({
+            url: $SCRIPT_ROOT+'/auth/showRegister',
+            success: function (response) {
+                $('#popUpBox').html(response);
+                $('#registerBox').modal('show')
+            }
+        })
+	}
+	function logout(){
+		$.ajax({
+			url: $SCRIPT_ROOT+'/auth/logout',
+			dataType:"json",
+			complete:function(){
+				$.ajax({
+					url: $SCRIPT_ROOT+'/base/showFlash',
+					success: function (response) {
+						$('#showFlash').html(response);
+						$('.toast').toast('show')
+					}
+				})
+				var linkLogin = $('<a>',{
+					text:"Login",
+					href:"#",
+					onclick:"login();",
+					class:"nav-item nav-link"
+				});
+				var linkRegister = $('<a>',{
+					text:"Register",
+					href:"#",
+					onclick:"register();",
+					class:"nav-item nav-link"
+				});
+				$("li.login_or_username").html(linkLogin);
+				$("li.logout_or_register").html(linkRegister);
+			}
+        })
+	}
+</script>
+<div id="popUpBox">
+</div>

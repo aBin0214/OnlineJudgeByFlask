@@ -1,7 +1,6 @@
 <script>
     $(function(){
         codeMap = {{codeMap|tojson|safe}};
-        console.log(codeMap);
         for(var key in codeMap){
             $("#"+key).html(codeMap[key]);
         }

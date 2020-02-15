@@ -1,20 +1,60 @@
-{% extends 'base.html' %}
-
-{% block title %}Login{% endblock title %}
-
-{% block content %}
-<div class="card m-4 border-0 shadow">
-  <div class="card-header bg-white">
-      User Login
-  </div>
-  <div class="card-body">
-  <form method="post">
-    <label>Username:</label>
-    <input type="text" class="form-control mt-1 mb-3" name="username" placeholder="Please enter your username.">
-    <label>Password:</label>
-    <input type="password" class="form-control mt-1 mb-3" name="password" placeholder="Please enter your password.">
-    <button class="btn btn-success" type="submit">Submit</button>
-  </form>
+<div id="loginBox" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header pl-4 pr-4">
+        <strong>User Login</strong>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body justify-content-center p-4">
+        <form method="post">
+          <label>Username:</label>
+          <input type="text" class="form-control mt-1 mb-3" name="username" id="username" placeholder="Please enter your username.">
+          <label>Password:</label>
+          <input type="password" class="form-control mt-1 mb-3" name="password" id="password" placeholder="Please enter your password.">
+          <button id="login_form_submit" class="btn btn-success float-right" type="button">Submit</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
-{% endblock %}
+<script>
+  $(function(){
+    $("#login_form_submit").click(function () {
+      $.ajax({
+        url:$SCRIPT_ROOT+"/auth/login",     
+        dataType:"json",                                           
+        type:"POST",
+        data:{
+          "username":$("#username").val(),
+          "password":$("#password").val()
+        },
+        complete:function(){
+          $('#loginBox').modal('hide');
+          $("#password").val("");
+          $.ajax({
+            url: $SCRIPT_ROOT+'/base/showFlash',
+            success: function (response) {
+                $('#showFlash').html(response);
+                $('.toast').toast('show')
+            }
+          })
+          var linkUser = $('<a>',{
+            text:$("#username").val(),
+            href:"#",
+            class:"nav-item nav-link"
+          });
+          var linkLogOut = $('<a>',{
+            text:"LogOut",
+            href:"#",
+            onclick:"logout();",
+            class:"nav-item nav-link"
+          });
+          $("li.login_or_username").html(linkUser);
+          $("li.logout_or_register").html(linkLogOut);
+        }
+      });
+    });
+  });
+</script>
