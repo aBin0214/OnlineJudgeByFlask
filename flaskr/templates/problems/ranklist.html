@@ -1,6 +1,3 @@
-{% extends 'problems/contestBase.html' %}
-
-{% block contest_content %}
 <table class="table table-hover border-0">
   <thead class="text-black-50">
     <tr>
@@ -18,10 +15,15 @@
       <td>{{rankItem["cnt"]}}</td>
     </tr>
     {% endfor %}
+    {%else%}
+    <tr>
+      <td scope="row">-</td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
     {% endif %}
   </tbody>
 </table>
 {% import "macro/page.html" as pg %}
 {{ pg.page(session.get("currentPage_rank"),session.get("totalPage_rank"),'#') }}
-{% endblock %}
 

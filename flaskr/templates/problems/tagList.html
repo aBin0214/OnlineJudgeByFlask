@@ -1,0 +1,15 @@
+{%if session.get("contestId_pro") == 1 %}
+<div class="card border-0 shadow">
+  <div class="card-header bg-white">
+    Tags
+  </div>
+  <div class="card-body">
+    {% import "macro/colorBadge.html" as cB %}
+    <label>当前tag:</label>{{ cB.cBadge(-1,session.get("problemTag_pro"),'#')}}
+    <br />
+    {% for tagItem in tags %}
+    {{ cB.cBadge(tagItem['id_tag'],tagItem['name_tag'],url_for('problems.problemSetTag',tag=tagItem['name_tag']))}}
+    {% endfor%}
+  </div>
+</div>
+{%endif%}

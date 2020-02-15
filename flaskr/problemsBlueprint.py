@@ -31,22 +31,7 @@ def problemSet(currentPage=1):
     total = total if totalCount%session.get("pageSize_pro") == 0 or totalCount == 0 else total+1
     session['totalPage_pro'] = total
 
-    currentPage = int(session.get("currentPage_pro"))
-    problemTag = session.get("problemTag_pro")
-    problems = getProblemsByTag(session.get("contestId_pro"),currentPage,problemTag,session.get("pageSize_pro"))
-    idx = 0
-    
-    if problems is not False:
-        for problem in problems:
-            problemId = problem["id_contest_problem"]
-            problems[idx]["accepted_count"] = getAcceptedCount(problemId)
-            problems[idx]["submit_count"] = getSubmitCount(problemId)
-            idx += 1
-    
-    tags = getAllTag()
-    contestInfo = getContestInfo(session.get("contestId_pro"))
-
-    return render_template("problems/problemSet.html",problems=problems,tags = tags,contestInfo = contestInfo,datetime=datetime.datetime)
+    return render_template("problems/contestBase.html")
 
 @bp.route("/ranklist/<int:currentPage>")
 @bp.route("/ranklist")
@@ -63,11 +48,7 @@ def ranklist(currentPage=1):
     if totalCount == 0:
         session['totalPage_rank'] = 0
 
-    contestInfo = getContestInfo(session.get("contestId_pro"))
-    ranklist = getRanklist(session.get("contestId_pro"))
-
-    return render_template("problems/ranklist.html",contestInfo = contestInfo,ranklist=ranklist)
-
+    return render_template("problems/contestBase.html")
 
 @bp.route("/submissions/<int:currentPage>")
 @bp.route("/submissions")
@@ -83,8 +64,6 @@ def submissions(currentPage=1):
     session['totalPage_sub'] = total
     if totalCount == 0:
         session['totalPage_sub'] = 0
-
-    contestInfo = getContestInfo(session.get("contestId_pro"))
     
     submissions = getSubmissions(session.get("contestId_pro"),currentPage,session.get("pageSize_sub"))
 
@@ -92,12 +71,63 @@ def submissions(currentPage=1):
         for submission in submissions:
             submission['hl_code'] = CodeHighlightUtils.CodeHighlight.codeTranslate(submission['submit_content'],submission['monaco_editor_val']);
 
-    return render_template("problems/submissions.html",contestInfo = contestInfo,submissions=submissions)
+    return render_template("problems/submissions.html",submissions=submissions)
 
 @bp.route("/problemSetTag/<string:tag>")
 def problemSetTag(tag):
     session['problemTag_pro'] = tag
     return redirect(url_for('problems.problemSet'))
+
+@bp.route("/currentRanklist/<int:currentPage>")
+@bp.route("/currentRanklist")
+def currentRanklist(currentPage=1):
+    g.active = 'Ranklist'
+    session['currentPage_curRank'] = currentPage
+    if session.get("pageSize_curRank") is None:
+        session['pageSize_curRank'] = 20
+
+    totalCount = getRanklistCount(session.get("contestId_pro"))
+    total = totalCount//session.get("pageSize_curRank")
+    total = total if totalCount%session.get("pageSize_curRank") == 0 or totalCount == 0 else total+1
+    session['totalPage_curRank'] = total
+    if totalCount == 0:
+        session['totalPage_curRank'] = 0
+
+    # ranklist = getRanklist(session.get("contestId_pro"))
+
+    return render_template("problems/currentRanklist.html")
+
+@bp.route("/showContestInfo")
+def showContestInfo():
+    contestInfo = getContestInfo(session.get("contestId_pro"))
+    return render_template("problems/contestInfo.html",contestInfo = contestInfo)
+
+@bp.route("/showProblemList")
+def showProblemList():
+
+    currentPage = int(session.get("currentPage_pro"))
+    problemTag = session.get("problemTag_pro")
+    problems = getProblemsByTag(session.get("contestId_pro"),currentPage,problemTag,session.get("pageSize_pro"))
+    idx = 0
+    
+    if problems is not False:
+        for problem in problems:
+            problemId = problem["id_contest_problem"]
+            problems[idx]["accepted_count"] = getAcceptedCount(problemId)
+            problems[idx]["submit_count"] = getSubmitCount(problemId)
+            idx += 1
+
+    return render_template("problems/problemList.html",problems = problems)
+
+@bp.route("/showTagList")
+def showTagList():
+    tags = getAllTag()
+    return render_template('problems/tagList.html',tags = tags)
+
+@bp.route("/showRanklist")
+def showRanklist():
+    ranklist = getRanklist(session.get("contestId_pro"))
+    return render_template("problems/ranklist.html",ranklist=ranklist)
 
 def getContestInfo(id_contest):
     db = MysqlUtils.MyPyMysqlPool()

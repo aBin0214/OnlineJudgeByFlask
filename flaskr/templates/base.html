@@ -50,7 +50,9 @@
 	</form> -->
 	<ul class="nav nav-pills ml-3 .text-success">
 		{% if session.get('id_user') %}
-		<li class="mr-1 mt-2"><a>{{ session.get('username') }}</a></li>
+		<li class="nav-item">
+			<a class="nav-item nav-link" href="#">{{ session.get('username') }}</a>
+		</li>
 		<li>
 			{%if session.get('active') == 'LogOut'%}
 			<a class="nav-item nav-link active" href="{{url_for('auth.logout')}}">LogOut</a>
@@ -78,14 +80,14 @@
 		{% endif %}
 	</ul>
 </nav>
-<div id="toastPage" class="fixed-top" style="margin-top: 2.2rem;">
+<div id="showFlash" class="fixed-top" style="margin-top: 2.2rem;">
 <script>
 	$(function(){
-			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 		$.ajax({
-			url: $SCRIPT_ROOT+'/base/flashShow',
+			url: $SCRIPT_ROOT+'/base/showFlash',
 			success: function (response) {
-				$('#toastPage').html(response);
+				$('#showFlash').html(response);
 				$('.toast').toast('show')
 			}
 		})

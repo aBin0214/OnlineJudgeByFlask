@@ -13,6 +13,6 @@ from . import MysqlUtils
 bp = Blueprint('base', __name__, url_prefix='/base')
 
 
-@bp.route('/flashShow', methods=('GET', 'POST'))
-def flashShow():
+@bp.route('/showFlash', methods=('GET', 'POST'))
+def showFlash():
     return render_template("base/flash.html")
