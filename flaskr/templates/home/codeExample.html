@@ -1,0 +1,32 @@
+<script>
+    $(function(){
+        codeMap = {{codeMap|tojson|safe}};
+        console.log(codeMap);
+        for(var key in codeMap){
+            $("#"+key).html(codeMap[key]);
+        }
+    });
+</script>
+
+<h4>where is the input and output?</h4>
+<p>Your program shall read input from stdin('Standard Input') and write output to stdout('Standard Output').For
+  example,you can use 'scanf' in C or 'cin' in C++ to read from stdin,and use 'printf' in C or 'cout' in C++ to
+  write to stdout.
+  User programs are not allowed to open and read from/write to files, you will get a "Runtime Error" if you try
+  to
+  do so.</p>
+<p>Here is a sample solution for problem 1001 using C++:</p>
+<div id="cpp">
+</div>
+<p>Here is a sample solution for problem 1001 using C:</p>
+<div id="c">
+</div>
+<p>Here is a sample solution for problem 1001 using Java:</p>
+<div id="java">
+</div>
+<p>Here is a sample solution for problem 1001 using Python2:</p>
+<div id="python2">
+</div>
+<p>Here is a sample solution for problem 1001 using Python3:</p>
+<div id="python3">
+</div>

@@ -21,7 +21,8 @@
   <div class="col-md-2">
     <div class="card border-0 shadow mb-4">
       <div id="showContestInfo" class="card-body">
-        ...
+        {% import "macro/loading.html" as ld %}
+        {{ ld.loading() }}  
       </div>
     </div>
     <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
@@ -82,7 +83,8 @@
               });
             </script>
             <div id="showProblemList">
-            ...
+              {% import "macro/loading.html" as ld %}
+              {{ ld.loading() }}  
             </div>
           {% elif g.active == 'Ranklist'%}
             {% if session.get("contestId_pro") == 1 %}
@@ -109,7 +111,8 @@
             </script>
             {%endif%}
             <div id="showRanklist">
-            ...
+              {% import "macro/loading.html" as ld %}
+              {{ ld.loading() }}  
             </div>
           {% elif g.active == 'Submissions'%}
             <script>
@@ -132,7 +135,8 @@
               }
           </script>
           <div id="showSubmissionlist">
-          ...
+            {% import "macro/loading.html" as ld %}
+            {{ ld.loading() }}  
           </div>
           <div id="showSubmissionDetail"></div>
           {% endif %}

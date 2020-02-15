@@ -1,0 +1,21 @@
+<h4>What is the compiler the judge is using and what are the compiler options?</h4>
+<p>The online judge system is running on Linux. We are using GNU GCC/G++ for C/C++, Free Pascal for Pascal and
+  OpenJDK 1.8 for Java. The supported compilers and the compiling options are listed in the following table.</p>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Compiler</th>
+        <th scope="col">Version</th>
+        <th scope="col">Compiler commands</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for info in compileInfo %}
+        <tr>
+          <td>{{info["name_language"]}}</td>
+          <td>{{info["version"]}}</td>
+          <td>{{info["cmd"]}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+  </table>

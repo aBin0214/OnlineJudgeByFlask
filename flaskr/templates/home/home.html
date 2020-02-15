@@ -3,16 +3,30 @@
 {% block title %}home{% endblock title %}
 {% block extraJs %}
 <script>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+  $(function(){
+    $.ajax({
+      url:$SCRIPT_ROOT+"/showIO", 
+      success:function(response){
+        $("#showIO").html(response);
+      }
+    });
+  });
   function setFAQ(faq){
     var idList = new Array('IO','AC','AJR','AJ');
     for(var id of idList){
-      var a = document.getElementById(id);
       if(id === faq){
-        a.setAttribute('class',"btn btn-success");
+        $("a#"+id).attr('class',"btn btn-success");
       }else{
-        a.setAttribute('class',"btn btn-outline-success");
+        $("a#"+id).attr('class',"btn btn-outline-success");
       }
     }
+    $.ajax({
+      url:$SCRIPT_ROOT+"/show"+faq, 
+      success:function(response){
+        $("#show"+faq).html(response);
+      }
+    });
   }
 </script>
 {% endblock %}
@@ -57,135 +71,34 @@
     </p>
     <div class="collapse show" id="IO" data-parent="#FAQ">
       <div class="card card-body">
-        <h4>where is the input and output?</h4>
-        <p>Your program shall read input from stdin('Standard Input') and write output to stdout('Standard Output').For
-          example,you can use 'scanf' in C or 'cin' in C++ to read from stdin,and use 'printf' in C or 'cout' in C++ to
-          write to stdout.
-          User programs are not allowed to open and read from/write to files, you will get a "Runtime Error" if you try
-          to
-          do so.</p>
-        <p>Here is a sample solution for problem 1001 using C++:</p>
-        <div class="highlight_code">
-<pre>
-<span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="kt">int</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
-    <span class="k">while</span><span class="p">(</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">)</span>
-        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-        </div>
-        <p>Here is a sample solution for problem 1001 using C:</p>
-        <div class="highlight_code">
-<pre>
-<span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
-
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="kt">int</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
-    <span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span> <span class="o">!=</span> <span class="n">EOF</span><span class="p">)</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-        </div>
-        <p>Here is a sample solution for problem 1001 using Java:</p>
-        <div class="highlight_code">
-<pre><span></span><span class="kn">import</span> <span class="nn">java.util.Scanner</span><span class="p">;</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="p">{</span>
-        <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">Scanner</span> <span class="n">in</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scanner</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">in</span><span class="p">);</span>
-                <span class="k">while</span> <span class="p">(</span><span class="n">in</span><span class="p">.</span><span class="na">hasNextInt</span><span class="p">())</span> <span class="p">{</span>
-                        <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">in</span><span class="p">.</span><span class="na">nextInt</span><span class="p">();</span>
-                        <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">in</span><span class="p">.</span><span class="na">nextInt</span><span class="p">();</span>
-                        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
-                <span class="p">}</span>
-        <span class="p">}</span>
-<span class="p">}</span>
-</pre>
-        </div>
-        <p>Here is a sample solution for problem 1001 using Python2:</p>
-        <div class="highlight_code">
-<pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span
-class="o">.</span><span class="n">stdin</span><span class="p">:</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-    <span class="nb">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</pre>
-        </div>
-        <p>Here is a sample solution for problem 1001 using Python3:</p>
-        <div class="highlight_code">
-<pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span
-class="o">.</span><span class="n">stdin</span><span class="p">:</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-    <span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-</pre>
+        <div id="showIO">
+          {% import "macro/loading.html" as ld %}
+          {{ ld.loading() }}  
         </div>
       </div>
     </div>
     <div class="collapse" id="AC" data-parent="#FAQ">
       <div class="card card-body">
-        <h4>What is the compiler the judge is using and what are the compiler options?</h4>
-        <p>The online judge system is running on Linux. We are using GNU GCC/G++ for C/C++, Free Pascal for Pascal and
-          OpenJDK 1.8 for Java. The supported compilers and the compiling options are listed in the following table.</p>
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th scope="col">Compiler</th>
-                <th scope="col">Version</th>
-                <th scope="col">Compiler commands</th>
-              </tr>
-            </thead>
-            <tbody>
-            {% for info in compileInfo %}
-                <tr>
-                  <td>{{info["name_language"]}}</td>
-                  <td>{{info["version"]}}</td>
-                  <td>{{info["cmd"]}}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-          </table>
+        <div id="showAC">
+          {% import "macro/loading.html" as ld %}
+          {{ ld.loading() }}  
         </div>
+      </div>
     </div>
     <div class="collapse" id="AJR" data-parent="#FAQ">
       <div class="card card-body">
-        <h4>About Judge Reply</h4>
-        <p>What is the meaning of the judge's reply XXXXX?</p>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Judge Reply</th>
-              <th scope="col">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-          {% for rd in resultsDes %}
-              <tr>
-                <td>{{rd["name_result"]}}</td>
-                <td>{{rd["description"]}}</td>
-              </tr>
-          {% endfor %}
-          </tbody>
-        </table>
+        <div id="showAJR">
+          {% import "macro/loading.html" as ld %}
+          {{ ld.loading() }}  
+        </div>
       </div>
     </div>
     <div class="collapse" id="AJ" data-parent="#FAQ">
       <div class="card card-body">
-        <h4>Which Java classes can I use?</h4>
-        <p>You can only use classes in those packages: java.lang, java.io, java.nio, java.math, java.util, java.text and
-          java.net. You are not allowed to catch any Error in your try-catch, read, write or create any file, or create
-          Socket, etc. In one word, don't do anything other than solving the problem.</p>
-        <hr class="my-4">
-        <h4>How to submit a Java solution?</h4>
-        <p>See the sample solution above. Basically you should submit a single source file which contains a public class
-          Main and it should have a method with signature public static void main(String[] args) which is the entry of
-          your program.</p>
+        <div id="showAJ">
+          {% import "macro/loading.html" as ld %}
+          {{ ld.loading() }}  
+        </div>
       </div>
     </div>
   </div>
