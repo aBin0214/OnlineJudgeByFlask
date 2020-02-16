@@ -1,0 +1,28 @@
+<h5 class="font-weight-normal">
+    Problem
+</h5>
+<div class="row">
+    <div class="col-md-6">
+        <span class="font-weight-normal text-success">
+            Solved
+        </span>
+    </div>
+    <div class="col-md-6">
+        <span class="font-weight-normal text-danger">
+            Failed
+        </span>
+    </div>
+</div>
+<hr/>
+<div class="row">
+    <div class="col-md-6 m-0 border-right">
+        {% for solved in solvedList%}
+            <a class="text-muted font-italic" href="{{url_for('proDetail.problemDetail',proNo=solved['id_contest_problem'])}}"><span>{{solved["id_problem"]}}</span></a>
+        {% endfor %}
+    </div>
+    <div class="col-md-6 m-0">
+        {% for failed in failedList %}
+            <a class="text-muted font-italic" href="{{url_for('proDetail.problemDetail',proNo=failed['id_contest_problem'])}}"><span>{{failed["id_problem"]}}</span></a>
+        {% endfor %}
+    </div>
+</div>

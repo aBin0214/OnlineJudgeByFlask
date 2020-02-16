@@ -5,7 +5,7 @@
       <div class="modal-header pl-4 pr-4">
         <h5 class="modal-title" id="exampleModalLabel">
           #<span id="id_solution">{{submission["id_solution"]}}</span>&nbsp;|&nbsp;
-          <a href="#" id="id_user"><span id="username">{{submission["username"]}}</span></a><span>'s solution for&nbsp;</span>
+          <a href="{{url_for('user.userIndex',userId = submission['id_user'])}}" id="id_user"><span id="username">{{submission["username"]}}</span></a><span>'s solution for&nbsp;</span>
           [<a href="{{url_for('proDetail.problemDetail',proNo=submission['id_contest_problem'])}}" id="id_contest_problem"><span id="problem_serial">{{submission["problem_serial"]}}</span></a>]
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">

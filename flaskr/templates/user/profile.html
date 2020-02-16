@@ -1,0 +1,40 @@
+<div class="media mb-0">
+    <img src="{{url_for('static',filename='img/portrait_man.jpg')}}" width="140rem" height="140rem">
+    <div class="ml-4">
+        <h4 class="font-weight-normal"><span><u>{{session.get("username")}}</u></span>
+            <img src="{{url_for('static',filename='img/edit.png')}}" width="28rem" height="28rem"></h4>
+        <table class="table border-0">
+            <thead class="text-black-50">
+                <tr>
+                    <td scope="col">24 hours</td>
+                    <td scope="col">7 days</td>
+                    <td scope="col">30 days</td>
+                    <td scope="col">Overall solved</td>
+                    <td scope="col">Overall attempted</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{proCnt["24hours"]}}</td>
+                    <td>{{proCnt["7days"]}}</td>
+                    <td>{{proCnt["30days"]}}</td>
+                    <td>{{proCnt["OverallSolved"]}}</td>
+                    <td>{{proCnt["OverallAttempted"]}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-1">
+        <strong><span class="font-weight-normal">Register:</span></strong><br />
+        <strong><span class="font-weight-normal">Last seen:</span></strong><br />
+        <strong><span class="font-weight-normal">Email:</span></strong>
+    </div>
+    <div class="col-md-4">
+        <span class="font-weight-light">30 mouth ago:</span><br />
+        <span class="font-weight-light">just now</span><br />
+        <span class="font-weight-light">1074871198@qq.com</span>
+    </div>
+</div>

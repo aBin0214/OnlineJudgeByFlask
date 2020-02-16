@@ -63,4 +63,10 @@ def create_app(test_config=None):
     from . import proDetailBlueprint
     app.register_blueprint(proDetailBlueprint.bp)
 
+    from . import userBlueprint
+    app.register_blueprint(userBlueprint.bp)
+
+    from . import adminBlueprint
+    app.register_blueprint(adminBlueprint.bp)
+
     return app

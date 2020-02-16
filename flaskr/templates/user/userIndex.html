@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}{{session.get("username")}}'s Index{% endblock title %}
+
+{% block extraJs %}
+<script>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    $(function(){
+        $.ajax({
+            url: $SCRIPT_ROOT+'/user/profile',
+            type:'POST',
+            data:{
+              "userId":{{g.userId|tojson|safe}}
+            },
+            success: function (response) {
+              $('#userContent').html(response);
+            }
+        });
+    })
+    function setContent(tag){
+        var urlList = new Array('profile','detail','report');
+        for(var url of urlList){
+          if(url === tag){
+            $("a#"+url).attr('class',"nav-link active");
+          }else{
+            $("a#"+url).attr('class',"nav-link");
+          }
+        }
+        $.ajax({
+          url:$SCRIPT_ROOT+"/user/"+tag,
+          type:'POST',
+          data:{
+            "userId":{{g.userId|tojson|safe}}
+          },
+          success:function(response){
+            $("#userContent").html(response);
+          }
+        });
+      }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row ml-2 mr-2">
+    <div class="col-md-10">
+        <div class="card border-0 shadow">
+            <div class="card-body" id="userContent">
+                {% import "macro/loading.html" as ld %}
+                {{ ld.loading() }}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
+            <a class="nav-link active" href="#" onclick="setContent('profile');" id="profile" role="tab">Profile</a>
+            <a class="nav-link" href="#" role="tab" onclick="setContent('detail');" id="detail">Detail</a>
+            <a class="nav-link" href="#" role="tab" onclick="setContent('report');" id="report">Report</a>
+        </div>
+    </div>
+
+</div>
+{% endblock%}

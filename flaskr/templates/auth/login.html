@@ -42,7 +42,7 @@
           })
           var linkUser = $('<a>',{
             text:$("#username").val(),
-            href:"#",
+            href:$SCRIPT_ROOT+"/user/userIndex/"+{{session.get('id_user')|tojson|safe}},
             class:"nav-item nav-link"
           });
           var linkLogOut = $('<a>',{

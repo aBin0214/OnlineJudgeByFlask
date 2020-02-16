@@ -52,7 +52,11 @@
 		
 		<li class="login_or_username">
 			{% if session.get('id_user') %}
-			<a class="nav-item nav-link" href="#">{{ session.get('username') }}</a>
+				{% if session.get("active") == "User"%}
+					<a class="nav-item nav-link" href="{{url_for('user.userIndex',userId = session.get('id_user'))}}"><u>{{ session.get('username') }}</u></a>
+				{% else %}
+					<a class="nav-item nav-link" href="{{url_for('user.userIndex',userId = session.get('id_user'))}}">{{ session.get('username') }}</a>
+				{% endif %}
 			{% else %}
 			<a class="nav-item nav-link" href="#" onclick="login();">Login</a>
 			{% endif %}
@@ -132,6 +136,10 @@
 				});
 				$("li.login_or_username").html(linkLogin);
 				$("li.logout_or_register").html(linkRegister);
+				var active = {{session.get('active')|tojson|safe}};
+				if(active == "User"){
+					window.location.href = $SCRIPT_ROOT+"/";
+				}
 			}
         })
 	}

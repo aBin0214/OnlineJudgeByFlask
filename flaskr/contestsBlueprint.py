@@ -41,10 +41,10 @@ def contestPermission(contestId):
     error = None
     if session.get('id_user') is None or session.get('id_user') == '':
         error = "Please log in first!"
-        flash(error,"danger")
+        flash(error,"Info")
     if contestInfo['start_time'] > datetime.datetime.now():
         error = "The contest hasn't started yet!"
-        flash(error,"danger")
+        flash(error,"Info")
     if error == None:
         if contestInfo["is_private"]:
             return jsonify({
