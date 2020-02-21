@@ -30,6 +30,11 @@
           "username":$("#username").val(),
           "password":$("#password").val()
         },
+        success: function (response) {
+          if(response["result"] != "success"){
+            return;
+          }
+        },
         complete:function(){
           $('#loginBox').modal('hide');
           $("#password").val("");
@@ -40,9 +45,14 @@
                 $('.toast').toast('show')
             }
           })
+          var idUser = {{session.get('id_user')|tojson|safe}};
+          if(idUser === undefined || idUser === null || idUser === ""){
+            return ;
+          }
+
           var linkUser = $('<a>',{
             text:$("#username").val(),
-            href:$SCRIPT_ROOT+"/user/userIndex/"+{{session.get('id_user')|tojson|safe}},
+            href:$SCRIPT_ROOT+"/user/userIndex/"+idUser,
             class:"nav-item nav-link"
           });
           var linkLogOut = $('<a>',{

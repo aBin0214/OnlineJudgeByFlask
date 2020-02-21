@@ -41,11 +41,11 @@ def contestPermission(contestId):
     error = None
     if session.get('id_user') is None or session.get('id_user') == '':
         error = "Please log in first!"
-        flash(error,"Info")
+        flash(error,"info")
     if contestInfo['start_time'] > datetime.datetime.now():
         error = "The contest hasn't started yet!"
-        flash(error,"Info")
-    if error == None:
+        flash(error,"info")
+    if error is None:
         if contestInfo["is_private"]:
             return jsonify({
                 "result":"success",
@@ -78,7 +78,7 @@ def judgeContestPass():
         error = 'Incorrect password.'
         flash(error,"danger")
     
-    if error == None:
+    if error is None:
         return jsonify({
             "result":"success",
             "nextUrl":url_for("contests.contest",contestId=contestId)

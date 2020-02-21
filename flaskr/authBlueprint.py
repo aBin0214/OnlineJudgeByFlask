@@ -67,7 +67,7 @@ def login():
     error = None
     if username is None or username == '':
         error = 'Username is required.'
-    elif password is None or password == '':
+    elif error is None and (password is None or password == ''):
         error = 'Password is required.'
     
     db = MysqlUtils.MyPyMysqlPool()
@@ -81,7 +81,6 @@ def login():
             error = 'Incorrect password.'
 
     if error is None:
-        session.clear()
         session['id_user'] = user['id_user']
         session["username"] = user['username']
         session['password'] = user['password']

@@ -114,14 +114,10 @@
 		$.ajax({
 			url: $SCRIPT_ROOT+'/auth/logout',
 			dataType:"json",
-			complete:function(){
-				$.ajax({
-					url: $SCRIPT_ROOT+'/base/showFlash',
-					success: function (response) {
-						$('#showFlash').html(response);
-						$('.toast').toast('show')
-					}
-				})
+			success: function (response) {
+				if(response["result"] != "success"){
+				  return;
+				}
 				var linkLogin = $('<a>',{
 					text:"Login",
 					href:"#",
@@ -140,6 +136,15 @@
 				if(active == "User"){
 					window.location.href = $SCRIPT_ROOT+"/";
 				}
+			},
+			complete:function(){
+				$.ajax({
+					url: $SCRIPT_ROOT+'/base/showFlash',
+					success: function (response) {
+						$('#showFlash').html(response);
+						$('.toast').toast('show')
+					}
+				})
 			}
         })
 	}
