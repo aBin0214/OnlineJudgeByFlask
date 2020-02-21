@@ -12,9 +12,11 @@ from . import MysqlUtils
 
 @bp.route("/problemDetail/<proNo>", methods=['GET'])
 def problemDetail(proNo):
-    languages = getLanguages()
-    problemInfo = getProblemInfo(proNo)
+    db = MysqlUtils.MyPyMysqlPool()
+    languages = getLanguages(db)
+    problemInfo = getProblemInfo(db,proNo)
     g.proNo = proNo
+    db.dispose()
     return render_template("proDetail/oneProblem.html",languages = languages,problemInfo=problemInfo)
 
 @bp.route("/submitCode",methods=['POST'])
@@ -30,7 +32,7 @@ def submitCode():
     if error is None:
         selectLanguage = request.form.get("selectLanguage")
         id_language = -1;
-        languages = getLanguages()
+        languages = getLanguages(db)
         for language in languages:
             if language['monaco_editor_val'] == selectLanguage:
                 id_language = language["id_language"]
@@ -56,20 +58,17 @@ def submitCode():
         "result":"failure",
         "error":error
     })
-def getLanguages():
-    db = MysqlUtils.MyPyMysqlPool()
+
+def getLanguages(db):
     sql = "SELECT id_language,name_language,monaco_editor_val FROM pro_language;"
     languages = None
     try:
         languages = db.get_all(sql)
     except:
         current_app.logger.info("get languages failure !")
-    finally:
-        db.dispose()
     return languages
 
-def getProblemInfo(idContestProblem):
-    db = MysqlUtils.MyPyMysqlPool()
+def getProblemInfo(db,idContestProblem):
     sql = "SELECT cp.serial,cp.id_contest_problem,p.id_problem,title,create_by,time_limit,mem_limit \
         FROM problem as p,contest_problem as cp \
         where p.id_problem = cp.id_problem \
@@ -79,6 +78,4 @@ def getProblemInfo(idContestProblem):
         problemInfo = db.get_one(sql)
     except:
         current_app.logger.info("get problem information failure !")
-    finally:
-        db.dispose()
     return problemInfo

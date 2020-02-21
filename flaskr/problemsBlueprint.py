@@ -14,6 +14,7 @@ bp = Blueprint('problems', __name__, url_prefix='/problems')
 @bp.route("/problemSet/<int:currentPage>")
 @bp.route("/problemSet")
 def problemSet(currentPage=1):
+    db = MysqlUtils.MyPyMysqlPool()
     g.active = 'ProblemSet'
     if session.get("contestId_pro") == 1:
         session['active'] = "Problems"
@@ -26,44 +27,52 @@ def problemSet(currentPage=1):
     if session.get("pageSize_pro") is None:
         session['pageSize_pro'] = 20
     
-    totalCount = getProblemCount(session.get("contestId_pro"),session.get("problemTag_pro"))
+    totalCount = getProblemCount(db,session.get("contestId_pro"),session.get("problemTag_pro"))
     total = totalCount//session.get("pageSize_pro")
     total = total if totalCount%session.get("pageSize_pro") == 0 or totalCount == 0 else total+1
     session['totalPage_pro'] = total
+
+    db.dispose()
 
     return render_template("problems/contestBase.html")
 
 @bp.route("/ranklist/<int:currentPage>")
 @bp.route("/ranklist")
 def ranklist(currentPage=1):
+    db = MysqlUtils.MyPyMysqlPool()
     g.active = 'Ranklist'
     session['currentPage_rank'] = currentPage
     if session.get("pageSize_rank") is None:
         session['pageSize_rank'] = 20
 
-    totalCount = getRanklistCount(session.get("contestId_pro"))
+    totalCount = getRanklistCount(db,session.get("contestId_pro"))
     total = totalCount//session.get("pageSize_rank")
     total = total if totalCount%session.get("pageSize_rank") == 0 or totalCount == 0 else total+1
     session['totalPage_rank'] = total
     if totalCount == 0:
         session['totalPage_rank'] = 0
 
+    db.dispose()
+
     return render_template("problems/contestBase.html")
 
 @bp.route("/submissions/<int:currentPage>")
 @bp.route("/submissions")
 def submissions(currentPage=1):
+    db = MysqlUtils.MyPyMysqlPool()
     g.active = 'Submissions'
     session['currentPage_sub'] = currentPage
     if session.get("pageSize_sub") is None:
         session['pageSize_sub'] = 20
 
-    totalCount = getSubmissionCount(session.get("contestId_pro"))
+    totalCount = getSubmissionCount(db,session.get("contestId_pro"))
     total = totalCount//session.get("pageSize_sub")
     total = total if totalCount%session.get("pageSize_sub") == 0 or totalCount == 0 else total+1
     session['totalPage_sub'] = total
     if totalCount == 0:
         session['totalPage_sub'] = 0
+
+    db.dispose()
     
     return render_template("problems/contestBase.html")
 
@@ -80,50 +89,63 @@ def problemSetTag(tag):
 
 @bp.route("/showContestInfo")
 def showContestInfo():
-    contestInfo = getContestInfo(session.get("contestId_pro"))
+    db = MysqlUtils.MyPyMysqlPool()
+    contestInfo = getContestInfo(db,session.get("contestId_pro"))
+    db.dispose()
     return render_template("problems/contestInfo.html",contestInfo = contestInfo)
 
 @bp.route("/showProblemList")
 def showProblemList():
 
+    db = MysqlUtils.MyPyMysqlPool()
+
     currentPage = int(session.get("currentPage_pro"))
     problemTag = session.get("problemTag_pro")
-    problems = getProblemsByTag(session.get("contestId_pro"),currentPage,problemTag,session.get("pageSize_pro"))
+    problems = getProblemsByTag(db,session.get("contestId_pro"),currentPage,problemTag,session.get("pageSize_pro"))
     idx = 0
     
     if problems is not False:
         for problem in problems:
             problemId = problem["id_contest_problem"]
-            problems[idx]["accepted_count"] = getAcceptedCount(problemId)
-            problems[idx]["submit_count"] = getSubmitCount(problemId)
+            problems[idx]["accepted_count"] = getAcceptedCount(db,problemId)
+            problems[idx]["submit_count"] = getSubmitCount(db,problemId)
             idx += 1
+
+    db.dispose()
 
     return render_template("problems/problemList.html",problems = problems)
 
 @bp.route("/showTagList")
 def showTagList():
-    tags = getAllTag()
+    db = MysqlUtils.MyPyMysqlPool()
+    tags = getAllTag(db)
+    db.dispose()
     return render_template('problems/tagList.html',tags = tags)
 
 @bp.route("/showRanklist")
 def showRanklist():
-    ranklist = getRanklist(session.get("contestId_pro"))
+    db = MysqlUtils.MyPyMysqlPool()
+    ranklist = getRanklist(db,session.get("contestId_pro"))
+    db.dispose()
     return render_template("problems/ranklist.html",ranklist=ranklist)
 
 @bp.route("/showSubmissionlist")
 def showSubmissionlist():
-    submissions = getSubmissions(session.get("contestId_pro"),session['currentPage_sub'],session.get("pageSize_sub"))
+    db = MysqlUtils.MyPyMysqlPool()
+    submissions = getSubmissions(db,session.get("contestId_pro"),session['currentPage_sub'],session.get("pageSize_sub"))
+    db.dispose()
     return render_template("problems/submissionList.html",submissions=submissions)
 
 @bp.route("/showSubmissionDetail/<int:solutionId>")
 def showSubmissionDetail(solutionId):
-    submission = getOneSubmission(solutionId)
+    db = MysqlUtils.MyPyMysqlPool()
+    submission = getOneSubmission(db,solutionId)
+    db.dispose()
     if submission is not False:
         submission['hl_code'] = CodeHighlightUtils.CodeHighlight.codeTranslate(submission['submit_content'],submission['monaco_editor_val'])
     return render_template("problems/submissionDetail.html",submission=submission)
 
-def getContestInfo(id_contest):
-    db = MysqlUtils.MyPyMysqlPool()
+def getContestInfo(db,id_contest):
     sql = "SELECT id_contest,title,introduction,start_time,end_time,is_practice,is_practice,username as belong,is_private,user.password \
         FROM contest,user \
         where contest.belong = user.id_user \
@@ -134,26 +156,20 @@ def getContestInfo(id_contest):
         contestInfo = db.get_one(sql)
     except:
         current_app.logger.error("get contest infomation failure !")
-    finally:
-        db.dispose()
     return contestInfo
 
-def getAllTag():
-    db = MysqlUtils.MyPyMysqlPool()
+def getAllTag(db):
     sql = "select id_tag,name_tag,descr from tag"
     tags = None
     try:
         tags = db.get_all(sql)
     except:
         current_app.logger.error("get tags failure !")
-    finally:
-        db.dispose()
     tags.append({'id_tag': 0, 'name_tag': 'All', 'descr': 'All Problems'})
     tags.reverse()
     return tags
 
-def getProblemsByTag(contestId,currentPage,problemTag,pageSize):
-    db = MysqlUtils.MyPyMysqlPool()
+def getProblemsByTag(db,contestId,currentPage,problemTag,pageSize):
     sql = ""
     start = (currentPage-1)*pageSize
     if contestId != 1 or (contestId == 1 and problemTag == "All"):
@@ -175,12 +191,9 @@ def getProblemsByTag(contestId,currentPage,problemTag,pageSize):
         problems = db.get_all(sql)
     except:
         current_app.logger.error("get problems failure !")
-    finally:
-        db.dispose()
     return problems
 
-def getSubmissions(contestId,currentPage,pageSize):
-    db = MysqlUtils.MyPyMysqlPool()
+def getSubmissions(db,contestId,currentPage,pageSize):
     start = (currentPage-1)*pageSize
     sql = 'select id_solution,submit_time,res.name_result as judge_status,cp.serial as problem_serial,cp.id_contest_problem,\
     lang.name_language,lang.monaco_editor_val,s.run_time,s.run_memory,u.username,u.id_user,\
@@ -199,12 +212,9 @@ def getSubmissions(contestId,currentPage,pageSize):
         submissions = db.get_all(sql)
     except:
         current_app.logger.error("get submissions failure !")
-    finally:
-        db.dispose()
     return submissions
 
-def getOneSubmission(solutionId):
-    db = MysqlUtils.MyPyMysqlPool()
+def getOneSubmission(db,solutionId):
     start = (session.get('currentPage_sub')-1)*session.get('pageSize_sub')
     sql = 'select id_solution,submit_time,res.name_result as judge_status,cp.serial as problem_serial,cp.id_contest_problem,\
     lang.name_language,lang.monaco_editor_val,s.run_time,s.run_memory,u.username,u.id_user,\
@@ -222,12 +232,9 @@ def getOneSubmission(solutionId):
         submissions = db.get_one(sql)
     except:
         current_app.logger.error("get solution-{}  failure !".format(solusionId))
-    finally:
-        db.dispose()
     return submissions
     
-def getRanklist(contestId):
-    db = MysqlUtils.MyPyMysqlPool()
+def getRanklist(db,contestId):
     sql = "select u.id_user,u.username,count(distinct s.id_contest_problem) as cnt \
         from user as u,solution as s,contest_problem as cp \
         where u.id_user = s.id_user \
@@ -241,12 +248,9 @@ def getRanklist(contestId):
         ranklist = db.get_all(sql)
     except:
         current_app.logger.error("get ranklist failure !")
-    finally:
-        db.dispose()
     return ranklist
 
-def getProblemCount(contestId,problemTag):
-    db = MysqlUtils.MyPyMysqlPool()
+def getProblemCount(db,contestId,problemTag):
     sql = "";
     if problemTag == "All":
         sql = "select count(id_contest_problem) as cnt from contest_problem where id_contest = {contestId}".format(contestId=contestId)
@@ -262,12 +266,9 @@ def getProblemCount(contestId,problemTag):
         res = db.get_one(sql)
     except:
         current_app.logger.error("get contest-{}'s problem count failure !".format(contestId))
-    finally:
-        db.dispose()
     return res["cnt"]
 
-def getSubmissionCount(contestId):
-    db = MysqlUtils.MyPyMysqlPool()
+def getSubmissionCount(db,contestId):
     sql = "select count(id_solution) as cnt \
     from solution as s,contest_problem as cp\
     where  s.id_contest_problem = cp.id_contest_problem\
@@ -276,12 +277,9 @@ def getSubmissionCount(contestId):
         res = db.get_one(sql)
     except:
         current_app.logger.error("get submission count failure !")
-    finally:
-        db.dispose()
     return res["cnt"]
 
-def getRanklistCount(contestId):
-    db = MysqlUtils.MyPyMysqlPool()
+def getRanklistCount(db,contestId):
     sql = "select count(distinct s.id_user) as cnt \
         from solution as s,contest_problem as cp \
         where cp.id_contest_problem = s.id_contest_problem \
@@ -291,12 +289,9 @@ def getRanklistCount(contestId):
         res = db.get_one(sql)
     except:
         current_app.logger.error("get ranklist count failure !")
-    finally:
-        db.dispose()
     return res["cnt"]
 
-def getAcceptedCount(problemId):
-    db = MysqlUtils.MyPyMysqlPool()
+def getAcceptedCount(db,problemId):
     sql = "select count(id_solution) as cnt \
     from solution as s,result_des as r \
     where s.state = r.id_result_des \
@@ -306,12 +301,9 @@ def getAcceptedCount(problemId):
         res = db.get_one(sql)
     except:
         current_app.logger.error("get problems accepted count failure !")
-    finally:
-        db.dispose()
     return res["cnt"]
 
-def getSubmitCount(problemId):
-    db = MysqlUtils.MyPyMysqlPool()
+def getSubmitCount(db,problemId):
     sql = "select count(id_solution) as cnt \
     from solution as s \
     where s.id_contest_problem = {}".format(problemId);
@@ -319,8 +311,6 @@ def getSubmitCount(problemId):
         res = db.get_one(sql)
     except:
         current_app.logger.error("get problems accepted count failure !")
-    finally:
-        db.dispose()
     return res["cnt"]
 
 def getProblemsBycontest(contest):

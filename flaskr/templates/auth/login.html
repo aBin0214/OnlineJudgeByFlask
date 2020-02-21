@@ -34,6 +34,19 @@
           if(response["result"] != "success"){
             return;
           }
+          var linkUser = $('<a>',{
+            text:$("#username").val(),
+            href:$SCRIPT_ROOT+"/user/userIndex",
+            class:"nav-item nav-link"
+          });
+          var linkLogOut = $('<a>',{
+            text:"LogOut",
+            href:"#",
+            onclick:"logout();",
+            class:"nav-item nav-link"
+          });
+          $("li.login_or_username").html(linkUser);
+          $("li.logout_or_register").html(linkLogOut);
         },
         complete:function(){
           $('#loginBox').modal('hide');
@@ -45,24 +58,6 @@
                 $('.toast').toast('show')
             }
           })
-          var idUser = {{session.get('id_user')|tojson|safe}};
-          if(idUser === undefined || idUser === null || idUser === ""){
-            return ;
-          }
-
-          var linkUser = $('<a>',{
-            text:$("#username").val(),
-            href:$SCRIPT_ROOT+"/user/userIndex/"+idUser,
-            class:"nav-item nav-link"
-          });
-          var linkLogOut = $('<a>',{
-            text:"LogOut",
-            href:"#",
-            onclick:"logout();",
-            class:"nav-item nav-link"
-          });
-          $("li.login_or_username").html(linkUser);
-          $("li.logout_or_register").html(linkLogOut);
         }
       });
     });

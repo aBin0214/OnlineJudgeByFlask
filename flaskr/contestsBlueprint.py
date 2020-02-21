@@ -14,6 +14,9 @@ bp = Blueprint('contests', __name__, url_prefix='/contests')
 @bp.route("/contestSet")
 @bp.route("/contestSet/<int:currentPage>")
 def contestSet(currentPage=1):
+
+    db = MysqlUtils.MyPyMysqlPool()
+
     session['active'] = "Contests"
     session['currentPage_con'] = currentPage
     if session.get("contextId_con") is None:
@@ -21,12 +24,14 @@ def contestSet(currentPage=1):
     if session.get("pageSize_con") is None:
         session['pageSize_con'] = 20
 
-    totalCount = getContestCount()
+    totalCount = getContestCount(db)
     total = totalCount//session.get("pageSize_con")
     total = total if totalCount%session.get("pageSize_con") == 0 else total+1
     session['totalPage_con'] = total
 
-    contestSet = getContestSet(session.get('currentPage_con'),session.get('pageSize_con'))
+    contestSet = getContestSet(db,session.get('currentPage_con'),session.get('pageSize_con'))
+
+    db.dispose()
         
     return render_template("contests/contestSet.html",contestSet=contestSet)
 
@@ -37,7 +42,10 @@ def contest(contestId):
 
 @bp.route("/contestPermission/<int:contestId>", methods=['GET'])
 def contestPermission(contestId):
-    contestInfo = getContestInfo(contestId)
+
+    db = MysqlUtils.MyPyMysqlPool()
+    contestInfo = getContestInfo(db,contestId)
+    db.dispose()
     error = None
     if session.get('id_user') is None or session.get('id_user') == '':
         error = "Please log in first!"
@@ -68,7 +76,9 @@ def contestPermission(contestId):
 def judgeContestPass():
     contestId = request.form["contestId"]
     password = request.form["password"]
-    contestInfo = getContestInfo(contestId)
+    db = MysqlUtils.MyPyMysqlPool()
+    contestInfo = getContestInfo(db,contestId)
+    db.dispose()
     error = None
     if password is None or password == '':
         error = "Password is required."
@@ -89,11 +99,12 @@ def judgeContestPass():
 
 @bp.route("/showContestList")
 def showContestList():
-    contestSet = getContestSet(session.get('currentPage_con'),session.get('pageSize_con'))
+    db = MysqlUtils.MyPyMysqlPool()
+    contestSet = getContestSet(db,session.get('currentPage_con'),session.get('pageSize_con'))
+    db.dispose()
     return render_template("contests/contestList.html",contestSet=contestSet)
 
-def getContestSet(currentPage,pageSize):
-    db = MysqlUtils.MyPyMysqlPool()
+def getContestSet(db,currentPage,pageSize):
     start = (currentPage-1)*pageSize
     sql = "SELECT id_contest,title,introduction,start_time,end_time,\
         is_practice,belong,is_private,password \
@@ -105,24 +116,18 @@ def getContestSet(currentPage,pageSize):
         contestSet = db.get_all(sql)
     except:
         current_app.logger.error("get contest count failure !")
-    finally:
-        db.dispose()
     return contestSet
 
-def getContestCount():
-    db = MysqlUtils.MyPyMysqlPool()
+def getContestCount(db):
     sql = "SELECT count(id_contest) as cnt FROM online_judge.contest \
     where contest.id_contest != 1 limit 1;"
     try:
         res = db.get_one(sql)
     except:
         current_app.logger.error("get submission count failure !")
-    finally:
-        db.dispose()
     return res["cnt"]
 
-def getContestInfo(id_contest):
-    db = MysqlUtils.MyPyMysqlPool()
+def getContestInfo(db,id_contest):
     sql = "SELECT id_contest,title,introduction,start_time,end_time,is_practice,is_practice,username as belong,is_private,user.password \
         FROM contest,user \
         where contest.belong = user.id_user \
@@ -133,6 +138,4 @@ def getContestInfo(id_contest):
         contestInfo = db.get_one(sql)
     except:
         current_app.logger.error("get contest infomation failure !")
-    finally:
-        db.dispose()
     return contestInfo
