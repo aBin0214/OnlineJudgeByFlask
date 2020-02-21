@@ -6,6 +6,11 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 import datetime
+from pyecharts import options as opts
+from pyecharts.charts import Bar
+from jinja2 import Markup
+# 内置主题类型可查看 pyecharts.globals.ThemeType
+from pyecharts.globals import ThemeType   
 
 from . import MysqlUtils
 
@@ -14,10 +19,9 @@ bp = Blueprint('user', __name__, url_prefix='/user')
 @bp.route("/userIndex/<int:userId>")
 @bp.route("/userIndex")
 def userIndex(userId=-1):
-    if session.get("id_user") is not None:
+    if userId == -1 and session.get("id_user") is not None:
         userId = session.get("id_user")
     g.userId = userId
-    session['active'] = "User"
     return render_template("user/userIndex.html")
 
 @bp.route("/profile",methods=['POST'])
@@ -25,6 +29,8 @@ def profile():
     db = MysqlUtils.MyPyMysqlPool()
 
     userId = request.form.get("userId")
+    userInfo = getUserInfo(db,userId)
+
     proCnt = {
         "24hours":0,
         "7days":0,
@@ -40,7 +46,7 @@ def profile():
 
     db.dispose()
 
-    return render_template("user/profile.html",proCnt=proCnt)
+    return render_template("user/profile.html",userInfo=userInfo,proCnt=proCnt)
 
 @bp.route("/detail",methods=['POST'])
 def detail():
@@ -60,14 +66,56 @@ def detail():
 @bp.route("/report",methods=['POST'])
 def report():
     userId = request.form.get("userId")
-    return render_template("user/report.html")
+    db = MysqlUtils.MyPyMysqlPool()
+    graph = getStatisticsGraph(db,userId)
+    db.dispose()
+    return Markup(graph.render_embed())
 
 @bp.route("/showUpdate")
 def showUpdate():
     return render_template("user/updateUser.html")
 
+def getStatisticsGraph(db,userId):
+    nowTime =datetime.datetime.now()
+    dateList = []
+    submitList = []
+    attemptedList = []
+    acceptList = []
+
+    startTime = datetime.datetime(nowTime.year,nowTime.month,nowTime.day,0,0,0)
+    endTime  = datetime.datetime(nowTime.year,nowTime.month,nowTime.day,23,59,59)
+    for idx in range(7):
+        startTimeTmp = startTime + datetime.timedelta(days=-1*idx)
+        endTimeTmp = endTime + datetime.timedelta(days=-1*idx)
+        dateList.append("{}.{}".format(startTimeTmp.month,endTimeTmp.day))
+        submitList.append(getSubmitCount(db,userId,startTimeTmp,endTimeTmp))
+        attemptedList.append(getAttemptedCount(db,userId,startTimeTmp,endTimeTmp))
+        acceptList.append(getAcceptedCount(db,userId,startTimeTmp,endTimeTmp))
+    dateList.reverse()
+    submitList.reverse()
+    attemptedList.reverse()
+    acceptList.reverse()
+
+    bar = (
+        Bar(init_opts=opts.InitOpts(theme=ThemeType.LIGHT,width="1200px", height="500px"))
+            .add_xaxis(dateList)
+            .add_yaxis("Submittimes", submitList)
+            .add_yaxis("Attempted Problems", attemptedList)
+            .add_yaxis("Accept Problems", acceptList)
+            .set_global_opts(title_opts=opts.TitleOpts(title="Statistics", subtitle="Last 7 days"),
+            yaxis_opts=opts.AxisOpts(min_interval=1))
+    )
+    return bar
+
 def getUserInfo(db,userId):
-    pass
+    sql = "select id_user,username,password,is_admin from user\
+    where id_user = {id_user} limit 1;".format(id_user=userId)
+    userInfo = None
+    try:
+        userInfo = db.get_one(sql)
+    except:
+        current_app.logger.error("get user:{} information failure !".format(userId))
+    return userInfo
 
 def getProCount(db,userId,interval=-1,state=-1):
     stateStr = ""
@@ -122,3 +170,46 @@ def getProList(db,userId,isSolved=True):
     except:
         current_app.logger.error("get user:{} {} problem failure !".format(userId,"solved" if isSolved else "unsolved"))
     return solvedPro
+
+def getSubmitCount(db,userId,startTime,endTime):
+    sql = "select count(id_solution) as cnt from solution \
+    where id_user = {id_user}\
+    and submit_time >= '{startTime}'\
+    and submit_time < '{endTime}';".format(id_user=userId,startTime=startTime,endTime=endTime)
+    res = None
+    try:
+        res = db.get_one(sql)
+    except:
+        current_app.logger.error("get user submit count failure !")
+    if res is False or res is None:
+        return 0
+    return res['cnt']
+
+def getAttemptedCount(db,userId,startTime,endTime):
+    sql = "select count(distinct id_contest_problem) as cnt from solution \
+    where id_user = {id_user}\
+    and submit_time >= '{startTime}'\
+    and submit_time < '{endTime}';".format(id_user=userId,startTime=startTime,endTime=endTime)
+    res = None
+    try:
+        res = db.get_one(sql)
+    except:
+        current_app.logger.error("get user attempted count failure !")
+    if res is False or res is None:
+        return 0
+    return res['cnt']
+
+def getAcceptedCount(db,userId,startTime,endTime):
+    sql = "select count(distinct id_contest_problem) as cnt from solution \
+    where state = 11\
+    and id_user = {id_user}\
+    and submit_time >= '{startTime}'\
+    and submit_time < '{endTime}';".format(id_user=userId,startTime=startTime,endTime=endTime)
+    res = None
+    try:
+        res = db.get_one(sql)
+    except:
+        current_app.logger.error("get user accept count failure !")
+    if res is False or res is None:
+        return 0
+    return res['cnt']

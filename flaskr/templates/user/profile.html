@@ -1,7 +1,7 @@
 <div class="media mb-0">
     <img src="{{url_for('static',filename='img/portrait_man.jpg')}}" width="140rem" height="140rem">
     <div class="ml-4">
-        <h4 class="font-weight-normal"><span><u>{{session.get("username")}}</u></span>
+        <h4 class="font-weight-normal"><span><u>{{userInfo["username"]}}</u></span>
             <img src="{{url_for('static',filename='img/edit.png')}}" width="28rem" height="28rem"></h4>
         <table class="table border-0">
             <thead class="text-black-50">
@@ -33,8 +33,8 @@
         <strong><span class="font-weight-normal">Email:</span></strong>
     </div>
     <div class="col-md-4">
-        <span class="font-weight-light">30 mouth ago:</span><br />
-        <span class="font-weight-light">just now</span><br />
-        <span class="font-weight-light">1074871198@qq.com</span>
+        <span class="font-weight-light">---</span><br />
+        <span class="font-weight-light">---</span><br />
+        <span class="font-weight-light">---</span>
     </div>
 </div>
