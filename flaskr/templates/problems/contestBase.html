@@ -102,9 +102,9 @@
             <script>
               $(function(){
                 $.ajax({
-                  url: $SCRIPT_ROOT+'/problems/currentRankList',
+                  url: $SCRIPT_ROOT+'/problems/showCurRanklist',
                   success: function (response) {
-                    $('#rankList').html(response);
+                    $('#showRanklist').html(response);
                   }
                 })
               });

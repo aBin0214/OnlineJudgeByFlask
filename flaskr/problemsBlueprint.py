@@ -80,7 +80,8 @@ def submissions(currentPage=1):
 @bp.route("/currentRanklist")
 def currentRanklist(currentPage=1):
     g.active = 'Ranklist'
-    return render_template("problems/currentRanklist.html")
+    return render_template("problems/contestBase.html")
+
 
 @bp.route("/problemSetTag/<string:tag>")
 def problemSetTag(tag):
@@ -128,6 +129,13 @@ def showRanklist():
     ranklist = getRanklist(db,session.get("contestId_pro"))
     db.dispose()
     return render_template("problems/ranklist.html",ranklist=ranklist)
+
+@bp.route("/showCurRanklist")
+def showCurRanklist():
+    db = MysqlUtils.MyPyMysqlPool()
+    serialList = getProblemSerial(db,session.get("contestId_pro"))
+    db.dispose()
+    return render_template("problems/curRanklist.html",serialList=serialList)
 
 @bp.route("/showSubmissionlist")
 def showSubmissionlist():
@@ -313,6 +321,18 @@ def getSubmitCount(db,problemId):
         current_app.logger.error("get problems accepted count failure !")
     return res["cnt"]
 
-def getProblemsBycontest(contest):
+def getProblemsBycontest(db,contest):
     pass
+
+def getProblemSerial(db,contestId):
+    sql = "select serial from contest_problem\
+    where id_contest = {} order by serial".format(contestId)
+    serialList = None
+    try:
+        serialList = db.get_all(sql)
+    except:
+        current_app.logger.error("get contest:{} problem serial list failure !".format(contestId))
+    if serialList == None or serialList == False:
+        return []
+    return serialList
 

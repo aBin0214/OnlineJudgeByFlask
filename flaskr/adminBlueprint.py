@@ -7,3 +7,11 @@ from flask import (
 from werkzeug.exceptions import abort
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+@bp.route("/login")
+def login():
+    pass
+
+@bp.route("/index")
+def index():
+    pass
