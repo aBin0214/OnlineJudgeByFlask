@@ -23,6 +23,7 @@ def worker(que, db_lock):
         task = que.get()  # 获取任务，如果队列为空则阻塞
         solution_id = task['solution_id']
         problem_id = task['problem_id']
+        # contest_problem_id = task["contest_problem_id"]
         language = task['pro_lang']
         data_count = deal_data.get_data_count(task['problem_id'])  # 获取测试数据的个数
         logger.info("judging %s" % solution_id)

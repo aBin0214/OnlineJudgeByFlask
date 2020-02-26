@@ -82,13 +82,13 @@ def main():
 
 
 if __name__ == '__main__':
-    try:
-        # 降低程序运行权限，防止恶意代码
-        os.setuid(int(os.popen("id -u %s" % "nobody").read()))
-    except OSError:
-        pass
-        # logging.error("please run this program as root!")
-        # sys.exit(-1)
+    # try:
+    #     # 降低程序运行权限，防止恶意代码
+    #     os.setuid(int(os.popen("id -u %s" % "nobody").read()))
+    # except OSError:
+    #     pass
+    #     logging.error("please run this program as root!")
+    #     sys.exit(-1)
     # 全局变量，创建队列
     cfg = sys_config.Config()
     queue = Queue(cfg.queue_size)

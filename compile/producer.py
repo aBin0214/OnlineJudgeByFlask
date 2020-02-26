@@ -15,35 +15,40 @@ def put_task_into_queue(que, db_lock):
     """
     while True:
         que.join()  # 阻塞程序,直到队列里面的任务全部完成
-        sql = "select id_solution,id_problem,name_language\
-                            from solution,pro_language \
-                            where solution.id_language = pro_language.id_language \
-                            and state = 12;"
+        sql = "select id_solution,id_problem,s.id_contest_problem,name_language\
+                from solution as s,pro_language as pl,contest_problem as cp \
+                where s.id_language = pl.id_language \
+                and  s.id_contest_problem = cp.id_contest_problem \
+                and state = 12;"
         mysql = mysql_DBUtils.MyPyMysqlPool()
+        db_lock.acquire()
         data = mysql.get_all(sql)
+        db_lock.release()
         if data is False:
             continue
         time.sleep(0.2)  # 延时0.2秒,防止因速度太快不能获取代码
         for item in data:
-            id_solution, id_problem, name_language = item["id_solution"], item["id_problem"], item["name_language"]
+            id_solution, id_problem, id_contest_problem, name_language = \
+                item["id_solution"], item["id_problem"], item["id_contest_problem"], item["name_language"]
             db_lock.acquire()
-            ret = get_code.get_code(id_solution, id_problem, name_language)
+            ret = get_code.get_code(id_solution, name_language)
             db_lock.release()
             if ret is False:
                 # 防止因速度太快不能获取代码
                 time.sleep(0.5)
                 db_lock.acquire()
-                ret = get_code.get_code(id_solution, id_problem, name_language)
+                ret = get_code.get_code(id_solution, name_language)
                 db_lock.release()
-            # # if ret is False:
-            # #     db_lock.acquire()
-            # #     # update_solution_state(solution_id, 11)
-            # #     db_lock.release()
-            # #     # clean_work_dir(solution_id)
-            # #     continue
+            # if ret is False:
+            #     db_lock.acquire()
+            #     # update_solution_state(solution_id, 11)
+            #     db_lock.release()
+            #     # clean_work_dir(solution_id)
+            #     continue
             task = {
                 "solution_id": id_solution,
                 "problem_id": id_problem,
+                "contest_problem_id":id_contest_problem,
                 "pro_lang": name_language,
             }
             que.put(task)

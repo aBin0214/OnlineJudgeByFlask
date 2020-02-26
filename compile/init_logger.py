@@ -29,7 +29,7 @@ def init_logger(name):
     log_file_str = log_dir_name + os.sep + log_file_name
     file_handler = logging.FileHandler(log_file_str, encoding='UTF-8')
 
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     stream_handler.setLevel(logging.INFO)
     file_handler.setLevel(logging.INFO)
 

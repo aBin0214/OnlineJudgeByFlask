@@ -8,7 +8,7 @@ import mysql_DBUtils
 import sys_config
 
 
-def get_code(solution_id, problem_id, pro_lang):
+def get_code(solution_id, pro_lang):
     """
     从数据库获取代码并写入work目录下对应的文件
     :param solution_id:
