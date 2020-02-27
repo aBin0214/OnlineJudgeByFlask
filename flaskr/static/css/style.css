@@ -4,6 +4,9 @@ html{
 
 #container {
     margin-top: 5rem;
+}
+
+.bg-light-grey{
     background-color: #fafafa;
 }
 

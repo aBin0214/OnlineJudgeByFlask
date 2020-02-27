@@ -58,6 +58,7 @@
             url: $SCRIPT_ROOT+'/problems/showTagList',
             success: function (response) {
               $('#showTagList').html(response);
+              loadFootor();
             }
           })
         });
@@ -78,6 +79,7 @@
                   url: $SCRIPT_ROOT+'/problems/showProblemList',
                   success: function (response) {
                     $('#showProblemList').html(response);
+                    loadFootor();
                   }
                 })
               });
@@ -94,6 +96,7 @@
                     url: $SCRIPT_ROOT+'/problems/showRanklist',
                     success: function (response) {
                       $('#showRanklist').html(response);
+                      loadFootor();
                     }
                   })
                 });
@@ -105,6 +108,7 @@
                   url: $SCRIPT_ROOT+'/problems/showCurRanklist',
                   success: function (response) {
                     $('#showRanklist').html(response);
+                    loadFootor();
                   }
                 })
               });
@@ -121,6 +125,7 @@
                   url: $SCRIPT_ROOT+'/problems/showSubmissionlist',
                   success: function (response) {
                     $('#showSubmissionlist').html(response);
+                    loadFootor();
                   }
                 })
               });
@@ -130,6 +135,7 @@
                   success: function (response) {
                     $('#showSubmissionDetail').html(response);
                     $('#showSubDetail').modal('show');
+                    loadFootor();
                   }
                 });
               }

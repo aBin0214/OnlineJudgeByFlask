@@ -21,6 +21,8 @@ def problemDetail(proNo):
 
 @bp.route("/submitCode",methods=['POST'])
 def submitCode():
+    db = MysqlUtils.MyPyMysqlPool()
+
     error = None
     if session.get('id_user') is None:
         error = 'You need to log in first!'
@@ -40,19 +42,19 @@ def submitCode():
         if id_language != -1:
             try:
                 proNo = request.form.get("proNo")
-                db = MysqlUtils.MyPyMysqlPool()
                 sql = 'INSERT INTO solution (id_user,id_contest_problem,id_language,submit_content) VALUES (\'{}\',\'{}\',\'{}\',\'{}\')'\
                     .format(id_user, proNo,id_language,inputCode)
+                print(sql)
                 db.insert(sql)
                 flash('Answer submitted successfully!','success')
+                db.dispose()
                 return jsonify({
                     "result":"success"
                 })
             except:
                 error = "user:{},problemNo:{}. submit answer failure".format(session.get("username"),proNo)
                 current_app.logger.error(error)
-            finally:
-                db.dispose()
+    db.dispose()
     flash(error,"danger")
     return jsonify({
         "result":"failure",

@@ -26,58 +26,23 @@
 </head>
 
 <body>
-
 	<nav id="narbar_top" class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
 		<a class="navbar-brand" href="{{url_for('home.index')}}">
 			<img src="{{url_for('static',filename='img/balloon.png')}}" width="38rem" height="38rem" class="d-inline-block align-top">
-			My Online Judge
+			My-OJ Admin
 		</a>
-		<ul class="nav nav-pills mr-auto">
-			<li>
-				{%if session.get('active') == 'Home'%}
-				<a class="nav-item nav-link active" href="{{url_for('home.index')}}">Home</a>
-				{%else%}
-				<a class="nav-item nav-link" href="{{url_for('home.index')}}">Home</a>
-				{%endif%}
-			</li>
-			<li>
-				{%if session.get('active') == 'Problems'%}
-				<a class="nav-item nav-link active" href="{{url_for('contests.contest',contestId=1)}}">Problems</a>
-				{%else%}
-				<a class="nav-item nav-link" href="{{url_for('contests.contest',contestId=1)}}">Problems</a>
-				{%endif%}
-			</li>
-			<li>
-				{%if session.get('active') == 'Contests'%}
-				<a class="nav-item nav-link active" href="{{url_for('contests.contestSet')}}">Contests</a>
-				{%else%}
-				<a class="nav-item nav-link" href="{{url_for('contests.contestSet')}}">Contests</a>
-				{%endif%}
-			</li>
-		</ul>
-		<!-- <form class="form-inline ml-auto">
-		<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-		<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-	</form> -->
-		<ul class="nav nav-pills ml-3 .text-success">
-
+		<ul class="nav nav-pills ml-auto .text-success">
 			<li class="login_or_username">
 				{% if session.get('id_user') %}
 				<a class="nav-item nav-link"
 					href="{{url_for('user.userIndex',userId = session.get('id_user'))}}">{{ session.get('username') }}</a>
-				{% else %}
-				<a class="nav-item nav-link" href="#" onclick="login();">Login</a>
 				{% endif %}
 			</li>
-			<li class="logout_or_register">
+			<li class="logout">
 				{% if session.get('id_user') %}
 				<a class="nav-item nav-link" href="#" onclick="logout()">LogOut</a>
-				{% else %}
-				<a class="nav-item nav-link" href="#" onclick="register();">Register</a>
 				{% endif %}
-
 			</li>
-
 		</ul>
 	</nav>
 	<div class="content">
@@ -119,67 +84,5 @@
 			});
 		</script>
 	</div>
-	<div id="popUpBox">
-	</div>
-	<script>
-		function login() {
-			$.ajax({
-				url: $SCRIPT_ROOT + '/auth/showLogin',
-				success: function (response) {
-					$('#popUpBox').html(response);
-					$('#loginBox').modal('show')
-				}
-			})
-		}
-
-		function register() {
-			$.ajax({
-				url: $SCRIPT_ROOT + '/auth/showRegister',
-				success: function (response) {
-					$('#popUpBox').html(response);
-					$('#registerBox').modal('show')
-				}
-			})
-		}
-
-		function logout() {
-			$.ajax({
-				url: $SCRIPT_ROOT + '/auth/logout',
-				dataType: "json",
-				success: function (response) {
-					if (response["result"] != "success") {
-						return;
-					}
-					var linkLogin = $('<a>', {
-						text: "Login",
-						href: "#",
-						onclick: "login();",
-						class: "nav-item nav-link"
-					});
-					var linkRegister = $('<a>', {
-						text: "Register",
-						href: "#",
-						onclick: "register();",
-						class: "nav-item nav-link"
-					});
-					$("li.login_or_username").html(linkLogin);
-					$("li.logout_or_register").html(linkRegister);
-					var active = {{session.get('active') | tojson | safe}};
-					if (active == "User") {
-						window.location.href = $SCRIPT_ROOT + "/";
-					}
-				},
-				complete: function () {
-					$.ajax({
-						url: $SCRIPT_ROOT + '/base/showFlash',
-						success: function (response) {
-							$('#showFlash').html(response);
-							$('.toast').toast('show')
-						}
-					})
-				}
-			})
-		}
-	</script>
 </body>
 </html>
