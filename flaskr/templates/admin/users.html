@@ -1,0 +1,83 @@
+<div class="my-4">
+    <h6>Show All Users</h6>
+</div>
+<div class="row customTableTop">
+    <div class="col-md-1">
+        <span class="font-weight-light">UserId</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-weight-light">Username</span>
+    </div>
+    <div class="col-md-3">
+        <span class="font-weight-light">Profile</span>
+    </div>
+    <div class="col-md-3">
+        <span class="font-weight-light">Detail</span>
+    </div>
+    <div class="col-md-3">
+        <span class="font-weight-light">Report</span>
+    </div>
+</div>
+<hr/>
+{% for user in userList %}
+    <div class="row customTableItem">
+        <div class="col-md-1">
+            <span class="text-muted">#{{user["id_user"]}}</span>
+        </div>
+        <div class="col-md-2">
+            <span class="text-muted">{{user["username"]}}</span>
+        </div>
+        <div class="col-md-3">
+            <a href="#" onclick="toggleUser({{user['id_user']}},'profile');"><span class="text-muted"></span>Profile</span></a>
+        </div>
+        <div class="col-md-3">
+            <a href="#" onclick="toggleUser({{user['id_user']}},'detail');"><span class="text-muted"></span>Detail</span></a>
+        </div>
+        <div class="col-md-3">
+            <a href="#" onclick="toggleUser({{user['id_user']}},'report');"><span class="text-muted"></span>Report</span></a>
+        </div>
+    </div>
+    <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="userDetail_{{user['id_user']}}">
+        {% import "macro/loading.html" as ld %}
+        {{ ld.loading() }}
+    </div>
+    <hr class="customTableItemHr"/>
+{% endfor%}
+{% import "macro/page.html" as pg %}
+{{ pg.page(1,3,'admin.users') }}
+<script>
+    $(function(){
+        $(".customTableItemDetail").hide();
+    });
+    function toggleUser(id,tag){
+        var toHide = true;
+        if($("#userDetail_"+id).is(":hidden")){
+            getDetail(id,tag);
+            toHide = false;
+        }else if($("#userDetail_"+id).attr('tag') === undefined || $("#userDetail_"+id).attr('tag') !== tag){
+            getDetail(id,tag);
+            toHide = false;
+        }
+        $("#userDetail_"+id).attr('tag',tag);
+        if(toHide){
+            $("#userDetail_"+id).hide();
+        }else{
+            $("#userDetail_"+id).show();
+        }
+        
+    }
+    function getDetail(id,tag){
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        $.ajax({
+            url: $SCRIPT_ROOT+'/user/'+tag,
+            type:'POST',
+            data:{
+              "userId":id
+            },
+            success: function (response) {
+                $("#userDetail_"+id).html(response)
+                loadFootor();
+            }
+        });
+    }
+</script>

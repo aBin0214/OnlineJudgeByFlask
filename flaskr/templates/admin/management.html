@@ -1,0 +1,37 @@
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="#" onclick="setManagementContent('users');" id="users">Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" onclick="setManagementContent('problems');" id="problems">Problems</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" onclick="setManagementContent('contests');" id="contests">Contests</a>
+    </li>
+</ul>
+<div id="managementContent" class="mx-2">
+    {% import "macro/loading.html" as ld %}
+    {{ ld.loading() }}
+</div>
+<script>
+    function setManagementContent(tag) {
+        var urlList = new Array('users', 'problems', 'contests');
+        for (var url of urlList) {
+            if (url === tag) {
+                $("a#" + url).attr('class', "nav-link active");
+            } else {
+                $("a#" + url).attr('class', "nav-link");
+            }
+        }
+        $.ajax({
+            url: $SCRIPT_ROOT + "/admin/" + tag,
+            type: 'POST',
+            success: function (response) {
+                $("#managementContent").html(response);
+            }
+        });
+    }
+    $(function () {
+        setManagementContent("users");
+    });
+</script>
