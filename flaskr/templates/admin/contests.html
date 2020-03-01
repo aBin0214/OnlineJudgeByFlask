@@ -1,0 +1,101 @@
+<div class="my-4">
+    <span class="font-weight-bold">Show All Contests</span>
+    <button type="button" class="btn btn-success float-right">Created Contest</button>
+</div>
+<div class="row customTableTop">
+    <div class="col-md-1">
+        <span class="font-italic">ContestId</span>
+    </div>
+    <div class="col-md-3">
+        <span class="font-italic">Title</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">Duration</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">State</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">Detail</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">Report</span>
+    </div>
+</div>
+<hr/>
+{% for contest in contestList %}
+    <div class="row customTableItem">
+        <div class="col-md-1">
+            <span class="text-muted">#{{contest["id_contest"]}}</span>
+        </div>
+        <div class="col-md-3">
+            <span class="text-muted">{{contest["title"]}}</span>
+        </div>
+        <div class="col-md-2">
+            <span class="font-weight-light">
+                {% import "macro/timeDelta.html" as td %}
+                {{ td.duration(contest['start_time'],contest['end_time']) }}
+            </span>
+        </div>
+        <div class="col-md-2">
+            <span class="font-weight-light">
+                {% import "macro/contestState.html" as cs %}
+                {{ cs.state(contest['id_contest'],contest['start_time'],contest['end_time']) }}
+            </span>
+        </div>
+        <!-- <div class="col-md-2">
+            <a href="#" onclick="toggleContest({{contest['id_contest']}},'profile');"><span class="text-muted"></span>Profile</span></a>
+        </div> -->
+        <div class="col-md-2">
+            detail
+            <!-- <a href="#" onclick="toggleContest({{contest['id_contest']}},'detail');"><span class="text-muted"></span>Detail</span></a> -->
+        </div>
+        <div class="col-md-2">
+            report
+            <!-- <a href="#" onclick="toggleContest({{contest['id_contest']}},'report');"><span class="text-muted"></span>Report</span></a> -->
+        </div>
+    </div>
+    <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="contestContent_{{contest['id_contest']}}">
+        {% import "macro/loading.html" as ld %}
+        {{ ld.loading() }}
+    </div>
+    <hr class="customTableItemHr"/>
+{% endfor%}
+{% import "macro/page.html" as pg %}
+{{ pg.page(1,3,'admin.users') }}
+<script>
+    $(function(){
+        $(".customTableItemDetail").hide();
+    });
+    function toggleContest(id,tag){
+        var toHide = true;
+        if($("#contestContent_"+id).is(":hidden")){
+            getDetail(id,tag);
+            toHide = false;
+        }else if($("#contestContent_"+id).attr('tag') === undefined || $("#contestContent_"+id).attr('tag') !== tag){
+            getDetail(id,tag);
+            toHide = false;
+        }
+        $("#contestContent_"+id).attr('tag',tag);
+        if(toHide){
+            $("#contestContent_"+id).hide();
+        }else{
+            $("#contestContent_"+id).show();
+        }
+        
+    }
+    function getDetail(id,tag){
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        $.ajax({
+            url: $SCRIPT_ROOT,
+            type:'POST',
+            data:{
+              "userId":id
+            },
+            success: function (response) {
+                $("#contestContent_"+id).html(response)
+                loadFootor();
+            }
+        });
+    }
+</script>

@@ -74,22 +74,53 @@ def logs():
     return render_template("admin/logs.html")
 
 @bp.route("/users",methods=["POST"])
-def users():
+@bp.route("/users/<int:currentPage>",methods=["POST","GET"])
+def users(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
-    userList = getUserList(db)
+
+    session['currentPage_users'] = currentPage
+    if session.get("pageSize_users") is None:
+        session['pageSize_users'] = 20
+
+    totalCount = getUserCount(db)
+    total = totalCount//session.get("pageSize_users")
+    total = total if totalCount%session.get("pageSize_users") == 0 else total+1
+    session['totalPage_users'] = total
+
+    userList = getUserList(db,session.get('currentPage_users'),session.get('pageSize_users'))
+
+    print(session.get('totalPage_users'),session.get('currentPage_users'),session.get('pageSize_users'))
     db.dispose()
     return render_template("admin/users.html",userList=userList)
 
 @bp.route("/problems",methods=["POST"])
 def problems():
-    return render_template("admin/problems.html")
+    db = MysqlUtils.MyPyMysqlPool()
+    problemList = getProblemList(db)
+    db.dispose()
+    return render_template("admin/problems.html",problemList=problemList)
 
 @bp.route("/contests",methods=["POST"])
 def contests():
-    return render_template("admin/contests.html")
+    db = MysqlUtils.MyPyMysqlPool()
+    contestList = getContestList(db)
+    db.dispose()
+    return render_template("admin/contests.html",contestList=contestList)
 
-def getUserList(db):
-    sql = "select id_user,username,password from user"
+def getUserCount(db):
+    sql = "select count(id_user) as cnt from user;"
+    res = None
+    try:
+        res = db.get_one(sql)
+    except:
+        current_app.logger.error("get user count failure !")
+    if res is False or res is None:
+        return 0
+    return res["cnt"]
+
+def getUserList(db,currentPage,pageSize):
+    start = (currentPage-1) * pageSize
+    sql = "select id_user,username,password from user limit {start},{pageSize}".format(start=start,pageSize=pageSize)
     userList = None
     try:
         userList = db.get_all(sql)
@@ -98,6 +129,31 @@ def getUserList(db):
     if userList is False or userList is None:
         return []
     return userList
+
+def getProblemList(db):
+    sql = "SELECT id_problem,title,username \
+        FROM problem,user \
+        where problem.create_by = user.id_user;"
+    problemList = None
+    try:
+        problemList = db.get_all(sql)
+    except:
+        current_app.logger.error("get problem list failure !")
+    if problemList is False or problemList is None:
+        return []
+    return problemList
+
+def getContestList(db):
+    sql = "SELECT id_contest,title,introduction,start_time,end_time,\
+    is_practice,belong,is_private,password FROM contest;"
+    contestList = None
+    try:
+        contestList = db.get_all(sql)
+    except:
+        current_app.logger.error("get contest list failure !")
+    if contestList is False or contestList is None:
+        return []
+    return contestList
 
 def judgeAdmin():
     if session.get('is_admin') is None:

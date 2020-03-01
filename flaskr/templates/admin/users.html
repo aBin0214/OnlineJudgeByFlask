@@ -1,21 +1,21 @@
 <div class="my-4">
-    <h6>Show All Users</h6>
+    <span class="font-weight-bold">Show All Users</span>
 </div>
 <div class="row customTableTop">
     <div class="col-md-1">
-        <span class="font-weight-light">UserId</span>
+        <span class="font-italic">UserId</span>
     </div>
     <div class="col-md-2">
-        <span class="font-weight-light">Username</span>
+        <span class="font-italic">Username</span>
     </div>
     <div class="col-md-3">
-        <span class="font-weight-light">Profile</span>
+        <span class="font-italic">Profile</span>
     </div>
     <div class="col-md-3">
-        <span class="font-weight-light">Detail</span>
+        <span class="font-italic">Detail</span>
     </div>
     <div class="col-md-3">
-        <span class="font-weight-light">Report</span>
+        <span class="font-italic">Report</span>
     </div>
 </div>
 <hr/>
@@ -37,32 +37,32 @@
             <a href="#" onclick="toggleUser({{user['id_user']}},'report');"><span class="text-muted"></span>Report</span></a>
         </div>
     </div>
-    <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="userDetail_{{user['id_user']}}">
+    <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="userContent_{{user['id_user']}}">
         {% import "macro/loading.html" as ld %}
         {{ ld.loading() }}
     </div>
     <hr class="customTableItemHr"/>
 {% endfor%}
 {% import "macro/page.html" as pg %}
-{{ pg.page(1,3,'admin.users') }}
+{{ pg.page(session.get("currentPage_users"),session.get("totalPage_users"),'admin.users') }}
 <script>
     $(function(){
         $(".customTableItemDetail").hide();
     });
     function toggleUser(id,tag){
         var toHide = true;
-        if($("#userDetail_"+id).is(":hidden")){
+        if($("#userContent_"+id).is(":hidden")){
             getDetail(id,tag);
             toHide = false;
-        }else if($("#userDetail_"+id).attr('tag') === undefined || $("#userDetail_"+id).attr('tag') !== tag){
+        }else if($("#userContent_"+id).attr('tag') === undefined || $("#userContent_"+id).attr('tag') !== tag){
             getDetail(id,tag);
             toHide = false;
         }
-        $("#userDetail_"+id).attr('tag',tag);
+        $("#userContent_"+id).attr('tag',tag);
         if(toHide){
-            $("#userDetail_"+id).hide();
+            $("#userContent_"+id).hide();
         }else{
-            $("#userDetail_"+id).show();
+            $("#userContent_"+id).show();
         }
         
     }
@@ -74,8 +74,17 @@
             data:{
               "userId":id
             },
+            beforeSend: function(){
+                $.ajax({
+                    url: $SCRIPT_ROOT + "/base/loading",
+                    type: 'POST',
+                    success:function(response){
+                        $("#userContent_"+id).html(response);
+                    }
+                });
+            },
             success: function (response) {
-                $("#userDetail_"+id).html(response)
+                $("#userContent_"+id).html(response)
                 loadFootor();
             }
         });

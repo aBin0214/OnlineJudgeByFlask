@@ -116,7 +116,17 @@
 			$.ajax({
 				url: $SCRIPT_ROOT + "/admin/" + tag,
 				type: 'POST',
+				beforeSend: function(){
+					$.ajax({
+						url: $SCRIPT_ROOT + "/base/loading",
+						type: 'POST',
+						success:function(response){
+							$("#adminContent").html(response);
+						}
+					});
+				},
 				success: function (response) {
+					$("title").text(tag);
 					$("#adminContent").html(response);
 				}
 			});
@@ -138,6 +148,7 @@
 			});
 		</script>
 	</div>
+	<div id="popUpBox">
+	</div>
 </body>
-
 </html>

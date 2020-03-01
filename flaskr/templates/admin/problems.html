@@ -1,0 +1,97 @@
+<div class="my-4">
+    <span class="font-weight-bold">Show All Problems</span>
+    <button type="button" class="btn btn-success float-right">Created Problem</button>
+</div>
+<div class="row customTableTop">
+    <div class="col-md-1">
+        <span class="font-italic">ProblemId</span>
+    </div>
+    <div class="col-md-3">
+        <span class="font-italic">Title</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">Created By</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">State</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">Detail</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">Report</span>
+    </div>
+</div>
+<hr/>
+{% for problem in problemList %}
+    <div class="row customTableItem">
+        <div class="col-md-1">
+            <span class="text-muted">#{{problem["id_problem"]}}</span>
+        </div>
+        <div class="col-md-3">
+            <span class="text-muted">{{problem["title"]}}</span>
+        </div>
+        <div class="col-md-2">
+            <span class="text-muted">{{problem["username"]}}</span>
+        </div>
+        <div class="col-md-2">
+            <span class="font-weight-light">
+                ---
+            </span>
+        </div>
+        <!-- <div class="col-md-2">
+            <a href="#" onclick="toggleProblem({{problem['id_problem']}},'profile');"><span class="text-muted"></span>Profile</span></a>
+        </div> -->
+        <div class="col-md-2">
+            detail
+            <!-- <a href="#" onclick="toggleProblem({{problem['id_problem']}},'detail');"><span class="text-muted"></span>Detail</span></a> -->
+        </div>
+        <div class="col-md-2">
+            report
+            <!-- <a href="#" onclick="toggleProblem({{problem['id_problem']}},'report');"><span class="text-muted"></span>Report</span></a> -->
+        </div>
+    </div>
+    <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="problemContent_{{problem['id_problem']}}">
+        {% import "macro/loading.html" as ld %}
+        {{ ld.loading() }}
+    </div>
+    <hr class="customTableItemHr"/>
+{% endfor%}
+{% import "macro/page.html" as pg %}
+{{ pg.page(1,3,'admin.users') }}
+<script>
+    $(function(){
+        $(".customTableItemDetail").hide();
+    });
+    function toggleProblem(id,tag){
+        var toHide = true;
+        if($("#problemContent_"+id).is(":hidden")){
+            getDetail(id,tag);
+            toHide = false;
+        }else if($("#problemContent_"+id).attr('tag') === undefined || $("#problemContent_"+id).attr('tag') !== tag){
+            getDetail(id,tag);
+            toHide = false;
+        }
+        $("#problemContent_"+id).attr('tag',tag);
+        if(toHide){
+            $("#problemContent_"+id).hide();
+        }else{
+            $("#problemContent_"+id).show();
+        }
+        
+    }
+    function getDetail(id,tag){
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        $.ajax({
+            url: $SCRIPT_ROOT,
+            type:'POST',
+            data:{
+              "userId":id
+            },
+            success: function (response) {
+                $("#problemContent_"+id).html(response)
+                loadFootor();
+            }
+        });
+    }
+</script>

@@ -1,12 +1,16 @@
 {% macro duration(startTime,endTime) %}
     {% set time = endTime-startTime %}
-    {% if time.days != 0 %}
+    {% if time.days > 1000 %}
+        forever
+    {%else%}
+        {% if time.days != 0 %}
         {{time.days}}days&nbsp;
-    {% endif %}
-    {% if time.seconds//3600 != 0 %}
-        {{time.seconds//3600}}hours&nbsp;
-    {% endif %}
-    {% if (time.seconds%3600)//60 != 0 %}
-        {{(time.seconds%3600)//60}}mimutes
+        {% endif %}
+        {% if time.seconds//3600 != 0 %}
+            {{time.seconds//3600}}hours&nbsp;
+        {% endif %}
+        {% if (time.seconds%3600)//60 != 0 %}
+            {{(time.seconds%3600)//60}}mimutes
+        {% endif %}
     {% endif %}
 {% endmacro %}
