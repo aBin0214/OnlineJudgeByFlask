@@ -8,14 +8,8 @@
     <div class="col-md-2">
         <span class="font-italic">Username</span>
     </div>
-    <div class="col-md-3">
-        <span class="font-italic">Profile</span>
-    </div>
-    <div class="col-md-3">
-        <span class="font-italic">Detail</span>
-    </div>
-    <div class="col-md-3">
-        <span class="font-italic">Report</span>
+    <div class="col-md-2 ml-auto">
+        <span class="font-italic">Options</span>
     </div>
 </div>
 <hr/>
@@ -27,13 +21,9 @@
         <div class="col-md-2">
             <span class="text-muted">{{user["username"]}}</span>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2 ml-auto">
             <a href="#" onclick="toggleUser({{user['id_user']}},'profile');"><span class="text-muted"></span>Profile</span></a>
-        </div>
-        <div class="col-md-3">
             <a href="#" onclick="toggleUser({{user['id_user']}},'detail');"><span class="text-muted"></span>Detail</span></a>
-        </div>
-        <div class="col-md-3">
             <a href="#" onclick="toggleUser({{user['id_user']}},'report');"><span class="text-muted"></span>Report</span></a>
         </div>
     </div>
@@ -44,7 +34,7 @@
     <hr class="customTableItemHr"/>
 {% endfor%}
 {% import "macro/page.html" as pg %}
-{{ pg.page(session.get("currentPage_users"),session.get("totalPage_users"),'admin.users') }}
+{{ pg.page(session.get("currentPage_users"),session.get("totalPage_users"),'/admin/users',"#managementContent") }}
 <script>
     $(function(){
         $(".customTableItemDetail").hide();

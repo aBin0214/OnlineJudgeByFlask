@@ -1,0 +1,46 @@
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="#" onclick="setLogContent('page');" id="page">Page</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" onclick="setLogContent('backstage');" id="backstage">Backstage</a>
+    </li>
+</ul>
+<div id="logContent" class="mx-2">
+</div>
+<script>
+    function setLogContent(tag) {
+        var urlList = new Array('page', 'backstage');
+        for (var url of urlList) {
+            if (url === tag) {
+                $("a#" + url).attr('class', "nav-link active");
+            } else {
+                $("a#" + url).attr('class', "nav-link");
+            }
+        }
+        $.ajax({
+            url: $SCRIPT_ROOT + "/admin/showLogs",
+            type: 'POST',
+            data: {
+                "tag":tag
+            },
+            beforeSend: function(){
+                $.ajax({
+                    url: $SCRIPT_ROOT + "/base/loading",
+                    type: 'POST',
+                    success:function(response){
+                        $("#logContent").html(response);
+                    }
+                });
+            },
+            success: function (response) {
+                $("#logContent").html(response);
+                $("#logListTitle").text("show all "+tag+" logs");
+                loadFootor();
+            }
+        });
+    }
+    $(function () {
+        setLogContent("page");
+    });
+</script>

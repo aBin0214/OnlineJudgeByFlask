@@ -15,11 +15,8 @@
     <div class="col-md-2">
         <span class="font-italic">State</span>
     </div>
-    <div class="col-md-2">
-        <span class="font-italic">Detail</span>
-    </div>
-    <div class="col-md-2">
-        <span class="font-italic">Report</span>
+    <div class="col-md-2 ml-auto">
+        <span class="font-italic">Options</span>
     </div>
 </div>
 <hr/>
@@ -43,16 +40,9 @@
                 {{ cs.state(contest['id_contest'],contest['start_time'],contest['end_time']) }}
             </span>
         </div>
-        <!-- <div class="col-md-2">
-            <a href="#" onclick="toggleContest({{contest['id_contest']}},'profile');"><span class="text-muted"></span>Profile</span></a>
-        </div> -->
-        <div class="col-md-2">
-            detail
-            <!-- <a href="#" onclick="toggleContest({{contest['id_contest']}},'detail');"><span class="text-muted"></span>Detail</span></a> -->
-        </div>
-        <div class="col-md-2">
-            report
-            <!-- <a href="#" onclick="toggleContest({{contest['id_contest']}},'report');"><span class="text-muted"></span>Report</span></a> -->
+        <div class="col-md-2 ml-auto">
+            <a href="#">detail</a>
+            <a href="#">report</a>
         </div>
     </div>
     <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="contestContent_{{contest['id_contest']}}">
@@ -62,7 +52,7 @@
     <hr class="customTableItemHr"/>
 {% endfor%}
 {% import "macro/page.html" as pg %}
-{{ pg.page(1,3,'admin.users') }}
+{{ pg.page(session.get("currentPage_contests"),session.get("totalPage_contests"),'/admin/contests',"#managementContent") }}
 <script>
     $(function(){
         $(".customTableItemDetail").hide();

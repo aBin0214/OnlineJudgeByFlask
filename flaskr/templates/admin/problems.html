@@ -1,6 +1,6 @@
 <div class="my-4">
     <span class="font-weight-bold">Show All Problems</span>
-    <button type="button" class="btn btn-success float-right">Created Problem</button>
+    <button type="button" class="btn btn-success float-right" onclick="showCreatedProblem();">Created Problem</button>
 </div>
 <div class="row customTableTop">
     <div class="col-md-1">
@@ -15,11 +15,8 @@
     <div class="col-md-2">
         <span class="font-italic">State</span>
     </div>
-    <div class="col-md-2">
-        <span class="font-italic">Detail</span>
-    </div>
-    <div class="col-md-2">
-        <span class="font-italic">Report</span>
+    <div class="col-md-2 ml-auto">
+        <span class="font-italic">Options</span>
     </div>
 </div>
 <hr/>
@@ -36,19 +33,16 @@
         </div>
         <div class="col-md-2">
             <span class="font-weight-light">
-                ---
+                {% if problem["is_publish"] == 1 %}
+                    <span class="badge badge-success">Published</span>
+                {% else %}
+                    <span class="badge badge-secondary">Unpublished</span>
+                {% endif %}
             </span>
         </div>
-        <!-- <div class="col-md-2">
-            <a href="#" onclick="toggleProblem({{problem['id_problem']}},'profile');"><span class="text-muted"></span>Profile</span></a>
-        </div> -->
-        <div class="col-md-2">
-            detail
-            <!-- <a href="#" onclick="toggleProblem({{problem['id_problem']}},'detail');"><span class="text-muted"></span>Detail</span></a> -->
-        </div>
-        <div class="col-md-2">
-            report
-            <!-- <a href="#" onclick="toggleProblem({{problem['id_problem']}},'report');"><span class="text-muted"></span>Report</span></a> -->
+        <div class="col-md-2 ml-auto">
+            <a href="#">detail</a>
+            <a href="#">report</a>
         </div>
     </div>
     <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="problemContent_{{problem['id_problem']}}">
@@ -58,7 +52,7 @@
     <hr class="customTableItemHr"/>
 {% endfor%}
 {% import "macro/page.html" as pg %}
-{{ pg.page(1,3,'admin.users') }}
+{{ pg.page(session.get("currentPage_problems"),session.get("totalPage_problems"),'/admin/problems',"#managementContent") }}
 <script>
     $(function(){
         $(".customTableItemDetail").hide();
@@ -91,6 +85,18 @@
             success: function (response) {
                 $("#problemContent_"+id).html(response)
                 loadFootor();
+            }
+        });
+    }
+</script>
+<script>
+    function showCreatedProblem(){
+        $.ajax({
+            url: $SCRIPT_ROOT + "/admin/createProblem",
+            type: "GET",
+            success: function(response){
+                $("#popUpBox").html(response);
+                $("#showCreateProblem").modal('show');
             }
         });
     }

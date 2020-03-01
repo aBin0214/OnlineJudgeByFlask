@@ -32,7 +32,6 @@ class CodeHighlight():
     
 
 
-
 if __name__ == "__main__":
     code = r"""
     #include <stdio.h>
@@ -47,3 +46,4 @@ if __name__ == "__main__":
     """
     print(CodeHighlight.codeTranslate(code,"c"))
     # print(CodeHighlight.getStyleCss())
+    print()

@@ -1,0 +1,76 @@
+<div class="my-4">
+    <span id="logListTitle" class="font-weight-bold">Show All Problems</span>
+    <button type="button" class="btn btn-success float-right" onclick="showCreatedProblem();">Export All</button>
+</div>
+<div class="row customTableTop">
+    <div class="col-md-1">
+        <span class="font-italic">Serial</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">filename</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">Size(KB)</span>
+    </div>
+    <div class="col-md-2 ml-auto">
+        <span class="font-italic">Options</span>
+    </div>
+</div>
+<hr/>
+{% for log in logList %}
+    <div class="row customTableItem">
+        <div class="col-md-1">
+            <span class="text-muted">#{{log["id_log"]}}</span>
+        </div>
+        <div class="col-md-2">
+            <span class="text-muted">{{log["filename"]}}</span>
+        </div>
+        <div class="col-md-2">
+            <span class="text-muted">{{log["size"]}}</span>
+        </div>
+        <div class="col-md-2 ml-auto">
+            <a href="#" onclick="showLogDetail({{log}})">Detail</a>
+            <a href="#" onclick="exportLog({{log}})">Export</a>
+        </div>
+    </div>
+    <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="logContent_{{loop.index}}">
+    </div>
+    <hr class="customTableItemHr"/>
+{% endfor%}
+{% import "macro/page.html" as pg %}
+{{ pg.page(session.get("currentPage_logs"),session.get("totalPage_logs"),'/admin/showLogs',"#logContent") }}
+<script>
+    $(function(){
+        $(".customTableItemDetail").hide();
+    });
+</script>
+<script>
+    function showLogDetail(log){
+        $.ajax({
+            url: $SCRIPT_ROOT + "/admin/logDetail",
+            type: "POST",
+            data:{
+                "path":log["path"]
+            },
+            success: function(response){
+                $("#popUpBox").html(response);
+                $("#showLogDetail").modal('show');
+            }
+        });
+    }
+    function exportLog(log){
+        /*$.ajax({
+            url: $SCRIPT_ROOT + "/admin/exportLog",
+            type: "POST",
+            data:{
+                "path":log["path"]
+            },
+            success: function(response){
+            }
+        });*/
+        var url = $SCRIPT_ROOT + "/admin/exportLog";
+        var form = $("<form></form>").attr("action", url).attr("method", "post");
+        form.append($("<input></input>").attr("type", "hidden").attr("name", "filePath").attr("value", log["path"]));
+        form.appendTo('body').submit().remove();
+    }
+</script>
