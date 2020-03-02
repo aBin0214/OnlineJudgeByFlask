@@ -95,8 +95,7 @@
             url: $SCRIPT_ROOT + "/admin/createProblem",
             type: "GET",
             success: function(response){
-                $("#popUpBox").html(response);
-                $("#showCreateProblem").modal('show');
+                $("#managementContent").html(response);
             }
         });
     }

@@ -38,15 +38,14 @@ def register():
             sql = 'INSERT INTO user (username, password, is_admin) VALUES (\'{}\',\'{}\',\'{}\')'\
                 .format(username, generate_password_hash(password), 0)
             db.insert(sql)
+            db.dispose()
+            flash('Registered successfully!','success')
+            return jsonify({
+                "result":"success"
+            })
         except:
             error = "Insert user into mysql-database failure"
             current_app.logger.error(error)
-        finally:
-            db.dispose()
-        flash('Registered successfully!','success')
-        return jsonify({
-            "result":"success"
-        })
     flash(error,'danger')
     db.dispose()
     return jsonify({

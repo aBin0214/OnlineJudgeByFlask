@@ -59,15 +59,6 @@
         });
     }
     function exportLog(log){
-        /*$.ajax({
-            url: $SCRIPT_ROOT + "/admin/exportLog",
-            type: "POST",
-            data:{
-                "path":log["path"]
-            },
-            success: function(response){
-            }
-        });*/
         var url = $SCRIPT_ROOT + "/admin/exportLog";
         var form = $("<form></form>").attr("action", url).attr("method", "post");
         form.append($("<input></input>").attr("type", "hidden").attr("name", "filePath").attr("value", log["path"]));

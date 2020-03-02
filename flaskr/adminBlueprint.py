@@ -11,6 +11,7 @@ import os
 from . import MysqlUtils
 from . import LogUtils
 from . import CodeHighlightUtils
+from . import problemUtils
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -156,8 +157,44 @@ def exportLog():
 def createProblem():
     if request.method == "GET":
         return render_template("admin/createProblem.html")
-    else:
-        pass
+    problemTitle = request.form.get("problemTitle")
+    timeLimit = request.form.get("timeLimit")
+    memoryLimit = request.form.get("memoryLimit")
+    describe = request.form.get("describe")
+    error = None
+    if problemTitle == "" or problemTitle == None:
+        error = "problemTitle is empty."
+    elif timeLimit == "" or timeLimit == None:
+        error = "timeLimit is empty."
+    elif memoryLimit == "" or memoryLimit == None:
+        error = "memoryLimit is empty."
+    elif describe == "" or describe == None:
+        error = "describe is empty."
+
+    userId = session.get("id_user")
+    
+    if error is None:
+        db = MysqlUtils.MyPyMysqlPool()
+        try:
+            sql = 'INSERT INTO problem (title,create_by, time_limit, mem_limit) VALUES (\'{}\',\'{}\',\'{}\',\'{}\')'\
+                .format(problemTitle, userId,timeLimit, memoryLimit)
+            db.insert(sql)
+            problemId = db.get_one("select max(id_problem) as id from problem limit 1;")["id"]
+            problemUtils.saveProblemDescribe(problemId,describe)
+            flash('Created problem successfully!','success')
+        except:
+            error = "Created problem failure."
+            current_app.logger.error(error)
+        finally:
+            db.dispose()
+    if error is None:
+        return jsonify({
+            "result":"success"
+        })
+    flash(error,'danger')
+    return jsonify({
+        "result":"failure"
+    })
 
 @bp.route("/contests",methods=["POST","GET"])
 @bp.route("/contests/<int:currentPage>",methods=["POST","GET"])
@@ -248,6 +285,8 @@ def getContestList(db,currentPage,pageSize):
     if contestList is False or contestList is None:
         return []
     return contestList
+
+
 
 def judgeAdmin():
     if session.get('is_admin') is None:

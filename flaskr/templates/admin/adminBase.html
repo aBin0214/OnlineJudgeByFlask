@@ -5,6 +5,7 @@
 	<title>DashBoard - MyOJ</title>
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/codeHighlight_vs.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='editor.md/css/editormd.css') }}">
 	<link rel="stylesheet"
 		href="{{ url_for('static', filename='bootstrap-4.4.1/bootstrap-4.4.1-dist/css/bootstrap.css') }}">
 	<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
@@ -19,6 +20,7 @@
 		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
 	</script>
 	<script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='editor.md/editormd.min.js') }}"></script>
 	{% block extraJs %}
 	{% endblock %}
 	{% block styles %}
