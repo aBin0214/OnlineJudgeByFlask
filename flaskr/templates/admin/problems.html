@@ -1,19 +1,16 @@
 <div class="my-4">
     <span class="font-weight-bold">Show All Problems</span>
-    <button type="button" class="btn btn-success float-right" onclick="showCreatedProblem();">Created Problem</button>
+    <button type="button" class="btn btn-success float-right" onclick="createdProblem();">Created Problem</button>
 </div>
 <div class="row customTableTop">
     <div class="col-md-1">
         <span class="font-italic">ProblemId</span>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <span class="font-italic">Title</span>
     </div>
     <div class="col-md-2">
         <span class="font-italic">Created By</span>
-    </div>
-    <div class="col-md-2">
-        <span class="font-italic">State</span>
     </div>
     <div class="col-md-2 ml-auto">
         <span class="font-italic">Options</span>
@@ -25,24 +22,16 @@
         <div class="col-md-1">
             <span class="text-muted">#{{problem["id_problem"]}}</span>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <span class="text-muted">{{problem["title"]}}</span>
         </div>
         <div class="col-md-2">
             <span class="text-muted">{{problem["username"]}}</span>
         </div>
-        <div class="col-md-2">
-            <span class="font-weight-light">
-                {% if problem["is_publish"] == 1 %}
-                    <span class="badge badge-success">Published</span>
-                {% else %}
-                    <span class="badge badge-secondary">Unpublished</span>
-                {% endif %}
-            </span>
-        </div>
         <div class="col-md-2 ml-auto">
             <a href="#">detail</a>
             <a href="#">report</a>
+            <a href="#" onclick="updateProblem({{problem['id_problem']}});">update</a>
         </div>
     </div>
     <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="problemContent_{{problem['id_problem']}}">
@@ -90,10 +79,26 @@
     }
 </script>
 <script>
-    function showCreatedProblem(){
+    function createdProblem(){
         $.ajax({
             url: $SCRIPT_ROOT + "/admin/createProblem",
-            type: "GET",
+            type: "POST",
+            success: function(response){
+                $("#managementContent").html(response);
+            }
+        });
+    }
+</script>
+<script>
+    function updateProblem(problemId){
+        console.log(problemId);
+
+        $.ajax({
+            url: $SCRIPT_ROOT + "/admin/updateProblem",
+            type: "POST",
+            data:{
+                "id_problem":problemId
+            },
             success: function(response){
                 $("#managementContent").html(response);
             }

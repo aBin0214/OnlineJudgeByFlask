@@ -9,12 +9,14 @@ from werkzeug.security import check_password_hash, generate_password_hash
 bp = Blueprint('proDetail', __name__, url_prefix='/proDetail')
 
 from . import MysqlUtils
+from . import ProblemUtils
 
 @bp.route("/problemDetail/<proNo>", methods=['GET'])
 def problemDetail(proNo):
     db = MysqlUtils.MyPyMysqlPool()
     languages = getLanguages(db)
     problemInfo = getProblemInfo(db,proNo)
+    problemInfo["describe"] = ProblemUtils.readProblemDescribe(problemInfo["id_problem"])["content"]
     g.proNo = proNo
     db.dispose()
     return render_template("proDetail/oneProblem.html",languages = languages,problemInfo=problemInfo)

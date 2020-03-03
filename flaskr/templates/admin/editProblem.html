@@ -1,24 +1,24 @@
 <div class="my-4">
-  <span class="font-weight-bold">Created Problem</span>
+  <span class="font-weight-bold">{{proContent["webTitle"]}}</span>
   <button type="button" class="btn btn-secondary float-right" onclick="setManagementContent('problems');">Back</button>
 </div>
 <label class="">Title:</label>
-<input type="text" class="form-control mt-1 mb-3" name="problemTitle" id="problemTitle">
+<input type="text" class="form-control mt-1 mb-3" name="problemTitle" id="problemTitle" value="{{proContent['title']}}">
 <div class="form-row">
   <div class="form-group col-md-6">
     <label for="inputEmail4">Time Limit(ms):</label>
-    <input type="text" class="form-control" name="timeLimit" id="timeLimit" value="1000">
+    <input type="text" class="form-control" name="timeLimit" id="timeLimit" value="{{proContent['time_limit']}}">
   </div>
   <div class="form-group col-md-6">
     <label for="inputPassword4">Memory Limit（kb):</label>
-    <input type="text" class="form-control" name="memoryLimit" id="memoryLimit" value="65535">
+    <input type="text" class="form-control" name="memoryLimit" id="memoryLimit" value="{{proContent['mem_limit']}}">
   </div>
 </div>
 <label class="mb-3">Describe:</label>
 <div id="editor">
-  <textarea style="display:none;"></textarea>
+  <textarea style="display:none;">{{proContent["describe"]}}</textarea>
 </div>
-<button type="button" class="btn btn-success float-right" onclick="createProblem();">Submit</button>
+<button type="button" class="btn btn-success float-right" onclick="saveProblem({{proContent['id_problem']}});">Submit</button>
 <script type="text/javascript">
   $SCRIPT_ROOT = {{request.script_root | tojson | safe}};                                       
   var editor = null;
@@ -27,26 +27,24 @@
       width: "100%",
       height: 640,
       syncScrolling : "single",
-      markdown: "Enter the description of the problem here\n\n"+
-      "### Input\nEnter the description of the input here\n"+
-      "### Output\nEnter the description of the output here\n"+
-      "### Sample Input\n```\nEnter the sample Input here\n```\n"+
-      "### Sample Output\n```\nEnter the sample output here\n```\n",     // dynamic set Markdown text -->
       path : $SCRIPT_ROOT+"/static/editor.md/lib/"  // Autoload modules mode, codemirror, marked... dependents libs path
     });
   });
 </script>
 <script>
-  function createProblem(){
+  function saveProblem(problemId){
     problemTitle = $("#problemTitle").val();
     timeLimit = $("#timeLimit").val();
     memoryLimit = $("#memoryLimit").val();
     describe = editor.getMarkdown();
-    console.log(problemTitle,timeLimit,memoryLimit,describe);
+
+    console.log(problemId);
+
     $.ajax({
-      url: $SCRIPT_ROOT+"/admin/createProblem",
+      url: $SCRIPT_ROOT+"/admin/saveProblem",
       type: "POST",
       data: {
+        "id_problem":problemId,
         "problemTitle":problemTitle,
         "timeLimit":timeLimit,
         "memoryLimit":memoryLimit,

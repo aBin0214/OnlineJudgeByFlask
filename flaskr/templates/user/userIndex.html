@@ -6,16 +6,7 @@
 <script>
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     $(function(){
-        $.ajax({
-            url: $SCRIPT_ROOT+'/user/profile',
-            type:'POST',
-            data:{
-              "userId":{{g.userId|tojson|safe}}
-            },
-            success: function (response) {
-              $('#userContent').html(response);
-            }
-        });
+      setContent("profile");
     })
     function setContent(tag){
         var urlList = new Array('profile','detail','report');
@@ -32,6 +23,21 @@
           data:{
             "userId":{{g.userId|tojson|safe}}
           },
+          beforeSend: function(){
+            var curUserId = {{g.userId|tojson|safe}};
+            var sesUserId = {{session.get("id_user")}};
+            if(curUserId == sesUserId){
+              $("#mainContent").attr("class","col-md-10");
+              $("#mainTab").attr("style","");
+            }
+            $.ajax({
+              url: $SCRIPT_ROOT + "/base/loading",
+              type: 'POST',
+              success:function(response){
+                $("#userContent").html(response);
+              }
+            });
+          },
           success:function(response){
             $("#userContent").html(response);
           }
@@ -42,15 +48,13 @@
 
 {% block content %}
 <div class="row ml-2 mr-2">
-    <div class="col-md-10">
+    <div class="col-md-12" id = "mainContent">
         <div class="card border-0 shadow">
             <div class="card-body" id="userContent">
-                {% import "macro/loading.html" as ld %}
-                {{ ld.loading() }}
             </div>
         </div>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2" id="mainTab" style="display:none;">
         <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
             <a class="nav-link active" href="#" onclick="setContent('profile');" id="profile" role="tab">Profile</a>
             <a class="nav-link" href="#" role="tab" onclick="setContent('detail');" id="detail">Detail</a>

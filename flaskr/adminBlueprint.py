@@ -11,7 +11,7 @@ import os
 from . import MysqlUtils
 from . import LogUtils
 from . import CodeHighlightUtils
-from . import problemUtils
+from . import ProblemUtils
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -153,10 +153,36 @@ def exportLog():
     if os.path.isfile(filePath):
         return send_from_directory(dirname,filename,as_attachment=True)
 
-@bp.route("/createProblem",methods=["POST","GET"])
+@bp.route("/createProblem",methods=["POST"])
 def createProblem():
-    if request.method == "GET":
-        return render_template("admin/createProblem.html")
+    proContent = {}
+    proContent["id_problem"] = -1
+    proContent["webTitle"] = "Created Problem"
+    proContent["title"] = ""
+    proContent["time_limit"] = 1000
+    proContent["mem_limit"] = 65535
+    proContent["describe"] = "Enter the description of the problem here\n\n" \
+        "### Input\nEnter the description of the input here\n" \
+        "### Output\nEnter the description of the output here\n" \
+        "### Sample Input\n```\nEnter the sample Input here\n```\n" \
+        "### Sample Output\n```\nEnter the sample output here\n```\n" \
+        "### Hint\nEnter the hint of the problem here\n"
+    return render_template("admin/editProblem.html",proContent=proContent)
+
+@bp.route("/updateProblem",methods=["POST"])
+def updateProblem():
+    db = MysqlUtils.MyPyMysqlPool()
+    problemId = request.form.get("id_problem")
+    print("problemId:",problemId)
+    proContent = getProblemById(db,problemId)
+    proContent["webTitle"] = "Update Problem"
+    proContent["describe"] = ProblemUtils.readProblemDescribe(problemId)["content"]
+    db.dispose
+    return render_template("admin/editProblem.html",proContent=proContent)
+
+@bp.route("/saveProblem",methods=["POST"])
+def saveProblem():
+    problemId = request.form.get("id_problem")
     problemTitle = request.form.get("problemTitle")
     timeLimit = request.form.get("timeLimit")
     memoryLimit = request.form.get("memoryLimit")
@@ -172,18 +198,24 @@ def createProblem():
         error = "describe is empty."
 
     userId = session.get("id_user")
-    
+    isUpdate = False if problemId == -1 or problemId == None else True
     if error is None:
         db = MysqlUtils.MyPyMysqlPool()
         try:
-            sql = 'INSERT INTO problem (title,create_by, time_limit, mem_limit) VALUES (\'{}\',\'{}\',\'{}\',\'{}\')'\
-                .format(problemTitle, userId,timeLimit, memoryLimit)
-            db.insert(sql)
-            problemId = db.get_one("select max(id_problem) as id from problem limit 1;")["id"]
-            problemUtils.saveProblemDescribe(problemId,describe)
-            flash('Created problem successfully!','success')
+            if isUpdate:
+                sql = "INSERT INTO problem (title,create_by, time_limit, mem_limit) VALUES ('{}','{}','{}','{}')" \
+                    .format(problemTitle, userId,timeLimit, memoryLimit)
+                db.insert(sql)
+                problemId = db.get_one("select max(id_problem) as id from problem limit 1;")["id"]
+            else:
+                sql = "UPDATE problem SET title='{}',create_by='{}',time_limit='{}',mem_limit='{}' where id_problem = '{}'" \
+                    .format(problemTitle, userId,timeLimit, memoryLimit,problemId)
+                print(sql)
+                db.update(sql)
+            ProblemUtils.saveProblemDescribe(problemId,describe)
+            flash('{} problem successfully!'.format("Created" if isUpdate is False else "Update"),'success')
         except:
-            error = "Created problem failure."
+            error = "{} problem failure.".format("Created" if isUpdate is False else "Update")
             current_app.logger.error(error)
         finally:
             db.dispose()
@@ -261,9 +293,9 @@ def getUserList(db,currentPage,pageSize):
 
 def getProblemList(db,currentPage,pageSize):
     start = (currentPage-1) * pageSize
-    sql = "SELECT id_problem,title,username,is_publish \
-        FROM problem,user \
-        where problem.create_by = user.id_user limit {start},{pageSize};".format(start=start,pageSize=pageSize)
+    sql = "SELECT id_problem,title,username "\
+        "FROM problem,user " \
+        "where problem.create_by = user.id_user limit {start},{pageSize};".format(start=start,pageSize=pageSize)
     problemList = None
     try:
         problemList = db.get_all(sql)
@@ -275,8 +307,8 @@ def getProblemList(db,currentPage,pageSize):
 
 def getContestList(db,currentPage,pageSize):
     start = (currentPage-1) * pageSize
-    sql = "SELECT id_contest,title,introduction,start_time,end_time,\
-    is_practice,belong,is_private,password FROM contest limit {start},{pageSize};".format(start=start,pageSize=pageSize)
+    sql = "SELECT id_contest,title,introduction,start_time,end_time," \
+    "is_practice,belong,is_private,password FROM contest limit {start},{pageSize};".format(start=start,pageSize=pageSize)
     contestList = None
     try:
         contestList = db.get_all(sql)
@@ -286,7 +318,18 @@ def getContestList(db,currentPage,pageSize):
         return []
     return contestList
 
-
+def getProblemById(db,problemId):
+    sql = "SELECT id_problem,title,time_limit,mem_limit " \
+        "FROM problem "\
+        "where id_problem = {id_problem} limit 1;".format(id_problem=problemId)
+    proContent = None
+    try:
+        proContent = db.get_one(sql)
+    except:
+        current_app.logger.error("get problem:{} failure !".format(problemId))
+    if proContent is False or proContent is None:
+        return {}
+    return proContent
 
 def judgeAdmin():
     if session.get('is_admin') is None:
