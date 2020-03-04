@@ -15,7 +15,7 @@
     <div class="col-md-2">
         <span class="font-italic">State</span>
     </div>
-    <div class="col-md-2 ml-auto">
+    <div class="col-md-3 ml-auto">
         <span class="font-italic">Options</span>
     </div>
 </div>
@@ -40,9 +40,10 @@
                 {{ cs.state(contest['id_contest'],contest['start_time'],contest['end_time']) }}
             </span>
         </div>
-        <div class="col-md-2 ml-auto">
-            <a href="#">detail</a>
-            <a href="#">report</a>
+        <div class="col-md-3 ml-auto">
+            <a href="#"  class="badge badge-pill badge-secondary">detail</a>
+            <a href="#"  class="badge badge-pill badge-info">report</a>
+            <a href="#" class="badge badge-pill badge-danger">delete</a>
         </div>
     </div>
     <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="contestContent_{{contest['id_contest']}}">

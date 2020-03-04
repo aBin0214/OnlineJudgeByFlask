@@ -12,7 +12,7 @@
     <div class="col-md-2">
         <span class="font-italic">Created By</span>
     </div>
-    <div class="col-md-2 ml-auto">
+    <div class="col-md-3 ml-auto">
         <span class="font-italic">Options</span>
     </div>
 </div>
@@ -28,52 +28,53 @@
         <div class="col-md-2">
             <span class="text-muted">{{problem["username"]}}</span>
         </div>
-        <div class="col-md-2 ml-auto">
-            <a href="#">detail</a>
-            <a href="#">report</a>
-            <a href="#" onclick="updateProblem({{problem['id_problem']}});">update</a>
+        <div class="col-md-3 ml-auto">
+            <a href="#" class="badge badge-pill badge-info" onclick="showReportDetail({{problem['id_problem']}});">report</a>
+            <a href="#" class="badge badge-pill badge-warning" onclick="updateProblem({{problem['id_problem']}});">updateProblem</a>
+            <a href="#" class="badge badge-pill badge-warning">updateData</a>
+            <a href="#" class="badge badge-pill badge-danger">delete</a>
         </div>
-    </div>
-    <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="problemContent_{{problem['id_problem']}}">
-        {% import "macro/loading.html" as ld %}
-        {{ ld.loading() }}
     </div>
     <hr class="customTableItemHr"/>
 {% endfor%}
 {% import "macro/page.html" as pg %}
 {{ pg.page(session.get("currentPage_problems"),session.get("totalPage_problems"),'/admin/problems',"#managementContent") }}
+<div class="modal fade" id="reportDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Statistic Detail</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body mx-0 justify-content-center" id="reportDetailContent">
+          
+        </div>
+      </div>
+    </div>
+  </div>
 <script>
-    $(function(){
-        $(".customTableItemDetail").hide();
-    });
-    function toggleProblem(id,tag){
-        var toHide = true;
-        if($("#problemContent_"+id).is(":hidden")){
-            getDetail(id,tag);
-            toHide = false;
-        }else if($("#problemContent_"+id).attr('tag') === undefined || $("#problemContent_"+id).attr('tag') !== tag){
-            getDetail(id,tag);
-            toHide = false;
-        }
-        $("#problemContent_"+id).attr('tag',tag);
-        if(toHide){
-            $("#problemContent_"+id).hide();
-        }else{
-            $("#problemContent_"+id).show();
-        }
-        
-    }
-    function getDetail(id,tag){
-        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    function showReportDetail(proNo){
+        $("#reportDetail").modal("show");
         $.ajax({
-            url: $SCRIPT_ROOT,
-            type:'POST',
-            data:{
-              "userId":id
+            url: $SCRIPT_ROOT+"/proDetail/problemReport",
+            type: "POST",
+            data: {
+                "id_problem":proNo,
+                "graphType":"statistics"
             },
-            success: function (response) {
-                $("#problemContent_"+id).html(response)
-                loadFootor();
+            beforeSend: function(){
+                $.ajax({
+                    url: $SCRIPT_ROOT + "/base/loading",
+                    type: 'POST',
+                    success:function(response){
+                        $("#reportDetailContent").html(response);
+                    }
+                });
+            },
+            success:function(response){
+                $("#reportDetailContent").html(response);
             }
         });
     }

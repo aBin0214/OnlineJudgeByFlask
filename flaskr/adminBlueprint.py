@@ -62,19 +62,26 @@ def login():
 
 @bp.route("/index")
 def index():
-    judgeAdmin()
+    if not judgeAdmin():
+        return redirect(url_for('admin.login'))
     return render_template("admin/adminBase.html")
 
 @bp.route("/dashBoard",methods=["POST"])
 def dashBoard():
+    if not judgeAdmin():
+        return redirect(url_for('admin.login'))
     return render_template("admin/dashBoard.html")
 
 @bp.route("/management",methods=["POST"])
 def management():
+    if not judgeAdmin():
+        return redirect(url_for('admin.login'))
     return render_template("admin/management.html")
 
 @bp.route("/logs",methods=["POST"])
 def logs():
+    if not judgeAdmin():
+        return redirect(url_for('admin.login'))
     return render_template("admin/logs.html")
 
 @bp.route("/showLogs",methods=["POST","GET"])
@@ -334,4 +341,5 @@ def getProblemById(db,problemId):
 def judgeAdmin():
     if session.get('is_admin') is None:
         flash("Please log in first.",'info')
-        return redirect(url_for('admin.login'))
+        return False
+    return True

@@ -8,7 +8,7 @@
     <div class="col-md-2">
         <span class="font-italic">Username</span>
     </div>
-    <div class="col-md-2 ml-auto">
+    <div class="col-md-3 ml-auto">
         <span class="font-italic">Options</span>
     </div>
 </div>
@@ -21,15 +21,13 @@
         <div class="col-md-2">
             <span class="text-muted">{{user["username"]}}</span>
         </div>
-        <div class="col-md-2 ml-auto">
-            <a href="#" onclick="toggleUser({{user['id_user']}},'profile');"><span class="text-muted"></span>Profile</span></a>
-            <a href="#" onclick="toggleUser({{user['id_user']}},'detail');"><span class="text-muted"></span>Detail</span></a>
-            <a href="#" onclick="toggleUser({{user['id_user']}},'report');"><span class="text-muted"></span>Report</span></a>
+        <div class="col-md-3 ml-auto">
+            <a href="#" class="badge badge-pill badge-light" onclick="toggleUser({{user['id_user']}},'profile');"><span class="text-muted"></span>Profile</span></a>
+            <a href="#" class="badge badge-pill badge-secondary" onclick="toggleUser({{user['id_user']}},'detail');"><span class="text-muted"></span>Detail</span></a>
+            <a href="#" class="badge badge-pill badge-info" onclick="toggleUser({{user['id_user']}},'report');"><span class="text-muted"></span>Report</span></a>
         </div>
     </div>
     <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="userContent_{{user['id_user']}}">
-        {% import "macro/loading.html" as ld %}
-        {{ ld.loading() }}
     </div>
     <hr class="customTableItemHr"/>
 {% endfor%}

@@ -1,8 +1,145 @@
 {% extends 'base.html' %}
 
 {% block title %}Problems{% endblock title %}
-{% block extraJs %}
 <script src="{{ url_for('static', filename='monaco-editor-0.19.3/package/min/vs/loader.js') }}"></script>
+
+{% block content %}
+<div class="row ml-2 mr-2">
+    <div class="col-md-10">
+        <div class="card border-0 shadow">
+            <div class="card-header bg-white">
+                <h4>{{problemInfo['problemTitle']}}</h4>
+            </div>
+            <div class="card-body">
+                <div id="markdown-view" class="m-0">
+                    <textarea style="display:none;">{{problemInfo['describe']}}</textarea>             
+                </div>
+                <script>
+                    $(function() {
+                        editormd.markdownToHTML("markdown-view", {});
+                    });
+                </script>
+            </div>
+        </div>
+        <div class="card mt-4 border-0 shadow">
+            <div class="card-body">
+                <form method="post" action="{{url_for('proDetail.problemDetail',proNo=problemInfo['id_contest_problem'])}}">
+                    <div class="form-row">
+                        <label class="ml-1">Language:</label>
+                        <select id="selectLanguage" name="selectLanguage" onchange="changeEditor();" class="form-control form-control-sm col-md-2 mb-3 ml-1">
+                            {% for language in languages%}
+                                <option value="{{language['monaco_editor_val']}}">{{language['name_language']}}</option>
+                            {% endfor%}
+                        </select>
+                        <label class="ml-3">Theme:</label>
+                        <select id="selectTheme" onchange="changeTheme();" class="form-control form-control-sm col-md-2 mb-3 ml-1">
+                            <option value="vs-light" selected>vs-light</option>
+                            <option value="vs-dark">vs-dark</option>
+                        </select>
+                    </div>
+                    <div id="monacoEditor" style="height: 25rem;" class="border"></div>
+                    <textarea name="inputCode" id="inputCode" style="display: none;"></textarea>
+                    <button id="answer_form_submit" class="btn btn-success float-right my-3" type="button">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-0 shadow p-4">
+            <h5>Infomation</h5>
+            <hr/>
+            <span>Time Limit(ms):<span class="text-info">{{problemInfo['time_limit']}}</span></span>
+            <span>Memory Limit(kb):<span class="text-info">{{problemInfo['mem_limit']}}</span></span>
+            <span>Contest:<span class="text-info">{{problemInfo['contestTitle']}}</span></span>
+            <span>Serial:<span class="text-info">{{problemInfo['serial']}}</span></span>
+            <span>Created By:<span class="text-info">{{problemInfo['username']}}</span></span>
+            {% if problemTags %}
+            <span>Tags:
+                <span class="text-info">
+                    {% import "macro/colorBadge.html" as cB %}
+                    {% for tagItem in problemTags %}
+                    {{ cB.cBadge(tagItem['id_tag'],tagItem['name_tag'],url_for('problems.problemSetTag',tag=tagItem['name_tag']))}}
+                    {% endfor %}
+                </span>
+            </span>
+            {% endif %}
+        </div>
+        <div class="card border-0 shadow mt-4 p-4">
+            <h5>Statistic</h5>
+            <hr/>
+            <div id="problemReportSimple">
+            </div>
+            <a class="mx-auto badge badge-info" href="#" onclick="showReportDetail()">detail</a>
+            <script>
+                $(function(){
+                    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+                    $proNo = {{problemInfo["id_problem"]|tojson|safe}}
+                    $.ajax({
+                        url: $SCRIPT_ROOT+"/proDetail/problemReport",
+                        type: "POST",
+                        data: {
+                            "id_problem":$proNo,
+                            "graphType":"simple"
+                        },
+                        beforeSend: function(){
+                            $.ajax({
+                                url: $SCRIPT_ROOT + "/base/loading",
+                                type: 'POST',
+                                success:function(response){
+                                    $("#problemReportSimple").html(response);
+                                }
+                            });
+                        },
+                        success:function(response){
+                            $("#problemReportSimple").html(response);
+                        }
+                    });
+                });
+            </script>
+            <script>
+                function showReportDetail(){
+                    $proNo = {{problemInfo["id_problem"]|tojson|safe}};
+                    $("#reportDetail").modal("show");
+                    $.ajax({
+                        url: $SCRIPT_ROOT+"/proDetail/problemReport",
+                        type: "POST",
+                        data: {
+                            "id_problem":$proNo,
+                            "graphType":"statistics"
+                        },
+                        beforeSend: function(){
+                            $.ajax({
+                                url: $SCRIPT_ROOT + "/base/loading",
+                                type: 'POST',
+                                success:function(response){
+                                    $("#reportDetailContent").html(response);
+                                }
+                            });
+                        },
+                        success:function(response){
+                            $("#reportDetailContent").html(response);
+                        }
+                    });
+                }
+            </script>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="reportDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Statistic Detail</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body mx-0 justify-content-center" id="reportDetailContent">
+          
+        </div>
+      </div>
+    </div>
+  </div>
 <script>
     var glbMonaco = null;
     var glbEditor = null;
@@ -58,46 +195,4 @@
     });
     
 </script>
-{% endblock %}
-
-{% block content %}
-<div class="card m-4 border-0 shadow">
-    <div class="card-header bg-white">
-        <h4>{{problemInfo['title']}}</h4>
-        <span class="text-muted">Time Limit(ms):<span class="text-info">{{problemInfo['time_limit']}}</span></span>&nbsp;&nbsp;
-        <span class="text-muted">Memory Limit(kb):<span class="text-info">{{problemInfo['mem_limit']}}</span></span>
-    </div>
-    <div class="card-body">
-        <div id="markdown-view" class="m-0">
-            <textarea style="display:none;">{{problemInfo['describe']}}</textarea>             
-        </div>
-        <script>
-            $(function() {
-                editormd.markdownToHTML("markdown-view", {});
-            });
-        </script>
-    </div>
-</div>
-<div class="card mx-4 mt-4 border-0 shadow">
-    <div class="card-body">
-        <form method="post" action="{{url_for('proDetail.problemDetail',proNo=problemInfo['id_contest_problem'])}}">
-            <div class="form-row">
-                <label class="ml-1">Language:</label>
-                <select id="selectLanguage" name="selectLanguage" onchange="changeEditor();" class="form-control form-control-sm col-md-2 mb-3 ml-1">
-                    {% for language in languages%}
-                        <option value="{{language['monaco_editor_val']}}">{{language['name_language']}}</option>
-                    {% endfor%}
-                </select>
-                <label class="ml-3">Theme:</label>
-                <select id="selectTheme" onchange="changeTheme();" class="form-control form-control-sm col-md-2 mb-3 ml-1">
-                    <option value="vs-light" selected>vs-light</option>
-                    <option value="vs-dark">vs-dark</option>
-                </select>
-            </div>
-            <div id="monacoEditor" style="height: 25rem;" class="border"></div>
-            <textarea name="inputCode" id="inputCode" style="display: none;"></textarea>
-            <button id="answer_form_submit" class="btn btn-success float-right my-3" type="button">Submit</button>
-        </form>
-    </div>
-</div>
 {% endblock%}
