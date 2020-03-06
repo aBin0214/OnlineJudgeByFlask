@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+
 import functools
 import datetime
 from flask import (
@@ -18,7 +19,7 @@ def contestSet(currentPage=1):
 
 @bp.route("/contest/<int:contestId>")
 def contest(contestId):
-    session['contestId_pro'] = contestId
+    session['contestId'] = contestId
     return redirect(url_for('contestDetail.problemSet'));
 
 @bp.route("/contestPermission/<int:contestId>", methods=['GET'])

@@ -8,100 +8,41 @@ from flask import (
 
 from . import MysqlUtils
 from . import CodeHighlightUtils
+from . import PagingUtils
 
 bp = Blueprint('contestDetail', __name__, url_prefix='/contestDetail')
 
-# @bp.route("/problemSet/<int:currentPage>")
-# @bp.route("/problemSet")
-# def problemSet(currentPage=1):
-#     db = MysqlUtils.MyPyMysqlPool()
-#     g.active = 'ProblemSet'
-#     if session.get("contestId_pro") == 1:
-#         session['active'] = "Problems"
-#     else:
-#         session['active'] = "Contests"
+@bp.route("/problemSet")
+def problemSet():
+    if session.get("contestId") == 1:
+        session['active'] = "Problems"
+    else:
+        session['active'] = "Contests"
 
-#     session['currentPage_pro'] = currentPage
-#     if session.get("problemTag_pro") is None:
-#         session["problemTag_pro"] = "All"
-#     if session.get("pageSize_pro") is None:
-#         session['pageSize_pro'] = 20
-    
-#     totalCount = getProblemCount(db,session.get("contestId_pro"),session.get("problemTag_pro"))
-#     total = totalCount//session.get("pageSize_pro")
-#     total = total if totalCount%session.get("pageSize_pro") == 0 or totalCount == 0 else total+1
-#     session['totalPage_pro'] = total
-
-#     contestInfo = getContestInfo(db,session.get("contestId_pro"))
-
-#     db.dispose()
-
-#     return render_template("contestDetail/contestBase.html",contestInfo=contestInfo)
-
-@bp.route("/ranklist/<int:currentPage>")
-@bp.route("/ranklist")
-def ranklist(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
-    g.active = 'Ranklist'
-    session['currentPage_rank'] = currentPage
-    if session.get("pageSize_rank") is None:
-        session['pageSize_rank'] = 20
-
-    totalCount = getRanklistCount(db,session.get("contestId_pro"))
-    total = totalCount//session.get("pageSize_rank")
-    total = total if totalCount%session.get("pageSize_rank") == 0 or totalCount == 0 else total+1
-    session['totalPage_rank'] = total
-    if totalCount == 0:
-        session['totalPage_rank'] = 0
-
-    contestInfo = getContestInfo(db,session.get("contestId_pro"))
-
+    contestInfo = getContestInfo(db,session.get("contestId"))
     db.dispose()
 
     return render_template("contestDetail/contestBase.html",contestInfo=contestInfo)
-
-@bp.route("/submissions/<int:currentPage>")
-@bp.route("/submissions")
-def submissions(currentPage=1):
-    db = MysqlUtils.MyPyMysqlPool()
-    g.active = 'Submissions'
-    session['currentPage_sub'] = currentPage
-    if session.get("pageSize_sub") is None:
-        session['pageSize_sub'] = 20
-
-    totalCount = getSubmissionCount(db,session.get("contestId_pro"))
-    total = totalCount//session.get("pageSize_sub")
-    total = total if totalCount%session.get("pageSize_sub") == 0 or totalCount == 0 else total+1
-    session['totalPage_sub'] = total
-    if totalCount == 0:
-        session['totalPage_sub'] = 0
-
-    contestInfo = getContestInfo(db,session.get("contestId_pro"))
-
-    db.dispose()
-
-    return render_template("contestDetail/contestBase.html",contestInfo=contestInfo)
-
-@bp.route("/currentRanklist/<int:currentPage>")
-@bp.route("/currentRanklist")
-def currentRanklist(currentPage=1):
-    g.active = 'Ranklist'
-    return render_template("contestDetail/contestBase.html")
-
 
 @bp.route("/problemSetTag/<string:tag>")
 def problemSetTag(tag):
-    session['problemTag_pro'] = tag
+    session['problemTag'] = tag
     return redirect(url_for('contestDetail.problemSet'))
 
 @bp.route("/showProblemList")
-def showProblemList():
+@bp.route("/showProblemList/<int:currentPage>")
+def showProblemList(currentPage=1):
+
+    if session.get("problemTag") is None:
+        session["problemTag"] = "All"
 
     db = MysqlUtils.MyPyMysqlPool()
 
-    currentPage = int(session.get("currentPage_pro"))
-    problemTag = session.get("problemTag_pro")
-    problems = getProblemsByTag(db,session.get("contestId_pro"),currentPage,problemTag,session.get("pageSize_pro"))
+    PagingUtils.Paging(currentPage,getProblemCount(db,session.get("contestId"),session.get("problemTag")))
+
+    problemTag = session.get("problemTag")
+    problems = getProblemsByTag(db,session.get("contestId"),currentPage,problemTag,session.get("pageSize"))
     idx = 0
     
     if problems is not False:
@@ -123,23 +64,27 @@ def showTagList():
     return render_template('contestDetail/tagList.html',tags = tags)
 
 @bp.route("/showRanklist")
-def showRanklist():
+@bp.route("/showRanklist/<int:currentPage>")
+def showRanklist(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
-    ranklist = getRanklist(db,session.get("contestId_pro"))
+    PagingUtils.Paging(currentPage,getRanklistCount(db,session.get("contestId")))
+    ranklist = getRanklist(db,session.get("contestId"))
     db.dispose()
     return render_template("contestDetail/ranklist.html",ranklist=ranklist)
 
 @bp.route("/showCurRanklist")
 def showCurRanklist():
     db = MysqlUtils.MyPyMysqlPool()
-    serialList = getProblemSerial(db,session.get("contestId_pro"))
+    serialList = getProblemSerial(db,session.get("contestId"))
     db.dispose()
     return render_template("contestDetail/curRanklist.html",serialList=serialList)
 
-@bp.route("/showSubmissionlist")
-def showSubmissionlist():
+@bp.route("/showSubmissionList")
+@bp.route("/showSubmissionList/<int:currentPage>")
+def showSubmissionList(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
-    submissions = getSubmissions(db,session.get("contestId_pro"),session['currentPage_sub'],session.get("pageSize_sub"))
+    PagingUtils.Paging(currentPage,getSubmissionCount(db,session.get("contestId")))
+    submissions = getSubmissions(db,session.get("contestId"),session['currentPage'],session.get("pageSize"))
     db.dispose()
     return render_template("contestDetail/submissionList.html",submissions=submissions)
 
@@ -187,12 +132,13 @@ def getProblemsByTag(db,contestId,currentPage,problemTag,pageSize):
         limit {start},{pageSize};".format(id_contest=contestId,start=start,pageSize=pageSize)
     else:
         sql = "select id_contest_problem,title,serial \
-        from problem,tag,tag_problem,contest_problem \
+        from problem,tag,tagblem,contest_problem \
         where contest_problem.id_contest = '{id_contest}' \
         and contest_problem.id_problem = problem.id_problem \
-        and problem.id_problem = tag_problem.id_problem \
-        and tag.id_tag = tag_problem.id_tag \
+        and problem.id_problem = tagblem.id_problem \
+        and tag.id_tag = tagblem.id_tag \
         and tag.name_tag = '{Tag}' limit {start},{pageSize}".format(id_contest=1,Tag=problemTag,start=start,pageSize=pageSize)
+    
     problems = None
     try:
         problems = db.get_all(sql)
@@ -258,21 +204,24 @@ def getRanklist(db,contestId):
     return ranklist
 
 def getProblemCount(db,contestId,problemTag):
-    sql = "";
+    sql = ""
     if problemTag == "All":
         sql = "select count(id_contest_problem) as cnt from contest_problem where id_contest = {contestId}".format(contestId=contestId)
     else:
         sql = "select count(contest_problem.id_contest_problem) as cnt \
-        from contest_problem,problem,tag_problem,tag \
+        from contest_problem,problem,tagblem,tag \
         where contest_problem.id_contest = {contestId} \
         and contest_problem.id_problem = problem.id_problem \
-        and problem.id_problem = tag_problem.id_problem \
-        and tag.id_tag = tag_problem.id_tag \
+        and problem.id_problem = tagblem.id_problem \
+        and tag.id_tag = tagblem.id_tag \
         and tag.name_tag = '{problemTag}' limit 1".format(contestId=1,problemTag=problemTag)
+    res = None
     try:
         res = db.get_one(sql)
     except:
         current_app.logger.error("get contest-{}'s problem count failure !".format(contestId))
+    if res is None or res is False:
+        return 0
     return res["cnt"]
 
 def getSubmissionCount(db,contestId):

@@ -25,5 +25,4 @@
   </tbody>
 </table>
 {% import "macro/page.html" as pg %}
-{{ pg.page(session.get("currentPage_rank"),session.get("totalPage_rank"),'#') }}
-
+{{ pg.page(session.get("currentPage"),session.get("totalPage"),'/contestDetail/showRanklist','#contestContent') }}

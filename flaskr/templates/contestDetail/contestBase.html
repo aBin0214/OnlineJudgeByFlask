@@ -39,32 +39,16 @@
       </div>
     </div>
     <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
-      {% if g.active == 'ProblemSet'%}
-      <a class="nav-link active" href="{{url_for('contestDetail.problemSet')}}" role="tab">Problems</a>
-      {% else %}
-      <a class="nav-link" href="{{url_for('contestDetail.problemSet')}}" role="tab">Problems</a>
-      {% endif %}
-      {% if g.active == 'Ranklist'%}
+      <a class="nav-link active" href="#" role="tab" id="showProblemList" onclick="showContestContent('showProblemList');">Problems</a>
         {%if session.get("contestId_pro") == 1 %}
-          <a class="nav-link active" href="{{url_for('contestDetail.ranklist')}}" role="tab">Ranklist</a>
+          <a class="nav-link" href="#" role="tab" id="showRanklist" onclick="showContestContent('showRanklist');">Ranklist</a>
         {%else%}
-          <a class="nav-link active" href="{{url_for('contestDetail.currentRanklist')}}" role="tab">Ranklist</a>
+          <a class="nav-link" href="#" role="tab" id="showCurRanklist" onclick="showContestContent('showCurRanklist');">Ranklist</a>
         {%endif%}
-      {% else %}
-        {%if session.get("contestId_pro") == 1 %}
-          <a class="nav-link" href="{{url_for('contestDetail.ranklist')}}" role="tab">Ranklist</a>
-        {%else%}
-          <a class="nav-link" href="{{url_for('contestDetail.currentRanklist')}}" role="tab">Ranklist</a>
-        {%endif%}
-      {% endif %}
-      {% if g.active == 'Submissions'%}
-      <a class="nav-link active" href="{{url_for('contestDetail.submissions')}}" role="tab">Submissions</a>
-      {% else %}
-      <a class="nav-link" href="{{url_for('contestDetail.submissions')}}" role="tab">Submissions</a>
-      {% endif %}
+      <a class="nav-link" href="#" role="tab" id="showSubmissionList" onclick="showContestContent('showSubmissionList');">Submissions</a>
     </div>
     {% block extraSidebar%}
-      {% if g.active == 'ProblemSet'%}
+      {% if session.get("contestId_pro") == 1 %}
         <script>
         $(function(){
           $.ajax({
@@ -83,85 +67,40 @@
   </div>
   <div class="col-md-10">
     <div class="card border-0 shadow">
-      <div class="card-body">
-        {% block contest_content %}
-          {% if g.active == 'ProblemSet'%}
-            <script>
-              $(function(){
-                $.ajax({
-                  url: $SCRIPT_ROOT+'/contestDetail/showProblemList',
-                  success: function (response) {
-                    $('#showProblemList').html(response);
-                    loadFootor();
-                  }
-                })
-              });
-            </script>
-            <div id="showProblemList">
-              {% import "macro/loading.html" as ld %}
-              {{ ld.loading() }}  
-            </div>
-          {% elif g.active == 'Ranklist'%}
-            {% if session.get("contestId_pro") == 1 %}
-              <script>
-                $(function(){
-                  $.ajax({
-                    url: $SCRIPT_ROOT+'/contestDetail/showRanklist',
-                    success: function (response) {
-                      $('#showRanklist').html(response);
-                      loadFootor();
-                    }
-                  })
-                });
-              </script>
-            {%else%}
-            <script>
-              $(function(){
-                $.ajax({
-                  url: $SCRIPT_ROOT+'/contestDetail/showCurRanklist',
-                  success: function (response) {
-                    $('#showRanklist').html(response);
-                    loadFootor();
-                  }
-                })
-              });
-            </script>
-            {%endif%}
-            <div id="showRanklist">
-              {% import "macro/loading.html" as ld %}
-              {{ ld.loading() }}  
-            </div>
-          {% elif g.active == 'Submissions'%}
-            <script>
-              $(function(){
-                $.ajax({
-                  url: $SCRIPT_ROOT+'/contestDetail/showSubmissionlist',
-                  success: function (response) {
-                    $('#showSubmissionlist').html(response);
-                    loadFootor();
-                  }
-                })
-              });
-              function showSubDetail(submmisionId) {
-                $.ajax({
-                  url: $SCRIPT_ROOT+'/contestDetail/showSubmissionDetail/'+submmisionId,
-                  success: function (response) {
-                    $('#showSubmissionDetail').html(response);
-                    $('#showSubDetail').modal('show');
-                    loadFootor();
-                  }
-                });
-              }
-          </script>
-          <div id="showSubmissionlist">
-            {% import "macro/loading.html" as ld %}
-            {{ ld.loading() }}  
-          </div>
-          <div id="showSubmissionDetail"></div>
-          {% endif %}
-        {% endblock %}
+      <div class="card-body" id="contestContent">
       </div>
     </div>
   </div>
 </div>
+<script>
+  $(function(){
+    showContestContent("showProblemList");
+  });
+  function showContestContent(tag){
+    var urlList = new Array("showProblemList","showRanklist","showCurRanklist","showSubmissionList");
+    for(var url of urlList){
+      if(url === tag){
+        $("a#"+url).attr('class',"nav-link active");
+      }else{
+        $("a#"+url).attr('class',"nav-link");
+      }
+    }
+    $.ajax({
+      url:$SCRIPT_ROOT+"/contestDetail/"+tag,
+      type:'GET',
+      beforeSend: function(){
+        $.ajax({
+          url: $SCRIPT_ROOT + "/base/loading",
+          type: 'POST',
+          success:function(response){
+            $("#contestContent").html(response);
+          }
+        });
+      },
+      success:function(response){
+        $("#contestContent").html(response);
+      }
+    });
+  }
+</script>
 {% endblock %}

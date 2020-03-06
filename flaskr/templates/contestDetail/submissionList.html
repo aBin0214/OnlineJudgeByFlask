@@ -30,4 +30,4 @@
   </tbody>
 </table>
 {% import "macro/page.html" as pg %}
-{{ pg.page(session.get("currentPage_sub"),session.get("totalPage_sub"),'problems.submissions') }}
+{{ pg.page(session.get("currentPage"),session.get("totalPage"),'/contestDetail/showSubmissionList','#contestContent') }}
