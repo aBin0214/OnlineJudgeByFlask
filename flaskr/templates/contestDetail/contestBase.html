@@ -40,27 +40,27 @@
     </div>
     <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
       {% if g.active == 'ProblemSet'%}
-      <a class="nav-link active" href="{{url_for('problems.problemSet')}}" role="tab">Problems</a>
+      <a class="nav-link active" href="{{url_for('contestDetail.problemSet')}}" role="tab">Problems</a>
       {% else %}
-      <a class="nav-link" href="{{url_for('problems.problemSet')}}" role="tab">Problems</a>
+      <a class="nav-link" href="{{url_for('contestDetail.problemSet')}}" role="tab">Problems</a>
       {% endif %}
       {% if g.active == 'Ranklist'%}
         {%if session.get("contestId_pro") == 1 %}
-          <a class="nav-link active" href="{{url_for('problems.ranklist')}}" role="tab">Ranklist</a>
+          <a class="nav-link active" href="{{url_for('contestDetail.ranklist')}}" role="tab">Ranklist</a>
         {%else%}
-          <a class="nav-link active" href="{{url_for('problems.currentRanklist')}}" role="tab">Ranklist</a>
+          <a class="nav-link active" href="{{url_for('contestDetail.currentRanklist')}}" role="tab">Ranklist</a>
         {%endif%}
       {% else %}
         {%if session.get("contestId_pro") == 1 %}
-          <a class="nav-link" href="{{url_for('problems.ranklist')}}" role="tab">Ranklist</a>
+          <a class="nav-link" href="{{url_for('contestDetail.ranklist')}}" role="tab">Ranklist</a>
         {%else%}
-          <a class="nav-link" href="{{url_for('problems.currentRanklist')}}" role="tab">Ranklist</a>
+          <a class="nav-link" href="{{url_for('contestDetail.currentRanklist')}}" role="tab">Ranklist</a>
         {%endif%}
       {% endif %}
       {% if g.active == 'Submissions'%}
-      <a class="nav-link active" href="{{url_for('problems.submissions')}}" role="tab">Submissions</a>
+      <a class="nav-link active" href="{{url_for('contestDetail.submissions')}}" role="tab">Submissions</a>
       {% else %}
-      <a class="nav-link" href="{{url_for('problems.submissions')}}" role="tab">Submissions</a>
+      <a class="nav-link" href="{{url_for('contestDetail.submissions')}}" role="tab">Submissions</a>
       {% endif %}
     </div>
     {% block extraSidebar%}
@@ -68,7 +68,7 @@
         <script>
         $(function(){
           $.ajax({
-            url: $SCRIPT_ROOT+'/problems/showTagList',
+            url: $SCRIPT_ROOT+'/contestDetail/showTagList',
             success: function (response) {
               $('#showTagList').html(response);
               loadFootor();
@@ -89,7 +89,7 @@
             <script>
               $(function(){
                 $.ajax({
-                  url: $SCRIPT_ROOT+'/problems/showProblemList',
+                  url: $SCRIPT_ROOT+'/contestDetail/showProblemList',
                   success: function (response) {
                     $('#showProblemList').html(response);
                     loadFootor();
@@ -106,7 +106,7 @@
               <script>
                 $(function(){
                   $.ajax({
-                    url: $SCRIPT_ROOT+'/problems/showRanklist',
+                    url: $SCRIPT_ROOT+'/contestDetail/showRanklist',
                     success: function (response) {
                       $('#showRanklist').html(response);
                       loadFootor();
@@ -118,7 +118,7 @@
             <script>
               $(function(){
                 $.ajax({
-                  url: $SCRIPT_ROOT+'/problems/showCurRanklist',
+                  url: $SCRIPT_ROOT+'/contestDetail/showCurRanklist',
                   success: function (response) {
                     $('#showRanklist').html(response);
                     loadFootor();
@@ -135,7 +135,7 @@
             <script>
               $(function(){
                 $.ajax({
-                  url: $SCRIPT_ROOT+'/problems/showSubmissionlist',
+                  url: $SCRIPT_ROOT+'/contestDetail/showSubmissionlist',
                   success: function (response) {
                     $('#showSubmissionlist').html(response);
                     loadFootor();
@@ -144,7 +144,7 @@
               });
               function showSubDetail(submmisionId) {
                 $.ajax({
-                  url: $SCRIPT_ROOT+'/problems/showSubmissionDetail/'+submmisionId,
+                  url: $SCRIPT_ROOT+'/contestDetail/showSubmissionDetail/'+submmisionId,
                   success: function (response) {
                     $('#showSubmissionDetail').html(response);
                     $('#showSubDetail').modal('show');

@@ -9,34 +9,34 @@ from flask import (
 from . import MysqlUtils
 from . import CodeHighlightUtils
 
-bp = Blueprint('problems', __name__, url_prefix='/problems')
+bp = Blueprint('contestDetail', __name__, url_prefix='/contestDetail')
 
-@bp.route("/problemSet/<int:currentPage>")
-@bp.route("/problemSet")
-def problemSet(currentPage=1):
-    db = MysqlUtils.MyPyMysqlPool()
-    g.active = 'ProblemSet'
-    if session.get("contestId_pro") == 1:
-        session['active'] = "Problems"
-    else:
-        session['active'] = "Contests"
+# @bp.route("/problemSet/<int:currentPage>")
+# @bp.route("/problemSet")
+# def problemSet(currentPage=1):
+#     db = MysqlUtils.MyPyMysqlPool()
+#     g.active = 'ProblemSet'
+#     if session.get("contestId_pro") == 1:
+#         session['active'] = "Problems"
+#     else:
+#         session['active'] = "Contests"
 
-    session['currentPage_pro'] = currentPage
-    if session.get("problemTag_pro") is None:
-        session["problemTag_pro"] = "All"
-    if session.get("pageSize_pro") is None:
-        session['pageSize_pro'] = 20
+#     session['currentPage_pro'] = currentPage
+#     if session.get("problemTag_pro") is None:
+#         session["problemTag_pro"] = "All"
+#     if session.get("pageSize_pro") is None:
+#         session['pageSize_pro'] = 20
     
-    totalCount = getProblemCount(db,session.get("contestId_pro"),session.get("problemTag_pro"))
-    total = totalCount//session.get("pageSize_pro")
-    total = total if totalCount%session.get("pageSize_pro") == 0 or totalCount == 0 else total+1
-    session['totalPage_pro'] = total
+#     totalCount = getProblemCount(db,session.get("contestId_pro"),session.get("problemTag_pro"))
+#     total = totalCount//session.get("pageSize_pro")
+#     total = total if totalCount%session.get("pageSize_pro") == 0 or totalCount == 0 else total+1
+#     session['totalPage_pro'] = total
 
-    contestInfo = getContestInfo(db,session.get("contestId_pro"))
+#     contestInfo = getContestInfo(db,session.get("contestId_pro"))
 
-    db.dispose()
+#     db.dispose()
 
-    return render_template("problems/contestBase.html",contestInfo=contestInfo)
+#     return render_template("contestDetail/contestBase.html",contestInfo=contestInfo)
 
 @bp.route("/ranklist/<int:currentPage>")
 @bp.route("/ranklist")
@@ -58,7 +58,7 @@ def ranklist(currentPage=1):
 
     db.dispose()
 
-    return render_template("problems/contestBase.html",contestInfo=contestInfo)
+    return render_template("contestDetail/contestBase.html",contestInfo=contestInfo)
 
 @bp.route("/submissions/<int:currentPage>")
 @bp.route("/submissions")
@@ -80,19 +80,19 @@ def submissions(currentPage=1):
 
     db.dispose()
 
-    return render_template("problems/contestBase.html",contestInfo=contestInfo)
+    return render_template("contestDetail/contestBase.html",contestInfo=contestInfo)
 
 @bp.route("/currentRanklist/<int:currentPage>")
 @bp.route("/currentRanklist")
 def currentRanklist(currentPage=1):
     g.active = 'Ranklist'
-    return render_template("problems/contestBase.html")
+    return render_template("contestDetail/contestBase.html")
 
 
 @bp.route("/problemSetTag/<string:tag>")
 def problemSetTag(tag):
     session['problemTag_pro'] = tag
-    return redirect(url_for('problems.problemSet'))
+    return redirect(url_for('contestDetail.problemSet'))
 
 @bp.route("/showProblemList")
 def showProblemList():
@@ -113,35 +113,35 @@ def showProblemList():
 
     db.dispose()
 
-    return render_template("problems/problemList.html",problems = problems)
+    return render_template("contestDetail/problemList.html",problems = problems)
 
 @bp.route("/showTagList")
 def showTagList():
     db = MysqlUtils.MyPyMysqlPool()
     tags = getAllTag(db)
     db.dispose()
-    return render_template('problems/tagList.html',tags = tags)
+    return render_template('contestDetail/tagList.html',tags = tags)
 
 @bp.route("/showRanklist")
 def showRanklist():
     db = MysqlUtils.MyPyMysqlPool()
     ranklist = getRanklist(db,session.get("contestId_pro"))
     db.dispose()
-    return render_template("problems/ranklist.html",ranklist=ranklist)
+    return render_template("contestDetail/ranklist.html",ranklist=ranklist)
 
 @bp.route("/showCurRanklist")
 def showCurRanklist():
     db = MysqlUtils.MyPyMysqlPool()
     serialList = getProblemSerial(db,session.get("contestId_pro"))
     db.dispose()
-    return render_template("problems/curRanklist.html",serialList=serialList)
+    return render_template("contestDetail/curRanklist.html",serialList=serialList)
 
 @bp.route("/showSubmissionlist")
 def showSubmissionlist():
     db = MysqlUtils.MyPyMysqlPool()
     submissions = getSubmissions(db,session.get("contestId_pro"),session['currentPage_sub'],session.get("pageSize_sub"))
     db.dispose()
-    return render_template("problems/submissionList.html",submissions=submissions)
+    return render_template("contestDetail/submissionList.html",submissions=submissions)
 
 @bp.route("/showSubmissionDetail/<int:solutionId>")
 def showSubmissionDetail(solutionId):
@@ -150,7 +150,7 @@ def showSubmissionDetail(solutionId):
     db.dispose()
     if submission is not False:
         submission['hl_code'] = CodeHighlightUtils.CodeHighlight.codeTranslate(submission['submit_content'],submission['monaco_editor_val'])
-    return render_template("problems/submissionDetail.html",submission=submission)
+    return render_template("contestDetail/submissionDetail.html",submission=submission)
 
 def getContestInfo(db,id_contest):
     sql = "SELECT id_contest,title,introduction,start_time,end_time,is_practice,is_practice,username as belong,is_private,user.password \

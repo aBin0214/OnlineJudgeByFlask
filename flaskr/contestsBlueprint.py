@@ -19,7 +19,7 @@ def contestSet(currentPage=1):
 @bp.route("/contest/<int:contestId>")
 def contest(contestId):
     session['contestId_pro'] = contestId
-    return redirect(url_for('problems.problemSet'));
+    return redirect(url_for('contestDetail.problemSet'));
 
 @bp.route("/contestPermission/<int:contestId>", methods=['GET'])
 def contestPermission(contestId):

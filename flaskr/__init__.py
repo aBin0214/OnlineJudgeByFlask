@@ -52,8 +52,8 @@ def create_app(test_config=None):
     app.register_blueprint(baseBlueprint.bp)
 
     # 用于显示题集信息
-    from . import problemsBlueprint
-    app.register_blueprint(problemsBlueprint.bp)
+    from . import contestDetailBlueprint
+    app.register_blueprint(contestDetailBlueprint.bp)
 
     # 用户显示比赛信息
     from . import contestsBlueprint
