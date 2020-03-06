@@ -32,9 +32,11 @@ def problemSet(currentPage=1):
     total = total if totalCount%session.get("pageSize_pro") == 0 or totalCount == 0 else total+1
     session['totalPage_pro'] = total
 
+    contestInfo = getContestInfo(db,session.get("contestId_pro"))
+
     db.dispose()
 
-    return render_template("problems/contestBase.html")
+    return render_template("problems/contestBase.html",contestInfo=contestInfo)
 
 @bp.route("/ranklist/<int:currentPage>")
 @bp.route("/ranklist")
@@ -52,9 +54,11 @@ def ranklist(currentPage=1):
     if totalCount == 0:
         session['totalPage_rank'] = 0
 
+    contestInfo = getContestInfo(db,session.get("contestId_pro"))
+
     db.dispose()
 
-    return render_template("problems/contestBase.html")
+    return render_template("problems/contestBase.html",contestInfo=contestInfo)
 
 @bp.route("/submissions/<int:currentPage>")
 @bp.route("/submissions")
@@ -72,9 +76,11 @@ def submissions(currentPage=1):
     if totalCount == 0:
         session['totalPage_sub'] = 0
 
+    contestInfo = getContestInfo(db,session.get("contestId_pro"))
+
     db.dispose()
-    
-    return render_template("problems/contestBase.html")
+
+    return render_template("problems/contestBase.html",contestInfo=contestInfo)
 
 @bp.route("/currentRanklist/<int:currentPage>")
 @bp.route("/currentRanklist")
@@ -87,13 +93,6 @@ def currentRanklist(currentPage=1):
 def problemSetTag(tag):
     session['problemTag_pro'] = tag
     return redirect(url_for('problems.problemSet'))
-
-@bp.route("/showContestInfo")
-def showContestInfo():
-    db = MysqlUtils.MyPyMysqlPool()
-    contestInfo = getContestInfo(db,session.get("contestId_pro"))
-    db.dispose()
-    return render_template("problems/contestInfo.html",contestInfo = contestInfo)
 
 @bp.route("/showProblemList")
 def showProblemList():

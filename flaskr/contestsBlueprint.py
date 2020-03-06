@@ -12,28 +12,9 @@ from . import MysqlUtils
 bp = Blueprint('contests', __name__, url_prefix='/contests')
 
 @bp.route("/contestSet")
-@bp.route("/contestSet/<int:currentPage>")
 def contestSet(currentPage=1):
-
-    db = MysqlUtils.MyPyMysqlPool()
-
     session['active'] = "Contests"
-    session['currentPage_con'] = currentPage
-    if session.get("contextId_con") is None:
-        session["contextId_con"] = 1
-    if session.get("pageSize_con") is None:
-        session['pageSize_con'] = 20
-
-    totalCount = getContestCount(db)
-    total = totalCount//session.get("pageSize_con")
-    total = total if totalCount%session.get("pageSize_con") == 0 else total+1
-    session['totalPage_con'] = total
-
-    contestSet = getContestSet(db,session.get('currentPage_con'),session.get('pageSize_con'))
-
-    db.dispose()
-        
-    return render_template("contests/contestSet.html",contestSet=contestSet)
+    return render_template("contests/contestSet.html")
 
 @bp.route("/contest/<int:contestId>")
 def contest(contestId):
@@ -98,8 +79,20 @@ def judgeContestPass():
     })
 
 @bp.route("/showContestList")
-def showContestList():
+@bp.route("/showContestList/<int:currentPage>",methods=["POST","GET"])
+def showContestList(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
+    session['currentPage_con'] = currentPage
+    if session.get("contextId_con") is None:
+        session["contextId_con"] = 1
+    if session.get("pageSize_con") is None:
+        session['pageSize_con'] = 20
+
+    totalCount = getContestCount(db)
+    total = totalCount//session.get("pageSize_con")
+    total = total if totalCount%session.get("pageSize_con") == 0 else total+1
+    session['totalPage_con'] = total
+
     contestSet = getContestSet(db,session.get('currentPage_con'),session.get('pageSize_con'))
     db.dispose()
     return render_template("contests/contestList.html",contestSet=contestSet)

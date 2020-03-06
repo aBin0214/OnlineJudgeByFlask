@@ -8,7 +8,7 @@
   {% endif %}
   <div class="row col-md-12">
     <div class="col-md-10">
-      <a class="contest" id="contestId={{contest['id_contest']}}" href="#"><span
+      <a class="contest" href="#" onclick="contestClick({{contest['id_contest']}});"><span
         style="font-size: large;">{{contest["title"]}}</span></a>
       {% if contest['is_private'] == 1 %}
       <img src="{{url_for('static',filename='img/private.png')}}" class="mb-2" width="16rem" height="16rem">
@@ -38,5 +38,5 @@
 <hr class="mb-3">
 {% endfor %}
 {% import "macro/page.html" as pg %}
-{{ pg.page(session.get("currentPage_con"),session.get("totalPage_con"),'#') }}
+{{ pg.page(session.get("currentPage_con"),session.get("totalPage_con"),'/contests/showContestList',"#contestList") }}
 {% endif %}

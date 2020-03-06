@@ -10,43 +10,36 @@
       url:$SCRIPT_ROOT+"/contests/showContestList", 
       success:function(response){
         $("#contestList").html(response);
-      },
-      complete:function(){
-        contestClick();
       }
     });
   });
-  contestClick = function() {
-    $('a.contest').bind('click', function() {
-      console.log("比赛被点击！");
-      var contestId = $(this).attr('id').split('=')[1];
-      $.ajax({
-        url:$SCRIPT_ROOT+"/contests/contestPermission/"+contestId,     
-        dataType:"json",                                           
-        type:"GET",
-        success:function(data){
-            if(data["result"] === 'success'){
-              if(data["is_private"] === 1){
-                $("#contest_title").text(data['title']);
-                $("#verify_form").attr("action",data['nextUrl']+"?"+contestId);
-                $('#contestVerify').modal();
-              }else if(data["is_private"] === 0){
-                $(location).attr('href', data['nextUrl']);
-              }
+  function contestClick(contestId) {
+    $.ajax({
+      url:$SCRIPT_ROOT+"/contests/contestPermission/"+contestId,     
+      dataType:"json",                                           
+      type:"GET",
+      success:function(data){
+          if(data["result"] === 'success'){
+            if(data["is_private"] === 1){
+              $("#contest_title").text(data['title']);
+              $("#verify_form").attr("action",data['nextUrl']+"?"+contestId);
+              $('#contestVerify').modal();
+            }else if(data["is_private"] === 0){
+              $(location).attr('href', data['nextUrl']);
             }
-        },
-        complete:function(){
-          $.ajax({
-            url: $SCRIPT_ROOT+'/base/showFlash',
-            success: function (response) {
-                $('#showFlash').html(response);
-                $('.toast').toast('show')
-            }
-          })
-        }
-      });
+          }
+      },
+      complete:function(){
+        $.ajax({
+          url: $SCRIPT_ROOT+'/base/showFlash',
+          success: function (response) {
+              $('#showFlash').html(response);
+              $('.toast').toast('show')
+          }
+        })
+      }
     });
-  }
+}
   $(function(){
     $("#verify_form_submit").click(function () {
       var next = $("#verify_form").attr("action").split('?');
@@ -87,8 +80,7 @@
       <span style="font-size: large;">All Contest</span>
     </div>
     <div id="contestList">
-      {% import "macro/loading.html" as ld %}
-      {{ ld.loading() }}  
+      
     </div>
   </div>
 </div>
