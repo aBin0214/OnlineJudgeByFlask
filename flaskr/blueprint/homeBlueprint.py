@@ -6,9 +6,8 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.authBlueprint import login_required
-from . import MysqlUtils
-from . import CodeHighlightUtils
+from flaskr.utils import MysqlUtils
+from flaskr.utils import CodeHighlightUtils
 
 bp = Blueprint('home', __name__)
 

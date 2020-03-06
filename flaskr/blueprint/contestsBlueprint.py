@@ -8,8 +8,8 @@ from flask import (
 )
 from werkzeug.security import check_password_hash
 
-from . import MysqlUtils
-from . import PagingUtils
+from flaskr.utils import MysqlUtils
+from flaskr.utils import PagingUtils
 
 bp = Blueprint('contests', __name__, url_prefix='/contests')
 

@@ -12,7 +12,7 @@ from jinja2 import Markup
 # 内置主题类型可查看 pyecharts.globals.ThemeType
 from pyecharts.globals import ThemeType   
 
-from . import MysqlUtils
+from flaskr.utils import MysqlUtils
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 

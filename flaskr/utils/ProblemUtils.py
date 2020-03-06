@@ -3,7 +3,7 @@
 
 import os
 
-from . import MysqlUtils
+from flaskr.utils import MysqlUtils
 
 def saveProblemDescribe(problemId,describe):
     dirname = os.path.split(os.path.dirname(__file__))[0]

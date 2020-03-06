@@ -6,9 +6,7 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from . import MysqlUtils
-# from . import FormUtils
-
+from flaskr.utils import MysqlUtils
 
 bp = Blueprint('base', __name__, url_prefix='/base')
 

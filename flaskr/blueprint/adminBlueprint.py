@@ -8,11 +8,11 @@ from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash
 import os
 
-from . import MysqlUtils
-from . import LogUtils
-from . import CodeHighlightUtils
-from . import ProblemUtils
-from . import PagingUtils
+from flaskr.utils import MysqlUtils
+from flaskr.utils import LogUtils
+from flaskr.utils import CodeHighlightUtils
+from flaskr.utils import ProblemUtils
+from flaskr.utils import PagingUtils
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 

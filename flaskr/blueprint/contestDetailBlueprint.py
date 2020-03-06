@@ -6,9 +6,9 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app
 )
 
-from . import MysqlUtils
-from . import CodeHighlightUtils
-from . import PagingUtils
+from flaskr.utils import MysqlUtils
+from flaskr.utils import CodeHighlightUtils
+from flaskr.utils import PagingUtils
 
 bp = Blueprint('contestDetail', __name__, url_prefix='/contestDetail')
 
