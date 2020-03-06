@@ -38,7 +38,7 @@
     <hr class="customTableItemHr"/>
 {% endfor%}
 {% import "macro/page.html" as pg %}
-{{ pg.page(session.get("currentPage_problems"),session.get("totalPage_problems"),'/admin/problems',"#managementContent") }}
+{{ pg.page(session.get("currentPage"),session.get("totalPage"),'/admin/problems',"#managementContent") }}
 <div class="modal fade" id="reportDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

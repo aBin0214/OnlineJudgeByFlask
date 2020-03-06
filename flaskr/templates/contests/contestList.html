@@ -38,5 +38,5 @@
 <hr class="mb-3">
 {% endfor %}
 {% import "macro/page.html" as pg %}
-{{ pg.page(session.get("currentPage_con"),session.get("totalPage_con"),'/contests/showContestList',"#contestList") }}
+{{ pg.page(session.get("currentPage"),session.get("totalPage"),'/contests/showContestList',"#contestList") }}
 {% endif %}

@@ -3,7 +3,7 @@
 
 from flask import session
 
-def Paging(currentPage,totalCount,pageSize=2):
+def Paging(currentPage,totalCount,pageSize=20):
     session['pageSize'] = pageSize
     session['currentPage'] = currentPage
 

@@ -12,6 +12,7 @@ from . import MysqlUtils
 from . import LogUtils
 from . import CodeHighlightUtils
 from . import ProblemUtils
+from . import PagingUtils
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -92,20 +93,15 @@ def showLogs(currentPage=1):
         session["logs_tag"] = tag
     else:
         tag = session.get("logs_tag")
-    session["currentPage_logs"] = currentPage
-    if session.get("pageSize_logs") is None:
-        session["pageSize_logs"] = 20
     logList = LogUtils.getLogListByTag(tag)
 
     if not logList:
-        session['totalPage_logs'] = 0
+        totalCount = 0
     else:
         totalCount = logList[-1]["id_log"]
-        total = totalCount//session.get("pageSize_logs")
-        total = total if totalCount%session.get("pageSize_logs") == 0 else total+1
-        session['totalPage_logs'] = total
+    PagingUtils.Paging(currentPage,totalCount)
 
-    logList = logList[(currentPage-1)*session.get("pageSize_logs"):currentPage*session.get("pageSize_logs")]
+    logList = logList[(currentPage-1)*session.get("pageSize"):currentPage*session.get("pageSize")]
     return render_template("admin/logList.html",logList=logList)
 
 @bp.route("/users",methods=["POST","GET"])
@@ -113,16 +109,8 @@ def showLogs(currentPage=1):
 def users(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
 
-    session['currentPage_users'] = currentPage
-    if session.get("pageSize_users") is None:
-        session['pageSize_users'] = 20
-
-    totalCount = getUserCount(db)
-    total = totalCount//session.get("pageSize_users")
-    total = total if totalCount%session.get("pageSize_users") == 0 else total+1
-    session['totalPage_users'] = total
-
-    userList = getUserList(db,session.get('currentPage_users'),session.get('pageSize_users'))
+    PagingUtils.Paging(currentPage,getUserCount(db))
+    userList = getUserList(db,session.get('currentPage'),session.get('pageSize'))
 
     db.dispose()
     return render_template("admin/users.html",userList=userList)
@@ -132,16 +120,9 @@ def users(currentPage=1):
 def problems(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
 
-    session['currentPage_problems'] = currentPage
-    if session.get("pageSize_problems") is None:
-        session['pageSize_problems'] = 20
+    PagingUtils.Paging(currentPage,getProblemCount(db))
 
-    totalCount = getProblemCount(db)
-    total = totalCount//session.get("pageSize_problems")
-    total = total if totalCount%session.get("pageSize_problems") == 0 else total+1
-    session['totalPage_problems'] = total
-
-    problemList = getProblemList(db,session.get('currentPage_problems'),session.get('pageSize_problems'))
+    problemList = getProblemList(db,session.get('currentPage'),session.get('pageSize'))
     db.dispose()
     return render_template("admin/problems.html",problemList=problemList)
 
@@ -239,17 +220,8 @@ def saveProblem():
 @bp.route("/contests/<int:currentPage>",methods=["POST","GET"])
 def contests(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
-
-    session['currentPage_contests'] = currentPage
-    if session.get("pageSize_contests") is None:
-        session['pageSize_contests'] = 20
-
-    totalCount = getContestCount(db)
-    total = totalCount//session.get("pageSize_contests")
-    total = total if totalCount%session.get("pageSize_contests") == 0 else total+1
-    session['totalPage_contests'] = total
-    contestList = getContestList(db,session.get('currentPage_contests'),session.get('pageSize_contests'))
-
+    PagingUtils.Paging(currentPage,getContestCount(db))
+    contestList = getContestList(db,session.get('currentPage'),session.get('pageSize'))
     db.dispose()
     return render_template("admin/contests.html",contestList=contestList)
 

@@ -8,6 +8,15 @@
   $(function() {
     $.ajax({
       url:$SCRIPT_ROOT+"/contests/showContestList", 
+      beforeSend: function(){
+        $.ajax({
+            url: $SCRIPT_ROOT + "/base/loading",
+            type: 'POST',
+            success:function(response){
+                $("#contestList").html(response);
+            }
+        });
+      },
       success:function(response){
         $("#contestList").html(response);
       }

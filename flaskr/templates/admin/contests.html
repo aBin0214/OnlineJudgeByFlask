@@ -53,7 +53,7 @@
     <hr class="customTableItemHr"/>
 {% endfor%}
 {% import "macro/page.html" as pg %}
-{{ pg.page(session.get("currentPage_contests"),session.get("totalPage_contests"),'/admin/contests',"#managementContent") }}
+{{ pg.page(session.get("currentPage"),session.get("totalPage"),'/admin/contests',"#managementContent") }}
 <script>
     $(function(){
         $(".customTableItemDetail").hide();
