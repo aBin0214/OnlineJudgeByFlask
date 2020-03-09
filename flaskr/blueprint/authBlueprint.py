@@ -7,6 +7,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.utils import MysqlUtils
+from flaskr.server import UserServer
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -28,22 +29,19 @@ def register():
         error = 'Password is required.'
     elif confirm_password is None or confirm_password == '':
         error = 'The two passwords you entered did not match !'
-    elif db.get_one('SELECT id_user FROM user WHERE username = \'{}\' limit 1;'.format(username)) is not False:
+    elif UserServer.getUser(db, username=username) != {}:
         error = 'User {} is already registered.'.format(username)
     elif password != confirm_password:
         error = 'The passwords must be the same'
 
     if error is None:
-        try:
-            sql = 'INSERT INTO user (username, password, is_admin) VALUES (\'{}\',\'{}\',\'{}\')'\
-                .format(username, generate_password_hash(password), 0)
-            db.insert(sql)
+        if UserServer.userRegister(db, username, generate_password_hash(password)):
             db.dispose()
             flash('Registered successfully!','success')
             return jsonify({
                 "result":"success"
             })
-        except:
+        else:
             error = "Insert user into mysql-database failure"
             current_app.logger.error(error)
     flash(error,'danger')
@@ -70,9 +68,7 @@ def login():
     
     db = MysqlUtils.MyPyMysqlPool()
     if error is None:
-        user = db.get_one(
-            'SELECT id_user,username,password,is_admin FROM user WHERE username = \'{}\' limit 1'.format(username)
-        )
+        user = UserServer.getUser(db, username=username)
         if user is False:
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):

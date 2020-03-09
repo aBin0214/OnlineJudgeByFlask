@@ -31,3 +31,15 @@
 </table>
 {% import "macro/page.html" as pg %}
 {{ pg.page(session.get("currentPage"),session.get("totalPage"),'/contestDetail/showSubmissionList','#contestContent') }}
+<script>
+  function showSubDetail(idSolution){
+    $.ajax({
+      url:$SCRIPT_ROOT+"/contestDetail/showSubmissionDetail/"+idSolution,
+      type:'GET',
+      success:function(response){
+        $("#popUpBox").html(response);
+        $("#showSubDetail").modal("show");
+      }
+    });
+  }
+</script>

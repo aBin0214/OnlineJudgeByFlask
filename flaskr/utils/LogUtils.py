@@ -1,7 +1,7 @@
 import os
 
 def getLogListByTag(tag):
-    dirname = os.path.split(os.path.dirname(__file__))[0]
+    dirname = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
     if tag == "page":
         dirname = dirname+"/logs"
     elif tag == "backstage":

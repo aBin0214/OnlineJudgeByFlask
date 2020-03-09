@@ -11,6 +11,8 @@ from werkzeug.security import check_password_hash
 from flaskr.utils import MysqlUtils
 from flaskr.utils import PagingUtils
 
+from flaskr.server import ContestServer
+
 bp = Blueprint('contests', __name__, url_prefix='/contests')
 
 @bp.route("/contestSet")
@@ -27,7 +29,7 @@ def contest(contestId):
 def contestPermission(contestId):
 
     db = MysqlUtils.MyPyMysqlPool()
-    contestInfo = getContestInfo(db,contestId)
+    contestInfo = ContestServer.getContestInfo(db,contestId)
     db.dispose()
     error = None
     if session.get('id_user') is None or session.get('id_user') == '':
@@ -60,7 +62,7 @@ def judgeContestPass():
     contestId = request.form["contestId"]
     password = request.form["password"]
     db = MysqlUtils.MyPyMysqlPool()
-    contestInfo = getContestInfo(db,contestId)
+    contestInfo = ContestServer.getContestInfo(db,contestId)
     db.dispose()
     error = None
     if password is None or password == '':
@@ -84,43 +86,8 @@ def judgeContestPass():
 @bp.route("/showContestList/<int:currentPage>",methods=["POST","GET"])
 def showContestList(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
-    PagingUtils.Paging(currentPage,getContestCount(db))
-    contestSet = getContestSet(db,session.get('currentPage'),session.get('pageSize'))
+    PagingUtils.Paging(currentPage,ContestServer.getContestCount(db))
+    # contestSet = getContestSet(db,session.get('currentPage'),session.get('pageSize'))
+    contestSet = ContestServer.getContestList(db,session.get('currentPage'),session.get('pageSize'))
     db.dispose()
     return render_template("contests/contestList.html",contestSet=contestSet)
-
-def getContestSet(db,currentPage,pageSize):
-    start = (currentPage-1)*pageSize
-    sql = "SELECT id_contest,title,introduction,start_time,end_time,\
-        is_practice,belong,is_private,password \
-        FROM contest \
-        where contest.id_contest != 1 \
-        limit {start},{pageSize};".format(start=start,pageSize=pageSize)
-    contestSet = None
-    try:
-        contestSet = db.get_all(sql)
-    except:
-        current_app.logger.error("get contest count failure !")
-    return contestSet
-
-def getContestCount(db):
-    sql = "SELECT count(id_contest) as cnt FROM online_judge.contest \
-    where contest.id_contest != 1 limit 1;"
-    try:
-        res = db.get_one(sql)
-    except:
-        current_app.logger.error("get submission count failure !")
-    return res["cnt"]
-
-def getContestInfo(db,id_contest):
-    sql = "SELECT id_contest,title,introduction,start_time,end_time,is_practice,is_practice,username as belong,is_private,user.password \
-        FROM contest,user \
-        where contest.belong = user.id_user \
-        and id_contest = {id_contest} \
-        limit 1".format(id_contest=id_contest)
-    contestInfo = None
-    try:
-        contestInfo = db.get_one(sql)
-    except:
-        current_app.logger.error("get contest infomation failure !")
-    return contestInfo

@@ -14,6 +14,8 @@ from pyecharts.globals import ThemeType
 
 from flaskr.utils import MysqlUtils
 
+from flaskr.server import UserServer
+
 bp = Blueprint('user', __name__, url_prefix='/user')
 
 @bp.route("/userIndex/<int:userId>")
@@ -29,7 +31,7 @@ def profile():
     db = MysqlUtils.MyPyMysqlPool()
 
     userId = request.form.get("userId")
-    userInfo = getUserInfo(db,userId)
+    userInfo = UserServer.getUserInfo(db,userId)
 
     proCnt = {
         "24hours":0,
@@ -38,11 +40,11 @@ def profile():
         "OverallSolved":0,
         "OverallAttempted":0
     }
-    proCnt["24hours"] = getProCount(db,userId,1,11)
-    proCnt["7days"] = getProCount(db,userId,7,11)
-    proCnt["30days"] = getProCount(db,userId,30,11)
-    proCnt["OverallSolved"] = getProCount(db,userId,-1,11)
-    proCnt["OverallAttempted"] = getProCount(db,userId,-1,-1)
+    proCnt["24hours"] = UserServer.getUserProCount(db,userId,1,11)
+    proCnt["7days"] = UserServer.getUserProCount(db,userId,7,11)
+    proCnt["30days"] = UserServer.getUserProCount(db,userId,30,11)
+    proCnt["OverallSolved"] = UserServer.getUserProCount(db,userId,-1,11)
+    proCnt["OverallAttempted"] = UserServer.getUserProCount(db,userId,-1,-1)
 
     db.dispose()
 
@@ -53,8 +55,8 @@ def detail():
     db = MysqlUtils.MyPyMysqlPool()
 
     userId = request.form.get("userId")
-    solvedList = getProList(db,userId)
-    failedList = getProList(db,userId,False)
+    solvedList = UserServer.getUserProList(db,userId)
+    failedList = UserServer.getUserProList(db,userId,False)
     if solvedList is False or solvedList is None:
         solvedList = {}
     if failedList is False or failedList is None:
@@ -88,9 +90,9 @@ def getStatisticsGraph(db,userId):
         startTimeTmp = startTime + datetime.timedelta(days=-1*idx)
         endTimeTmp = endTime + datetime.timedelta(days=-1*idx)
         dateList.append("{}.{}".format(startTimeTmp.month,endTimeTmp.day))
-        submitList.append(getSubmitCount(db,userId,startTimeTmp,endTimeTmp))
-        attemptedList.append(getAttemptedCount(db,userId,startTimeTmp,endTimeTmp))
-        acceptList.append(getAcceptedCount(db,userId,startTimeTmp,endTimeTmp))
+        submitList.append(UserServer.getUserSubmitCount(db,userId,startTimeTmp,endTimeTmp))
+        attemptedList.append(UserServer.getUserAttemptedCount(db,userId,startTimeTmp,endTimeTmp))
+        acceptList.append(UserServer.getUserAcceptedCount(db,userId,startTimeTmp,endTimeTmp))
     dateList.reverse()
     submitList.reverse()
     attemptedList.reverse()
@@ -107,109 +109,109 @@ def getStatisticsGraph(db,userId):
     )
     return bar
 
-def getUserInfo(db,userId):
-    sql = "select id_user,username,password,is_admin from user\
-    where id_user = {id_user} limit 1;".format(id_user=userId)
-    userInfo = None
-    try:
-        userInfo = db.get_one(sql)
-    except:
-        current_app.logger.error("get user:{} information failure !".format(userId))
-    return userInfo
+# def getUserInfo(db,userId):
+#     sql = "select id_user,username,password,is_admin from user\
+#     where id_user = {id_user} limit 1;".format(id_user=userId)
+#     userInfo = None
+#     try:
+#         userInfo = db.get_one(sql)
+#     except:
+#         current_app.logger.error("get user:{} information failure !".format(userId))
+#     return userInfo
 
-def getProCount(db,userId,interval=-1,state=-1):
-    stateStr = ""
-    if state != -1:
-        stateStr = "and s.state = {}".format(state)
-    intervalStr = ""
-    if interval != -1:
-        intervalStr = "and s.submit_time > '{}'".format(
-            (datetime.datetime.now()+datetime.timedelta(days=interval)).strftime("%Y-%m-%d %H:%M:%S")
-        )
+# def getUserProCount(db,userId,interval=-1,state=-1):
+#     stateStr = ""
+#     if state != -1:
+#         stateStr = "and s.state = {}".format(state)
+#     intervalStr = ""
+#     if interval != -1:
+#         intervalStr = "and s.submit_time > '{}'".format(
+#             (datetime.datetime.now()+datetime.timedelta(days=interval)).strftime("%Y-%m-%d %H:%M:%S")
+#         )
 
-    sql = "select count(DISTINCT cp.id_problem) as cnt \
-            from solution as s,contest_problem as cp \
-            where s.id_contest_problem = cp.id_contest_problem \
-            and id_user = {id_user} \
-            {state}\
-            {time}\
-            limit 1".format(id_user=userId,state=stateStr,time=intervalStr)
-    res = None
-    try:
-        res = db.get_one(sql)
-    except:
-        current_app.logger.error("get user count failure !")
-    if res is False or res is None:
-        return 0
-    return res['cnt']
+#     sql = "select count(DISTINCT cp.id_problem) as cnt \
+#             from solution as s,contest_problem as cp \
+#             where s.id_contest_problem = cp.id_contest_problem \
+#             and id_user = {id_user} \
+#             {state}\
+#             {time}\
+#             limit 1".format(id_user=userId,state=stateStr,time=intervalStr)
+#     res = None
+#     try:
+#         res = db.get_one(sql)
+#     except:
+#         current_app.logger.error("get user count failure !")
+#     if res is False or res is None:
+#         return 0
+#     return res['cnt']
 
-def getProList(db,userId,isSolved=True):
-    sql = ""
-    if isSolved:
-        sql = "select distinct cp.id_problem,cp.id_contest_problem\
-            from solution as s,contest_problem as cp\
-            where s.id_contest_problem = cp.id_contest_problem\
-            and s.id_user = {id_user}\
-            and s.state = 11\
-            order by s.submit_time".format(id_user=userId)
-    else:
-        sql = "select distinct cp.id_problem,cp.id_contest_problem\
-            from online_judge.solution as s,online_judge.contest_problem as cp\
-            where s.id_contest_problem = cp.id_contest_problem\
-            and id_user = {id_user}\
-            and cp.id_problem not in (select distinct cp.id_problem\
-            from online_judge.solution as s,online_judge.contest_problem as cp\
-            where s.id_contest_problem = cp.id_contest_problem\
-            and id_user = {id_user}\
-            and s.state = 11)\
-            order by s.submit_time".format(id_user=userId)
-        pass
-    solvedPro = None
-    try:
-        solvedPro = db.get_all(sql)
-    except:
-        current_app.logger.error("get user:{} {} problem failure !".format(userId,"solved" if isSolved else "unsolved"))
-    return solvedPro
+# def getUserProList(db,userId,isSolved=True):
+#     sql = ""
+#     if isSolved:
+#         sql = "select distinct cp.id_problem,cp.id_contest_problem\
+#             from solution as s,contest_problem as cp\
+#             where s.id_contest_problem = cp.id_contest_problem\
+#             and s.id_user = {id_user}\
+#             and s.state = 11\
+#             order by s.submit_time".format(id_user=userId)
+#     else:
+#         sql = "select distinct cp.id_problem,cp.id_contest_problem\
+#             from online_judge.solution as s,online_judge.contest_problem as cp\
+#             where s.id_contest_problem = cp.id_contest_problem\
+#             and id_user = {id_user}\
+#             and cp.id_problem not in (select distinct cp.id_problem\
+#             from online_judge.solution as s,online_judge.contest_problem as cp\
+#             where s.id_contest_problem = cp.id_contest_problem\
+#             and id_user = {id_user}\
+#             and s.state = 11)\
+#             order by s.submit_time".format(id_user=userId)
+#         pass
+#     solvedPro = None
+#     try:
+#         solvedPro = db.get_all(sql)
+#     except:
+#         current_app.logger.error("get user:{} {} problem failure !".format(userId,"solved" if isSolved else "unsolved"))
+#     return solvedPro
 
-def getSubmitCount(db,userId,startTime,endTime):
-    sql = "select count(id_solution) as cnt from solution \
-    where id_user = {id_user}\
-    and submit_time >= '{startTime}'\
-    and submit_time < '{endTime}';".format(id_user=userId,startTime=startTime,endTime=endTime)
-    res = None
-    try:
-        res = db.get_one(sql)
-    except:
-        current_app.logger.error("get user submit count failure !")
-    if res is False or res is None:
-        return 0
-    return res['cnt']
+# def getUserSubmitCount(db,userId,startTime,endTime):
+#     sql = "select count(id_solution) as cnt from solution \
+#     where id_user = {id_user}\
+#     and submit_time >= '{startTime}'\
+#     and submit_time < '{endTime}';".format(id_user=userId,startTime=startTime,endTime=endTime)
+#     res = None
+#     try:
+#         res = db.get_one(sql)
+#     except:
+#         current_app.logger.error("get user submit count failure !")
+#     if res is False or res is None:
+#         return 0
+#     return res['cnt']
 
-def getAttemptedCount(db,userId,startTime,endTime):
-    sql = "select count(distinct id_contest_problem) as cnt from solution \
-    where id_user = {id_user}\
-    and submit_time >= '{startTime}'\
-    and submit_time < '{endTime}';".format(id_user=userId,startTime=startTime,endTime=endTime)
-    res = None
-    try:
-        res = db.get_one(sql)
-    except:
-        current_app.logger.error("get user attempted count failure !")
-    if res is False or res is None:
-        return 0
-    return res['cnt']
+# def getUserAttemptedCount(db,userId,startTime,endTime):
+#     sql = "select count(distinct id_contest_problem) as cnt from solution \
+#     where id_user = {id_user}\
+#     and submit_time >= '{startTime}'\
+#     and submit_time < '{endTime}';".format(id_user=userId,startTime=startTime,endTime=endTime)
+#     res = None
+#     try:
+#         res = db.get_one(sql)
+#     except:
+#         current_app.logger.error("get user attempted count failure !")
+#     if res is False or res is None:
+#         return 0
+#     return res['cnt']
 
-def getAcceptedCount(db,userId,startTime,endTime):
-    sql = "select count(distinct id_contest_problem) as cnt from solution \
-    where state = 11\
-    and id_user = {id_user}\
-    and submit_time >= '{startTime}'\
-    and submit_time < '{endTime}';".format(id_user=userId,startTime=startTime,endTime=endTime)
-    res = None
-    try:
-        res = db.get_one(sql)
-    except:
-        current_app.logger.error("get user accept count failure !")
-    if res is False or res is None:
-        return 0
-    return res['cnt']
+# def getUserAcceptedCount(db,userId,startTime,endTime):
+#     sql = "select count(distinct id_contest_problem) as cnt from solution \
+#     where state = 11\
+#     and id_user = {id_user}\
+#     and submit_time >= '{startTime}'\
+#     and submit_time < '{endTime}';".format(id_user=userId,startTime=startTime,endTime=endTime)
+#     res = None
+#     try:
+#         res = db.get_one(sql)
+#     except:
+#         current_app.logger.error("get user accept count failure !")
+#     if res is False or res is None:
+#         return 0
+#     return res['cnt']

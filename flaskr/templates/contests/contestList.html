@@ -1,5 +1,6 @@
 {% if session.get("totalPage_con") != 0 %}
 {% for contest in contestSet %}
+{% if contest["id_contest"] != 1 %}
 <div class="media">
   {% if contest['is_practice'] != 1 %}
   <img src="{{url_for('static',filename='img/contest.png')}}" class="mt-1 p-1" width="40rem" height="40rem">
@@ -9,7 +10,7 @@
   <div class="row col-md-12">
     <div class="col-md-10">
       <a class="contest" href="#" onclick="contestClick({{contest['id_contest']}});"><span
-        style="font-size: large;">{{contest["title"]}}</span></a>
+          style="font-size: large;">{{contest["title"]}}</span></a>
       {% if contest['is_private'] == 1 %}
       <img src="{{url_for('static',filename='img/private.png')}}" class="mb-2" width="16rem" height="16rem">
       {% endif %}<br />
@@ -36,6 +37,7 @@
   </div>
 </div>
 <hr class="mb-3">
+{% endif %}
 {% endfor %}
 {% import "macro/page.html" as pg %}
 {{ pg.page(session.get("currentPage"),session.get("totalPage"),'/contests/showContestList',"#contestList") }}

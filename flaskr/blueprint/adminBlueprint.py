@@ -14,6 +14,10 @@ from flaskr.utils import CodeHighlightUtils
 from flaskr.utils import ProblemUtils
 from flaskr.utils import PagingUtils
 
+from flaskr.server import UserServer
+from flaskr.server import ProblemServer
+from flaskr.server import ContestServer
+
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 @bp.route("/login",methods=["POST","GET"])
@@ -29,10 +33,7 @@ def login():
         
         db = MysqlUtils.MyPyMysqlPool()
         if error is None:
-            user = db.get_one(
-                'SELECT id_user,username,password,is_admin FROM user WHERE username = \'{}\' limit 1'.format(username)
-            )
-            print(user)
+            user = UserServer.getUser(db, username=username)
             if user is False:
                 error = 'Incorrect username.'
             if user['is_admin'] == 0:
@@ -109,8 +110,8 @@ def showLogs(currentPage=1):
 def users(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
 
-    PagingUtils.Paging(currentPage,getUserCount(db))
-    userList = getUserList(db,session.get('currentPage'),session.get('pageSize'))
+    PagingUtils.Paging(currentPage, UserServer.getUserCount(db))
+    userList = UserServer.getUserList(db, session.get('currentPage'), session.get('pageSize'))
 
     db.dispose()
     return render_template("admin/users.html",userList=userList)
@@ -120,9 +121,9 @@ def users(currentPage=1):
 def problems(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
 
-    PagingUtils.Paging(currentPage,getProblemCount(db))
+    PagingUtils.Paging(currentPage, ProblemServer.getProblemCount(db))
 
-    problemList = getProblemList(db,session.get('currentPage'),session.get('pageSize'))
+    problemList = ProblemServer.getProblemList(db, session.get('currentPage'), session.get('pageSize'))
     db.dispose()
     return render_template("admin/problems.html",problemList=problemList)
 
@@ -161,8 +162,7 @@ def createProblem():
 def updateProblem():
     db = MysqlUtils.MyPyMysqlPool()
     problemId = request.form.get("id_problem")
-    print("problemId:",problemId)
-    proContent = getProblemById(db,problemId)
+    proContent = ProblemServer.getProblemById(db, problemId)
     proContent["webTitle"] = "Update Problem"
     proContent["describe"] = ProblemUtils.readProblemDescribe(problemId)["content"]
     db.dispose
@@ -186,27 +186,29 @@ def saveProblem():
         error = "describe is empty."
 
     userId = session.get("id_user")
-    isUpdate = False if problemId == -1 or problemId == None else True
+    print("problemId:{}".format(problemId))
+    print(type(problemId))
+    isUpdate = False if problemId == "-1" or problemId == None else True
     if error is None:
         db = MysqlUtils.MyPyMysqlPool()
-        try:
-            if isUpdate:
-                sql = "INSERT INTO problem (title,create_by, time_limit, mem_limit) VALUES ('{}','{}','{}','{}')" \
-                    .format(problemTitle, userId,timeLimit, memoryLimit)
-                db.insert(sql)
-                problemId = db.get_one("select max(id_problem) as id from problem limit 1;")["id"]
-            else:
-                sql = "UPDATE problem SET title='{}',create_by='{}',time_limit='{}',mem_limit='{}' where id_problem = '{}'" \
-                    .format(problemTitle, userId,timeLimit, memoryLimit,problemId)
-                print(sql)
-                db.update(sql)
+        problem = {}
+        problem["title"] = problemTitle
+        problem["create_by"] = userId
+        problem["time_limit"] = timeLimit
+        problem["mem_limit"] = memoryLimit
+        problem["id_problem"] = problemId
+        isSuccess = False
+        if isUpdate:
+            isSuccess = ProblemServer.updateProblem(db, problem)
+        else:
+            isSuccess = ProblemServer.insertProblem(db, problem)
+        if isSuccess:
             ProblemUtils.saveProblemDescribe(problemId,describe)
             flash('{} problem successfully!'.format("Created" if isUpdate is False else "Update"),'success')
-        except:
+        else:
             error = "{} problem failure.".format("Created" if isUpdate is False else "Update")
             current_app.logger.error(error)
-        finally:
-            db.dispose()
+        db.dispose()
     if error is None:
         return jsonify({
             "result":"success"
@@ -220,95 +222,10 @@ def saveProblem():
 @bp.route("/contests/<int:currentPage>",methods=["POST","GET"])
 def contests(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
-    PagingUtils.Paging(currentPage,getContestCount(db))
-    contestList = getContestList(db,session.get('currentPage'),session.get('pageSize'))
+    PagingUtils.Paging(currentPage, ContestServer.getContestCount(db))
+    contestList = ContestServer.getContestList(db, session.get('currentPage'), session.get('pageSize'))
     db.dispose()
     return render_template("admin/contests.html",contestList=contestList)
-
-def getUserCount(db):
-    sql = "select count(id_user) as cnt from user;"
-    res = None
-    try:
-        res = db.get_one(sql)
-    except:
-        current_app.logger.error("get user count failure !")
-    if res is False or res is None:
-        return 0
-    return res["cnt"]
-
-def getProblemCount(db):
-    sql = "select count(id_problem) as cnt from problem;"
-    res = None
-    try:
-        res = db.get_one(sql)
-    except:
-        current_app.logger.error("get user count failure !")
-    if res is False or res is None:
-        return 0
-    return res["cnt"]
-
-def getContestCount(db):
-    sql = "select count(id_contest) as cnt from contest;"
-    res = None
-    try:
-        res = db.get_one(sql)
-    except:
-        current_app.logger.error("get user count failure !")
-    if res is False or res is None:
-        return 0
-    return res["cnt"]
-
-def getUserList(db,currentPage,pageSize):
-    start = (currentPage-1) * pageSize
-    sql = "select id_user,username,password from user limit {start},{pageSize}".format(start=start,pageSize=pageSize)
-    userList = None
-    try:
-        userList = db.get_all(sql)
-    except:
-        current_app.logger.error("get user list failure !")
-    if userList is False or userList is None:
-        return []
-    return userList
-
-def getProblemList(db,currentPage,pageSize):
-    start = (currentPage-1) * pageSize
-    sql = "SELECT id_problem,title,username "\
-        "FROM problem,user " \
-        "where problem.create_by = user.id_user limit {start},{pageSize};".format(start=start,pageSize=pageSize)
-    problemList = None
-    try:
-        problemList = db.get_all(sql)
-    except:
-        current_app.logger.error("get problem list failure !")
-    if problemList is False or problemList is None:
-        return []
-    return problemList
-
-def getContestList(db,currentPage,pageSize):
-    start = (currentPage-1) * pageSize
-    sql = "SELECT id_contest,title,introduction,start_time,end_time," \
-    "is_practice,belong,is_private,password FROM contest limit {start},{pageSize};".format(start=start,pageSize=pageSize)
-    contestList = None
-    try:
-        contestList = db.get_all(sql)
-    except:
-        current_app.logger.error("get contest list failure !")
-    if contestList is False or contestList is None:
-        return []
-    return contestList
-
-def getProblemById(db,problemId):
-    sql = "SELECT id_problem,title,time_limit,mem_limit " \
-        "FROM problem "\
-        "where id_problem = {id_problem} limit 1;".format(id_problem=problemId)
-    proContent = None
-    try:
-        proContent = db.get_one(sql)
-    except:
-        current_app.logger.error("get problem:{} failure !".format(problemId))
-    if proContent is False or proContent is None:
-        return {}
-    return proContent
 
 def judgeAdmin():
     if session.get('is_admin') is None:

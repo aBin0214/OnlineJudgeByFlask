@@ -9,6 +9,8 @@ from werkzeug.exceptions import abort
 from flaskr.utils import MysqlUtils
 from flaskr.utils import CodeHighlightUtils
 
+from flaskr.server import CompileServer
+
 bp = Blueprint('home', __name__)
 
 codeList = {
@@ -79,36 +81,18 @@ def showIO():
 @bp.route("/showAC")
 def showAC():
     db = MysqlUtils.MyPyMysqlPool()
-    compileInfo = getCompileInfo(db)
+    compileInfo = CompileServer.getCompileInfo(db)
     db.dispose()
     return render_template("home/compilers.html",compileInfo=compileInfo)
 
 @bp.route("/showAJR")
 def showAJR():
     db = MysqlUtils.MyPyMysqlPool()
-    resultsDes = getResultDes(db)
+    resultsDes = CompileServer.getResultDes(db)
     db.dispose()
     return render_template("home/judgeResult.html",resultsDes=resultsDes)
 
 @bp.route("/showAJ")
 def showAJ():
     return render_template("home/java.html")
-
-def getCompileInfo(db):
-    sql = "SELECT name_language,version,cmd FROM pro_language;"
-    compileInfo = None
-    try:
-        compileInfo = db.get_all(sql)
-    except:
-        current_app.logger.info("get compile information failure !")
-    return compileInfo
-
-def getResultDes(db):
-    sql = "SELECT name_result,description FROM result_des;"
-    resultsDes = None
-    try:
-        resultsDes = db.get_all(sql)
-    except:
-        current_app.logger.info("get result description failure !")
-    return resultsDes
 
