@@ -4,24 +4,33 @@
 from flaskr.utils import MysqlUtils
 
 def insertProblem(db,problem):
+    sql = "INSERT INTO problem (title,create_by, time_limit, mem_limit) VALUES ('{}','{}','{}','{}')" \
+    .format(problem["title"], problem["create_by"],problem["time_limit"], problem["mem_limit"])
+    res = 0
     try:
-        sql = "INSERT INTO problem (title,create_by, time_limit, mem_limit) VALUES ('{}','{}','{}','{}')" \
-        .format(problem["title"], problem["create_by"],problem["time_limit"], problem["mem_limit"])
-        db.insert(sql)
-        return True
+        res = db.insert(sql)
     except:
         current_app.logger.error("Problem insert failure !")
-        return False
+    return True if res !=0 and res != False else False
 
 def updateProblem(db,problem):
+    sql = "UPDATE problem SET title='{}',create_by='{}',time_limit='{}',mem_limit='{}' where id_problem = '{}'" \
+    .format(problem["title"], problem["create_by"],problem["time_limit"], problem["mem_limit"],problem["id_problem"])
+    res = 0
     try:
-        sql = "UPDATE problem SET title='{}',create_by='{}',time_limit='{}',mem_limit='{}' where id_problem = '{}'" \
-        .format(problem["title"], problem["create_by"],problem["time_limit"], problem["mem_limit"],problem["id_problem"])
-        db.update(sql)
-        return True
+        res = db.update(sql)
     except:
         current_app.logger.error("Problem update failure !")
-        return False
+    return True if res !=0 and res != False else False
+
+def deleteProblem(db,problemId):
+    sql = "DELETE FROM problem WHERE id_problem = '{}';".format(problemId)
+    res = 0
+    try:
+        res = db.delete(sql)
+    except:
+        current_app.logger.error("delete problem failure !")
+    return True if res !=0 and res != False else False
 
 def getProblemById(db,problemId):
     sql = "SELECT id_problem,title,time_limit,mem_limit " \

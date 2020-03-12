@@ -43,7 +43,9 @@
         <div class="col-md-3 ml-auto">
             <a href="#" onclick="updateContest({{contest['id_contest']}});" class="badge badge-pill badge-warning">updateContest</a>
             <a href="#" class="badge badge-pill badge-info" onclick="EditProblemSet({{contest['id_contest']}});">editProblemSet</a>
-            <a href="#" class="badge badge-pill badge-danger">delete</a>
+            {% if contest['id_contest'] != 1 %}
+                <a href="#" class="badge badge-pill badge-danger" onclick="deleteContest({{contest['id_contest']}});">delete</a>
+            {% endif %}
         </div>
     </div>
     <div class="customTableItemDetail my-4 p-2 border-info rounded shadow" id="contestContent_{{contest['id_contest']}}">
@@ -110,6 +112,20 @@
             success: function(response){
                 $("#managementContent").html(response);
             }
+        });
+    }
+    function deleteContest(contestId){
+        $.ajax({
+            url:$SCRIPT_ROOT+"/admin/deleteContest",
+            type:"POST",
+            data:{
+                "id_delete":contestId,
+                "isConfirm":"false"
+            },            
+            success:function(response){
+                $("#popUpBox").html(response);
+                $("#DeleteComfirm").modal("show");
+            },
         });
     }
 </script>

@@ -1,0 +1,73 @@
+<div id="DeleteComfirm" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog"
+  aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header pl-4 pr-4">
+        <h5 class="modal-title">{{confirmInfo["content"]}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body justify-content-center p-4">
+        <button type="button" class="btn btn-secondary" onclick="cancelDelete();">Cancel</button>
+        <button type="button" class="btn btn-danger float-right" onclick="comfirmDelete();">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function cancelDelete(){
+    $("#DeleteComfirm").modal("hide");
+  }
+  function comfirmDelete(){
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    var confirmInfo = {{confirmInfo|tojson|safe}};
+    $.ajax({
+      url:$SCRIPT_ROOT+confirmInfo["next"],
+      type:"POST",
+      data:{
+          "id_delete":confirmInfo["id_delete"],
+          "isConfirm":"true"
+      },
+      complete:function(){
+        $("#DeleteComfirm").modal("hide");
+        $(function () {
+            $.ajax({
+                url: $SCRIPT_ROOT + '/base/showFlash',
+                success: function (response) {
+                    $('#showFlash').html(response);
+                    $('.toast').toast('show')
+                }
+            })
+        });
+        if(confirmInfo["reflash_url"] === "" 
+        || confirmInfo["reflash_content"] === ""
+        || confirmInfo["reflash_url"] === undefined
+        || confirmInfo["reflash_content"] === undefined){
+          return ;
+        }
+        refresh(confirmInfo["reflash_url"],confirmInfo["reflash_content"])
+      }
+    });
+  }
+
+  function refresh(next,select){
+    $.ajax({
+      url: $SCRIPT_ROOT + next,
+      type: 'POST',
+      beforeSend: function(){
+          $.ajax({
+              url: $SCRIPT_ROOT + "/base/loading",
+              type: 'POST',
+              success:function(response){
+                  $(select).html(response);
+              }
+          });
+      },
+      success: function (response) {
+          $(select).html(response);
+          loadFootor();
+      }
+  });
+  }
+</script>

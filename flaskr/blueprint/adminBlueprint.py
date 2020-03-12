@@ -219,6 +219,37 @@ def saveProblem():
         "result":"failure"
     })
 
+@bp.route("/deleteProblem",methods=["POST"])
+def deleteProblem():
+    id_problem = request.form.get("id_delete")
+    isConfirm = request.form.get("isConfirm")
+    if isConfirm == "false":
+        confirmInfo = {}
+        confirmInfo["id_delete"] = id_problem
+        confirmInfo["content"] = "Delete this problem (#{}) ?".format(id_problem)
+        confirmInfo["next"] = "/admin/deleteProblem"
+        confirmInfo["reflash_url"] = "/admin/problems"
+        confirmInfo["reflash_content"] = "#managementContent"
+        return render_template("admin/deleteConfirm.html",confirmInfo=confirmInfo)
+    else:
+        db = MysqlUtils.MyPyMysqlPool()
+        isSuccess = ProblemServer.deleteProblem(db,id_problem)
+        db.dispose()
+        if isSuccess:
+            info = "delete problem success."
+            current_app.logger.info(info)
+            flash(info,"success")
+            return jsonify({
+                "result":"success"
+            })
+        else:
+            error = "delete problem failure."
+            current_app.logger.error(error)
+            flash(error,"danger")
+            return jsonify({
+                "result":"failure"
+            })
+
 @bp.route("/contests",methods=["POST","GET"])
 @bp.route("/contests/<int:currentPage>",methods=["POST","GET"])
 def contests(currentPage=1):
@@ -307,6 +338,37 @@ def saveContest():
     return jsonify({
         "result":"failure"
     })
+
+@bp.route("/deleteContest",methods=["POST"])
+def deleteContest():
+    id_contest = request.form.get("id_delete")
+    isConfirm = request.form.get("isConfirm")
+    if isConfirm == "false":
+        confirmInfo = {}
+        confirmInfo["id_delete"] = id_contest
+        confirmInfo["content"] = "Delete this contest (#{}) ?".format(id_contest)
+        confirmInfo["next"] = "/admin/deleteContest"
+        confirmInfo["reflash_url"] = "/admin/contests"
+        confirmInfo["reflash_content"] = "#managementContent"
+        return render_template("admin/deleteConfirm.html",confirmInfo=confirmInfo)
+    else:
+        db = MysqlUtils.MyPyMysqlPool()
+        isSuccess = ContestServer.deleteContest(db,id_contest)
+        db.dispose()
+        if isSuccess:
+            info = "delete contest success."
+            current_app.logger.info(info)
+            flash(info,"success")
+            return jsonify({
+                "result":"success"
+            })
+        else:
+            error = "delete contest failure."
+            current_app.logger.error(error)
+            flash(error,"danger")
+            return jsonify({
+                "result":"failure"
+            })
 
 @bp.route("/editProblemSet",methods=["POST","GET"])
 def editProblemSet():

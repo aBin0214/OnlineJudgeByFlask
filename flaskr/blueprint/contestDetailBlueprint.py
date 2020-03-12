@@ -95,9 +95,8 @@ def showSubmissionList(currentPage=1):
 def showSubmissionDetail(solutionId):
     db = MysqlUtils.MyPyMysqlPool()
     submission = ContestServer.getOneSubmission(db,solutionId)
-    print(submission)
     db.dispose()
-    if submission is not False:
+    if submission != {}:
         submission['hl_code'] = CodeHighlightUtils.CodeHighlight.codeTranslate(submission['submit_content'],submission['monaco_editor_val'])
     return render_template("contestDetail/submissionDetail.html",submission=submission)
 

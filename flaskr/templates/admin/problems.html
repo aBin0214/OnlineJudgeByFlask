@@ -32,7 +32,7 @@
             <a href="#" class="badge badge-pill badge-info" onclick="showReportDetail({{problem['id_problem']}});">report</a>
             <a href="#" class="badge badge-pill badge-warning" onclick="updateProblem({{problem['id_problem']}});">updateProblem</a>
             <a href="#" class="badge badge-pill badge-warning">updateData</a>
-            <a href="#" class="badge badge-pill badge-danger">delete</a>
+            <a href="#" class="badge badge-pill badge-danger" onclick="deleteProblem({{problem['id_problem']}});">delete</a>
         </div>
     </div>
     <hr class="customTableItemHr"/>
@@ -103,6 +103,20 @@
             success: function(response){
                 $("#managementContent").html(response);
             }
+        });
+    }
+    function deleteProblem(problemId){
+        $.ajax({
+            url:$SCRIPT_ROOT+"/admin/deleteProblem",
+            type:"POST",
+            data:{
+                "id_delete":problemId,
+                "isConfirm":"false"
+            },            
+            success:function(response){
+                $("#popUpBox").html(response);
+                $("#DeleteComfirm").modal("show");
+            },
         });
     }
 </script>

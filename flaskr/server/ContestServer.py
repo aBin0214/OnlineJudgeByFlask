@@ -10,13 +10,12 @@ def insertContest(db,contest):
         "VALUES('{}','{}','{}','{}','{}','{}','{}','{}');" \
         .format(contest["title"],contest["introduction"],contest["is_practice"],
         contest["is_private"],contest["start_time"],contest["end_time"],contest["password"],contest["belong"])
-    print(sql)
+    res = 0
     try:
         res = db.insert(sql)
-        return True
     except:
         current_app.logger.error("insert contest failure !")
-        return False
+    return True if res != 0 and res != False else False
 
 def updateContest(db,contest):
     sql = "UPDATE contest set title='{}',introduction='{}',is_practice='{}'" \
@@ -25,13 +24,21 @@ def updateContest(db,contest):
         .format(contest["title"],contest["introduction"],contest["is_practice"],
         contest["is_private"],contest["start_time"],contest["end_time"],contest["password"],contest["belong"],
         contest["id_contest"])
-    print(sql)
+    res != 0
     try:
         res = db.update(sql)
-        return True
     except:
         current_app.logger.error("insert contest failure !")
-        return False
+    return True if res != 0 and res != False else False
+    
+def deleteContest(db,contestId):
+    sql = "DELETE FROM contest WHERE id_contest = '{}';".format(contestId)
+    res = 0
+    try:
+        res = db.delete(sql)
+    except:
+        current_app.logger.error("delete contest failure !")
+    return True if res !=0 and res != False else False
 
 def getContestCount(db):
     sql = "select count(id_contest) as cnt from contest;"
@@ -150,12 +157,12 @@ def getOneSubmission(db,solutionId):
     limit 1;'.format(solutionId=solutionId);
     submission = None
     try:
-        submissions = db.get_one(sql)
+        submission = db.get_one(sql)
     except:
         current_app.logger.error("get solution-{}  failure !".format(solusionId))
     if submission is None or submission is False:
-        return []
-    return submissions
+        return {}
+    return submission
     
 def getRanklist(db,contestId):
     sql = "select u.id_user,u.username,count(distinct s.id_contest_problem) as cnt \
