@@ -1,0 +1,135 @@
+<div class="my-4">
+    <span class="font-weight-bold">{{contestContent["webTitle"]}}</span>
+    <button type="button" class="btn btn-secondary float-right"
+        onclick="setManagementContent('contests');">Back</button>
+</div>
+<div class="form-group">
+    <label>Title:</label>
+    <input type="text" class="form-control" id="contestTitle" value="{{contestContent['title']}}">
+</div>
+<div class="form-group">
+    <label for="contestIntroduction">Introduction</label>
+    <textarea class="form-control" id="contestIntroduction" rows="3">{{contestContent["introduction"]}}</textarea>
+</div>
+{% if contestContent["id_contest"] != 1 %}
+<div class="form-group">
+    <div class="row">
+        <div class="col-md-6">
+            <label for="start_time">Start Time</label><br/>
+            <input type="datetime-local" value="{{contestContent['start_time']}}" id="start_time"/>
+        </div>
+        <div class="col-md-6">
+            <label for="end_time">End Time</label><br/>
+            <input type="datetime-local" value="{{contestContent['end_time']}}" id="end_time"/>
+        </div>
+    </div>
+
+</div>
+<div class="form-group">
+    <div class="custom-control custom-radio custom-control-inline">
+        {% if contestContent["is_practice"] == 1 %}
+        <input type="radio" class="custom-control-input" checked="checked" name="practice_or_contest" id="isPractice">
+        {% else %}
+        <input type="radio" class="custom-control-input" name="practice_or_contest" id="isPractice">
+        {% endif %}
+        <label class="custom-control-label" for="isPractice">Practice</label>
+    </div>
+    <div class="custom-control custom-radio custom-control-inline">
+        {% if contestContent["is_practice"] == 0 %}
+        <input type="radio" class="custom-control-input" checked="checked" name="practice_or_contest" id="isContest">
+        {% else %}
+        <input type="radio" class="custom-control-input" name="practice_or_contest" id="isContest">
+        {% endif %}
+        <label class="custom-control-label" for="isContest">Contest</label>
+    </div>
+</div>
+<div class="form-group">
+    <div class="custom-control custom-checkbox">
+        {% if contestContent["is_private"] == 1 %}
+        <input type="checkbox" class="custom-control-input" checked="checked" id="privateSwitch" name="privateSwitch">
+        {% else %}
+        <input type="checkbox" class="custom-control-input" id="privateSwitch" name="privateSwitch">
+        {% endif %}
+        <label class="custom-control-label" for="privateSwitch">Private</label>
+    </div>
+</div>
+{% if contestContent["is_private"] == 1 %}
+<div class="form-group" show="true" id="passwordDiv">
+{% else %}
+<div class="form-group" show="false" id="passwordDiv" style="display: none;">
+{% endif %}
+    <label>Password:</label>
+    <input type="password" class="form-control" id="contestPassword">
+</div>
+{% endif %}
+
+<button type="button" class="btn btn-success float-right" onclick="saveContest();">Submit</button>
+<script>
+    $SCRIPT_ROOT = {{request.script_root|tojson|safe}};  
+    function saveContest(){
+        var contest = {{contestContent|tojson|safe}};
+        var title = $("#contestTitle").val();
+        var introduction = $("#contestIntroduction").val();
+        var practice_or_contest = $("input[name='practice_or_contest']:checked").attr("id");
+        var is_practice = true;
+        if(practice_or_contest === undefined){
+            is_practice = contest["is_practice"];
+        }else{
+            is_practice = (practice_or_contest === "isPractice")?1:0;
+        }
+        var is_private = ($("input[name='privateSwitch']:checked").attr("id") !== undefined)?1:0;
+        password = ""
+        if(is_practice){
+            is_practice = $("#contestPassword").val();
+        }
+        var start_time = $("#start_time").val();
+        if(start_time === undefined){
+            start_time = contest["start_time"]
+        }
+        var end_time = $("#end_time").val();
+        if(end_time === undefined){
+            end_time = contest["end_time"]
+        }
+        console.log(title,introduction,is_practice,is_private,start_time,end_time)
+        $.ajax({
+            url: $SCRIPT_ROOT+"/admin/saveContest",
+            type: "POST",
+            data:{
+                "id_contest":contest["id_contest"],
+                "title":title,
+                "introduction":introduction,
+                "is_practice":is_practice,
+                "is_private":is_private,
+                "start_time":start_time,
+                "end_time":end_time,
+                "password":password
+            },
+            complete:function(){
+                $.ajax({
+                    url: $SCRIPT_ROOT + '/base/showFlash',
+                    success: function (response) {
+                        $('#showFlash').html(response);
+                        $('.toast').toast('show')
+                    }
+                })
+            }
+        });
+    }
+    </script>
+  {% if contestContent["id_contest"] != 1 %}
+  <script>
+      $(function(){
+        $("#privateSwitch").click(function() { 
+            var isShow = $("#passwordDiv").attr("show");
+            console.log(isShow);
+            if(isShow === "true"){
+                $("#passwordDiv").attr("show","false");
+                $("#passwordDiv").attr("style","display: none;");
+            }else if(isShow === "false"){
+                $("#passwordDiv").attr("show","true");
+                $("#passwordDiv").attr("style","");             
+            }
+        });
+      });
+  </script>
+  {% endif %}

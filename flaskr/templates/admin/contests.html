@@ -1,6 +1,6 @@
 <div class="my-4">
     <span class="font-weight-bold">Show All Contests</span>
-    <button type="button" class="btn btn-success float-right">Created Contest</button>
+    <button type="button" class="btn btn-success float-right" onclick="createContest();">Created Contest</button>
 </div>
 <div class="row customTableTop">
     <div class="col-md-1">
@@ -41,8 +41,8 @@
             </span>
         </div>
         <div class="col-md-3 ml-auto">
-            <a href="#"  class="badge badge-pill badge-secondary">detail</a>
-            <a href="#"  class="badge badge-pill badge-info">report</a>
+            <a href="#" onclick="updateContest({{contest['id_contest']}});" class="badge badge-pill badge-warning">updateContest</a>
+            <a href="#" class="badge badge-pill badge-info" onclick="EditProblemSet({{contest['id_contest']}});">editProblemSet</a>
             <a href="#" class="badge badge-pill badge-danger">delete</a>
         </div>
     </div>
@@ -87,6 +87,44 @@
                 $("#contestContent_"+id).html(response)
                 loadFootor();
             }
+        });
+    }
+</script>
+<script>
+    function createContest(){
+        $.ajax({
+            url: $SCRIPT_ROOT + "/admin/createContest",
+            type: "POST",
+            success: function(response){
+                $("#managementContent").html(response);
+            }
+        });
+    }
+    function updateContest(contestId){
+        $.ajax({
+            url: $SCRIPT_ROOT + "/admin/updateContest",
+            type: "POST",
+            data:{
+                "id_contest":contestId
+            },
+            success: function(response){
+                $("#managementContent").html(response);
+            }
+        });
+    }
+</script>
+<script>
+    function EditProblemSet(contestId){
+        $.ajax({
+            url:$SCRIPT_ROOT + "/admin/editProblemSet",
+            type:"POST",
+            data:{
+                "id_contest":contestId
+            },
+            success:function(response){
+                $("#popUpBox").html(response);
+                $("#EditProblemSet").modal("show");
+            },
         });
     }
 </script>

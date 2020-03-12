@@ -1,6 +1,6 @@
 <div class="my-4">
     <span class="font-weight-bold">Show All Problems</span>
-    <button type="button" class="btn btn-success float-right" onclick="createdProblem();">Created Problem</button>
+    <button type="button" class="btn btn-success float-right" onclick="createProblem();">Created Problem</button>
 </div>
 <div class="row customTableTop">
     <div class="col-md-1">
@@ -80,7 +80,7 @@
     }
 </script>
 <script>
-    function createdProblem(){
+    function createProblem(){
         $.ajax({
             url: $SCRIPT_ROOT + "/admin/createProblem",
             type: "POST",

@@ -10,6 +10,8 @@ def getCompileInfo(db):
         compileInfo = db.get_all(sql)
     except:
         current_app.logger.info("get compile information failure !")
+    if compileInfo is None or compileInfo is False:
+        return []
     return compileInfo
 
 def getResultDes(db):
@@ -19,6 +21,8 @@ def getResultDes(db):
         resultsDes = db.get_all(sql)
     except:
         current_app.logger.info("get result description failure !")
+    if resultsDes is None or resultsDes is False:
+        return []
     return resultsDes
 
 def getLanguages(db):

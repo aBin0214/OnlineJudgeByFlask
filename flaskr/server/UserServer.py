@@ -75,6 +75,8 @@ def getUserInfo(db,userId):
         userInfo = db.get_one(sql)
     except:
         current_app.logger.error("get user:{} information failure !".format(userId))
+    if userInfo is None or userInfo is False:
+        return {}
     return userInfo
 
 def getUserProCount(db,userId,interval=-1,state=-1):
@@ -129,6 +131,8 @@ def getUserProList(db,userId,isSolved=True):
         solvedPro = db.get_all(sql)
     except:
         current_app.logger.error("get user:{} {} problem failure !".format(userId,"solved" if isSolved else "unsolved"))
+    if solvedPro is None or solvedPro is False:
+        return []
     return solvedPro
 
 def getUserSubmitCount(db,userId,startTime,endTime):

@@ -66,21 +66,27 @@ def getProblemAcceptedCount(db,problemId):
     from solution as s,result_des as r \
     where s.state = r.id_result_des \
     and r.name_result = \"Accepted\" \
-    and s.id_contest_problem = {}".format(problemId);
+    and s.id_contest_problem = {}".format(problemId)
+    res = None
     try:
         res = db.get_one(sql)
     except:
         current_app.logger.error("get problems accepted count failure !")
+    if res is None or res is False:
+        return 0
     return res["cnt"]
 
 def getProblemSubmitCount(db,problemId):
     sql = "select count(id_solution) as cnt \
     from solution as s \
-    where s.id_contest_problem = {}".format(problemId);
+    where s.id_contest_problem = {}".format(problemId)
+    res = None
     try:
         res = db.get_one(sql)
     except:
         current_app.logger.error("get problems accepted count failure !")
+    if res is None or res is False:
+        return 0
     return res["cnt"]
 
 def getProblemInfo(db,idContestProblem):

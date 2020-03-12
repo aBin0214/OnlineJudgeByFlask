@@ -7,6 +7,7 @@ from flask import (
 from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash
 import os
+import datetime
 
 from flaskr.utils import MysqlUtils
 from flaskr.utils import LogUtils
@@ -186,8 +187,8 @@ def saveProblem():
         error = "describe is empty."
 
     userId = session.get("id_user")
-    print("problemId:{}".format(problemId))
-    print(type(problemId))
+    # print("problemId:{}".format(problemId))
+    # print(type(problemId))
     isUpdate = False if problemId == "-1" or problemId == None else True
     if error is None:
         db = MysqlUtils.MyPyMysqlPool()
@@ -226,6 +227,94 @@ def contests(currentPage=1):
     contestList = ContestServer.getContestList(db, session.get('currentPage'), session.get('pageSize'))
     db.dispose()
     return render_template("admin/contests.html",contestList=contestList)
+
+@bp.route("/createContest",methods=["POST"])
+def createContest():
+    contestContent = {}
+    contestContent["id_contest"] = -1
+    contestContent["webTitle"] = "Created Contest"
+    contestContent["title"] = ""
+    contestContent["introduction"] = ""
+    contestContent["start_time"] = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    contestContent["end_time"] = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    contestContent["is_practice"] = 0
+    contestContent["is_private"] = 0
+    contestContent["password"] = ""
+    return render_template("admin/editContest.html",contestContent=contestContent)
+
+@bp.route("/updateContest",methods=["POST"])
+def updateContest():
+    db = MysqlUtils.MyPyMysqlPool()
+    contestId = request.form.get("id_contest")
+    contestContent = ContestServer.getContestInfo(db,contestId)
+    contestContent["webTitle"] = "Update Contest"
+    contestContent["start_time"] = contestContent["start_time"].strftime("%Y-%m-%dT%H:%M:%S")
+    contestContent["end_time"] = contestContent["end_time"].strftime("%Y-%m-%dT%H:%M:%S")
+    db.dispose()
+    return render_template("admin/editContest.html",contestContent=contestContent)
+
+@bp.route("/saveContest",methods=["POST"])
+def saveContest():
+    contestId = request.form.get("id_contest")
+    title = request.form.get("title")
+    introduction = request.form.get("introduction")
+    is_practice = request.form.get("is_practice")
+    is_private = request.form.get("is_private")
+    start_time = request.form.get("start_time")
+    end_time = request.form.get("end_time")
+    password = request.form.get("password")
+
+    error = None
+    if title == None or title == "":
+        error = "title is empty."
+    elif introduction == None or introduction == "":
+        error = "introduction is empty."
+    elif start_time == None or start_time == "":
+        error = "start_time is empty."
+    elif end_time == None or end_time == "":
+        error = "end_time is empty."
+
+    isUpdate = False if contestId == "-1" or contestId == None else True
+    if error is None:
+        db = MysqlUtils.MyPyMysqlPool()
+        contest = {}
+        contest["id_contest"] = contestId
+        contest["title"] = title
+        contest["introduction"] = introduction
+        contest["is_practice"] = is_practice
+        contest["is_private"] = is_private
+        contest["start_time"] = start_time
+        contest["end_time"] = end_time
+        contest["password"] = password
+        contest["belong"] = session.get("id_user")
+        isSuccess = False
+        if isUpdate:
+            isSuccess = ContestServer.updateContest(db,contest)
+        else:
+            isSuccess = ContestServer.insertContest(db,contest)
+        if isSuccess:
+            flash('{} contest successfully!'.format("Created" if isUpdate is False else "Update"),'success')
+        else:
+            error = "{} contest failure.".format("Created" if isUpdate is False else "Update")
+            current_app.logger.error(error)
+        db.dispose()
+
+    if error is None:
+        return jsonify({
+            "result":"success"
+        })
+    flash(error,'danger')
+    return jsonify({
+        "result":"failure"
+    })
+
+@bp.route("/editProblemSet",methods=["POST","GET"])
+def editProblemSet():
+    return render_template("admin/editProblemSet.html")
+
+@bp.route("/saveProblemSet",methods=["POST","GET"])
+def saveProblemSet():
+    pass
 
 def judgeAdmin():
     if session.get('is_admin') is None:

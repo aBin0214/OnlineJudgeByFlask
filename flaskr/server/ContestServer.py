@@ -1,7 +1,37 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from flask import current_app
 from flaskr.utils import MysqlUtils
+
+def insertContest(db,contest):
+    sql = "INSERT INTO contest " \
+        "(title,introduction,is_practice,is_private,start_time,end_time,password,belong) " \
+        "VALUES('{}','{}','{}','{}','{}','{}','{}','{}');" \
+        .format(contest["title"],contest["introduction"],contest["is_practice"],
+        contest["is_private"],contest["start_time"],contest["end_time"],contest["password"],contest["belong"])
+    print(sql)
+    try:
+        res = db.insert(sql)
+        return True
+    except:
+        current_app.logger.error("insert contest failure !")
+        return False
+
+def updateContest(db,contest):
+    sql = "UPDATE contest set title='{}',introduction='{}',is_practice='{}'" \
+        ",is_private='{}',start_time='{}',end_time='{}',password='{}',belong='{}' " \
+        "where id_contest = {}" \
+        .format(contest["title"],contest["introduction"],contest["is_practice"],
+        contest["is_private"],contest["start_time"],contest["end_time"],contest["password"],contest["belong"],
+        contest["id_contest"])
+    print(sql)
+    try:
+        res = db.update(sql)
+        return True
+    except:
+        current_app.logger.error("insert contest failure !")
+        return False
 
 def getContestCount(db):
     sql = "select count(id_contest) as cnt from contest;"
@@ -28,7 +58,7 @@ def getContestList(db,currentPage,pageSize):
     return contestList
 
 def getContestInfo(db,id_contest):
-    sql = "SELECT id_contest,title,introduction,start_time,end_time,is_practice,is_practice,username as belong,is_private,user.password \
+    sql = "SELECT id_contest,title,introduction,start_time,end_time,is_practice,username as belong,is_private,user.password \
         FROM contest,user \
         where contest.belong = user.id_user \
         and id_contest = {id_contest} \
@@ -38,6 +68,8 @@ def getContestInfo(db,id_contest):
         contestInfo = db.get_one(sql)
     except:
         current_app.logger.error("get contest infomation failure !")
+    if contestInfo is None or contestInfo is False:
+        return {}
     return contestInfo
 
 def getAllTag(db):
@@ -47,6 +79,8 @@ def getAllTag(db):
         tags = db.get_all(sql)
     except:
         current_app.logger.error("get tags failure !")
+    if tags is None or tags is False:
+        tags = []
     tags.append({'id_tag': 0, 'name_tag': 'All', 'descr': 'All Problems'})
     tags.reverse()
     return tags
@@ -74,6 +108,9 @@ def getProblemsByTag(db,contestId,currentPage,problemTag,pageSize):
         problems = db.get_all(sql)
     except:
         current_app.logger.error("get problems failure !")
+
+    if problems is None or problems is False:
+        return []
     return problems
 
 def getSubmissions(db,contestId,currentPage,pageSize):
@@ -95,6 +132,8 @@ def getSubmissions(db,contestId,currentPage,pageSize):
         submissions = db.get_all(sql)
     except:
         current_app.logger.error("get submissions failure !")
+    if submissions is None or submissions is False:
+        return []
     return submissions
 
 def getOneSubmission(db,solutionId):
@@ -114,6 +153,8 @@ def getOneSubmission(db,solutionId):
         submissions = db.get_one(sql)
     except:
         current_app.logger.error("get solution-{}  failure !".format(solusionId))
+    if submission is None or submission is False:
+        return []
     return submissions
     
 def getRanklist(db,contestId):
@@ -130,6 +171,8 @@ def getRanklist(db,contestId):
         ranklist = db.get_all(sql)
     except:
         current_app.logger.error("get ranklist failure !")
+    if ranklist is None or ranklist is False:
+        return []
     return ranklist
 
 def getProblemCount(db,contestId,problemTag):
@@ -158,10 +201,13 @@ def getSubmissionCount(db,contestId):
     from solution as s,contest_problem as cp\
     where  s.id_contest_problem = cp.id_contest_problem\
     and cp.id_contest = '{id_contest}' limit 1;".format(id_contest=contestId)
+    res = None
     try:
         res = db.get_one(sql)
     except:
         current_app.logger.error("get submission count failure !")
+    if res is None or res is False:
+        return 0
     return res["cnt"]
 
 def getRanklistCount(db,contestId):
@@ -170,10 +216,13 @@ def getRanklistCount(db,contestId):
         where cp.id_contest_problem = s.id_contest_problem \
         and s.state = 11 \
         and cp.id_contest = {id_contest};".format(id_contest=contestId)
+    res = None
     try:
         res = db.get_one(sql)
     except:
         current_app.logger.error("get ranklist count failure !")
+    if res is None or res is False:
+        return 0
     return res["cnt"]
 
 def getAcceptedCount(db,problemId):
@@ -181,21 +230,27 @@ def getAcceptedCount(db,problemId):
     from solution as s,result_des as r \
     where s.state = r.id_result_des \
     and r.name_result = \"Accepted\" \
-    and s.id_contest_problem = {}".format(problemId);
+    and s.id_contest_problem = {}".format(problemId)
+    res = None
     try:
         res = db.get_one(sql)
     except:
         current_app.logger.error("get problems accepted count failure !")
+    if res is None or res is False:
+        return 0
     return res["cnt"]
 
 def getSubmitCount(db,problemId):
     sql = "select count(id_solution) as cnt \
     from solution as s \
-    where s.id_contest_problem = {}".format(problemId);
+    where s.id_contest_problem = {}".format(problemId)
+    res = None
     try:
         res = db.get_one(sql)
     except:
         current_app.logger.error("get problems accepted count failure !")
+    if res is None or res is False:
+        return 0
     return res["cnt"]
 
 def getProblemSerial(db,contestId):

@@ -8,7 +8,6 @@
         </tr>
     </thead>
     <tbody>
-        {% if session.get("totalPage_pro") != 0 %}
         {% for problem in problems %}
         <tr class="tr_link"
             onclick="window.location.href = '../../proDetail/problemDetail/'+{{problem['id_contest_problem']}}">
@@ -25,7 +24,6 @@
             </td>
         </tr>
         {% endfor %}
-        {% endif %}
     </tbody>
 </table>
 {% import "macro/page.html" as pg %}
