@@ -10,8 +10,6 @@
     </li>
 </ul>
 <div id="managementContent" class="mx-2">
-    {% import "macro/loading.html" as ld %}
-    {{ ld.loading() }}
 </div>
 <script>
     function setManagementContent(tag) {
@@ -37,6 +35,8 @@
             },
             success: function (response) {
                 $("#managementContent").html(response);
+            },
+            complete: function(){
                 loadFootor();
             }
         });

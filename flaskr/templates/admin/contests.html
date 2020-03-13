@@ -42,7 +42,7 @@
         </div>
         <div class="col-md-3 ml-auto">
             <a href="#" onclick="updateContest({{contest['id_contest']}});" class="badge badge-pill badge-warning">updateContest</a>
-            <a href="#" class="badge badge-pill badge-info" onclick="EditProblemSet({{contest['id_contest']}});">editProblemSet</a>
+            <!-- <a href="#" class="badge badge-pill badge-info" onclick="EditProblemSet({{contest['id_contest']}});">editProblemSet</a> -->
             {% if contest['id_contest'] != 1 %}
                 <a href="#" class="badge badge-pill badge-danger" onclick="deleteContest({{contest['id_contest']}});">delete</a>
             {% endif %}
