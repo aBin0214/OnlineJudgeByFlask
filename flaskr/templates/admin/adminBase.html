@@ -67,29 +67,10 @@
 			</div>
 		</div>
 	</div>
-	<div id="footer">
+	<div id="footer" class="mx-0 px-0 py-3 text-center bg-light-grey">
 		<img src="{{url_for('static',filename='img/balloon.png')}}" class="" width="30rem" height="30rem">
-		<a href="{{url_for('home.index')}}">MY-OJ.&nbsp;</a><a
-			href="{{url_for('admin.login')}}">Admin-Page.&nbsp;</a><span class="text-muted">Copyright @2020.&nbsp;<span
-				class="text-success"><a href="https://github.com/aBin0214">By aBin0214.</a></span></span>
+		<a href="{{url_for('home.index')}}">MY-OJ.&nbsp;</a><a href="{{url_for('admin.login')}}">Admin-Page.&nbsp;</a><span class="text-muted">Copyright @2020.&nbsp;<span class="text-success"><a href="https://github.com/aBin0214">By aBin0214.</a></span></span>
 	</div>
-	<script>
-		function loadFootor(){
-			var bodyHeight = $("body").height();
-			var footerHeight = $("#footer").height();
-			var narbarHeight = $("#narbar_top").height();
-			var iHeight = document.documentElement.clientHeight||document.body.clientHeight;
-			console.log(bodyHeight,footerHeight,narbarHeight);
-			if(bodyHeight <= (iHeight-footerHeight-narbarHeight-20)){
-				$("#footer").attr("class","fixed-bottom mx-0 px-0 py-3 text-center bg-light-grey");
-			}else{
-				$("#footer").attr("class","mx-0 px-0 py-3 text-center bg-light-grey")
-			}
-		}
-		$(function(){
-			loadFootor();
-		});
-	</script>
 	<script>
 		$SCRIPT_ROOT = {{request.script_root | tojson | safe}};
 		function logout() {
@@ -130,9 +111,6 @@
 				success: function (response) {
 					$("title").text(tag[0].toUpperCase()+tag.substr(1));
 					$("#adminContent").html(response);
-				},
-				complete: function(){
-					loadFootor();
 				}
 			});
 		}

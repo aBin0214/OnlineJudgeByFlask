@@ -55,7 +55,6 @@
             url: $SCRIPT_ROOT+'/contestDetail/showTagList',
             success: function (response) {
               $('#showTagList').html(response);
-              loadFootor();
             }
           })
         });
@@ -99,7 +98,6 @@
       },
       success:function(response){
         $("#contestContent").html(response);
-        loadFootor();
       }
     });
   }
