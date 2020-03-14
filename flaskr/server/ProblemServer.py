@@ -11,17 +11,17 @@ def insertProblem(db,problem):
         res = db.insert(sql)
     except:
         current_app.logger.error("Problem insert failure !")
-    return True if res !=0 and res != False else False
+    return True if res != 0 and res != False else False
 
 def updateProblem(db,problem):
     sql = "UPDATE problem SET title='{}',create_by='{}',time_limit='{}',mem_limit='{}' where id_problem = '{}'" \
     .format(problem["title"], problem["create_by"],problem["time_limit"], problem["mem_limit"],problem["id_problem"])
-    res = 0
     try:
         res = db.update(sql)
+        return True
     except:
         current_app.logger.error("Problem update failure !")
-    return True if res !=0 and res != False else False
+        return False
 
 def deleteProblem(db,problemId):
     sql = "DELETE FROM problem WHERE id_problem = '{}';".format(problemId)
@@ -99,7 +99,7 @@ def getProblemSubmitCount(db,problemId):
     return res["cnt"]
 
 def getProblemInfo(db,idContestProblem):
-    sql = "SELECT cp.serial,cp.id_contest,cp.id_contest_problem,p.id_problem,p.title as problemTitle,c.title as contestTitle,create_by,time_limit,mem_limit,username " \
+    sql = "SELECT cp.id_contest,cp.id_contest_problem,p.id_problem,p.title as problemTitle,c.title as contestTitle,create_by,time_limit,mem_limit,username " \
         "FROM problem as p,contest_problem as cp,contest as c,user as u " \
         "where p.id_problem = cp.id_problem " \
         "and cp.id_contest = c.id_contest " \

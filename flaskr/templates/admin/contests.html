@@ -21,6 +21,7 @@
 </div>
 <hr/>
 {% for contest in contestList %}
+{% if contest["id_contest"] != 1 %}
     <div class="row customTableItem">
         <div class="col-md-1">
             <span class="text-muted">#{{contest["id_contest"]}}</span>
@@ -53,6 +54,7 @@
         {{ ld.loading() }}
     </div>
     <hr class="customTableItemHr"/>
+{% endif %}
 {% endfor%}
 {% import "macro/page.html" as pg %}
 {{ pg.page(session.get("currentPage"),session.get("totalPage"),'/admin/contests',"#managementContent") }}

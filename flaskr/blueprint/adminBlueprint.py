@@ -8,6 +8,7 @@ from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash
 import os
 import datetime
+import json
 
 from flaskr.utils import MysqlUtils
 from flaskr.utils import LogUtils
@@ -324,9 +325,9 @@ def saveContest():
         else:
             isSuccess = ContestServer.insertContest(db,contest)
         if isSuccess:
-            flash('{} contest successfully!'.format("Created" if isUpdate is False else "Update"),'success')
+            flash('{} contest info successfully!'.format("Created" if isUpdate is False else "Update"),'success')
         else:
-            error = "{} contest failure.".format("Created" if isUpdate is False else "Update")
+            error = "{} contest info failure.".format("Created" if isUpdate is False else "Update")
             current_app.logger.error(error)
         db.dispose()
 
@@ -370,13 +371,56 @@ def deleteContest():
                 "result":"failure"
             })
 
-@bp.route("/editProblemSet",methods=["POST","GET"])
+@bp.route("/editProblemSet",methods=["POST"])
 def editProblemSet():
-    return render_template("admin/editProblemSet.html")
+    id_contest = request.form.get("id_contest")
+    db = MysqlUtils.MyPyMysqlPool()
+    if id_contest == "-1":
+        existingProblems = []
+    else:
+        existingProblems = ContestServer.getExistingProblems(db,id_contest)
+    problemList = ProblemServer.getProblemList(db,1,10000000)
+    db.dispose()
+    return render_template("admin/editProblemSet.html",id_contest=id_contest,existingProblems=existingProblems,problemList=problemList)
 
-@bp.route("/saveProblemSet",methods=["POST","GET"])
+@bp.route("/saveProblemSet",methods=["POST"])
 def saveProblemSet():
-    pass
+    id_contest = request.form.get("id_contest")
+    deleteList = json.loads(request.form.get("deleteList"))
+    updateList = json.loads(request.form.get("updateList"))
+    db = MysqlUtils.MyPyMysqlPool()
+
+    print(id_contest,deleteList,updateList)
+
+    error = None
+    probCnt = {}
+    for prob in updateList:
+        probCnt[prob['id_problem']] = probCnt.get(prob['id_problem'],0)+1
+        if probCnt[prob['id_problem']] == 2:
+            error = "Two of the same problems were added!"
+            break
+
+    if error is not None:
+        flash(error,"danger")
+        current_app.logger.error(error)
+        return jsonify({
+            "result":"failure"
+        })
+
+    for deleteProb in deleteList:
+        ContestServer.deleteContestProblem(db,deleteProb)
+    for prob in updateList:
+        if prob['id_contest_problem'] == "-1":
+            ContestServer.insertContestProblem(db,id_contest,prob['id_problem'])
+        else:
+            ContestServer.updateContestProblem(db,prob['id_contest_problem'],prob['id_problem'])
+    db.dispose()
+    info = "update contest problem success!"
+    flash(info,"success")
+    current_app.logger.info(info)
+    return jsonify({
+        "result":"success"
+    })
 
 def judgeAdmin():
     if session.get('is_admin') is None:

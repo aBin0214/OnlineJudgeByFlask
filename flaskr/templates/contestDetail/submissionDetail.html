@@ -6,7 +6,7 @@
         <h5 class="modal-title">
           #<span id="id_solution">{{submission["id_solution"]}}</span>&nbsp;|&nbsp;
           <a href="{{url_for('user.userIndex',userId = submission['id_user'])}}" id="id_user"><span id="username">{{submission["username"]}}</span></a><span>'s solution for&nbsp;</span>
-          [<a href="{{url_for('proDetail.problemDetail',proNo=submission['id_contest_problem'])}}" id="id_contest_problem"><span id="problem_serial">{{submission["problem_serial"]}}</span></a>]
+          [<a href="{{url_for('proDetail.problemDetail',proNo=submission['id_contest_problem'])}}" id="id_contest_problem"><span id="id_problem">{{submission["id_problem"]}}</span></a>]
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>

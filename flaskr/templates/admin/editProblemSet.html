@@ -1,0 +1,125 @@
+<label>Problem Set:</label>
+<div class="media">
+    <a href="#" onclick="addProb(-1,1);"><img src="{{url_for('static',filename='img/add.png')}}" width="24rem"
+            height="24rem"></a>
+    <span class="font-italic col-md-2 text-center ml-1">ProbNum</span>
+    <span class="col-md-7 font-italic text-center ml-2">Title</span>
+    <span class="col-md-2 font-italic text-center ml-2">Serial</span>
+</div>
+<div id="probList">
+    <div class="media mt-2 prob" style="display: none;" tag="probExample">
+        <a href="#" class="removeProb"><img src="{{url_for('static',filename='img/del.png')}}" class="mt-2 ml-1"
+                width="17rem" height="17rem"></a>
+        <select class="form-control form-inline col-md-2 pr-2 ml-2 selectProb">
+            {% for problem in problemList %}
+            <option value="{{problem['title']}}">{{problem["id_problem"]}}</option>
+            {% endfor %}
+        </select>
+        <input type="text" class="form-control col-md-7 pr-2 ml-2 text-center probTitle" readonly value="A+B">
+        <input type="text" class="form-control col-md-2 pr-2 ml-2 text-center probSerial" readonly value="A">
+    </div>
+</div>
+<script>
+    function addProb(id_contest_problem, id_problem,id_contest) {
+        $new = $("[tag='probExample']").clone(true);
+        $new.removeAttr("style");
+        $new.removeAttr("tag");
+        $new.attr("id_contest_problem", id_contest_problem);
+        $new.children("select.selectProb").find("option:contains('" + id_problem + "')").map(function(){
+            if (parseInt($(this).text()) == id_problem) { 
+                $(this).prop("selected", true) 
+            }
+        });
+        $new.children("input.probTitle").val($new.children("select.selectProb").val())
+        $new.children("input.probSerial").val(String.fromCharCode(64 + getValidCount() + 1));
+        $("#probList").append($new);
+    }
+    $(function () {
+        $("a.removeProb").click(function () {
+            if($(this).parent().attr("id_contest_problem") == -1){
+                $(this).parent().remove()
+            }else{
+                $(this).parent().attr("tag", "delete");
+                $(this).parent().attr("style", "display:none;");
+            }
+            serailReset();
+        });
+        $("select.selectProb").change(function () {
+            $(this).parent().children("input.probTitle").val($(this).val());
+        });
+        $existingProblems = {{existingProblems | tojson | safe}};
+        var hasProb = false;
+        for ($problem of $existingProblems) {
+            if(!hasProb){
+                hasProb = true;
+            }
+            addProb($problem["id_contest_problem"], $problem["id_problem"])
+        }
+        if(!hasProb){
+            addProb(-1, 1);
+        }
+    });
+
+    function serailReset() {
+        $idx = 1;
+        $("div.prob").each(function () {
+            if ($(this).attr("tag") === "probExample" || $(this).attr("tag") === "delete") {
+                return;
+            }
+            $(this).children("input.probSerial").val(String.fromCharCode(64 + $idx));
+            $idx += 1;
+        });
+    }
+
+    function getValidCount() {
+        $idx = 0;
+        $("div.prob").each(function () {
+            if ($(this).attr("tag") === "probExample" || $(this).attr("tag") === "delete") {
+                return;
+            }
+            $idx++;
+        });
+        return $idx;
+    }
+
+    function saveProblemSet(){
+        var updateList = [];
+        var deleteList = [];
+        $("div.prob").each(function () {
+            if ($(this).attr("tag") === "probExample") {
+                return ;
+            }
+            var id_contest_problem = $(this).attr("id_contest_problem");
+            var id_problem = $(this).children("select.selectProb").children("option:selected").text();
+            if ($(this).attr("tag") === "delete") {
+                deleteList.push(id_contest_problem);
+            }else {
+                updateList.push({
+                    "id_contest_problem":id_contest_problem,
+                    "id_problem":id_problem
+                })
+            }
+        });
+        $SCRIPT_ROOT = {{request.script_root|tojson|safe}};
+        $.ajax({
+            url: $SCRIPT_ROOT+"/admin/saveProblemSet",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                "id_contest":{{id_contest|tojson|safe}},
+                "updateList":JSON.stringify(updateList),
+                "deleteList":JSON.stringify(deleteList)
+            },
+            traditional: true,
+            complete:function(){
+                $.ajax({
+                    url: $SCRIPT_ROOT + '/base/showFlash',
+                    success: function (response) {
+                        $('#showFlash').html(response);
+                        $('.toast').toast('show')
+                    }
+                })
+            }
+        });
+    }
+</script>

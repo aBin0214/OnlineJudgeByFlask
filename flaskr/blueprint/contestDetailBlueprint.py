@@ -46,9 +46,10 @@ def showProblemList(currentPage=1):
 
     problemTag = session.get("problemTag")
     problems = ContestServer.getProblemsByTag(db,session.get("contestId"),currentPage,problemTag,session.get("pageSize"))
+    
     idx = 0
     
-    if problems is not False:
+    if problems != []:
         for problem in problems:
             problemId = problem["id_contest_problem"]
             problems[idx]["accepted_count"] = ProblemServer.getProblemAcceptedCount(db,problemId)
@@ -78,9 +79,8 @@ def showRanklist(currentPage=1):
 @bp.route("/showCurRanklist")
 def showCurRanklist():
     db = MysqlUtils.MyPyMysqlPool()
-    serialList = ContestServer.getProblemSerial(db,session.get("contestId"))
     db.dispose()
-    return render_template("contestDetail/curRanklist.html",serialList=serialList)
+    return render_template("contestDetail/curRanklist.html")
 
 @bp.route("/showSubmissionList")
 @bp.route("/showSubmissionList/<int:currentPage>")
@@ -88,6 +88,7 @@ def showSubmissionList(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
     PagingUtils.Paging(currentPage,ContestServer.getSubmissionCount(db,session.get("contestId")))
     submissions = ContestServer.getSubmissions(db,session.get("contestId"),session['currentPage'],session.get("pageSize"))
+
     db.dispose()
     return render_template("contestDetail/submissionList.html",submissions=submissions)
 
