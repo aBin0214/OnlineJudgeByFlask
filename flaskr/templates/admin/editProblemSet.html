@@ -82,7 +82,7 @@
         return $idx;
     }
 
-    function saveProblemSet(){
+    function saveProblemSet(id_contest){
         var updateList = [];
         var deleteList = [];
         $("div.prob").each(function () {
@@ -106,7 +106,7 @@
             type: "POST",
             dataType: 'json',
             data: {
-                "id_contest":{{id_contest|tojson|safe}},
+                "id_contest":id_contest,
                 "updateList":JSON.stringify(updateList),
                 "deleteList":JSON.stringify(deleteList)
             },

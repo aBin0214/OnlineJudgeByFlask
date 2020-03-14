@@ -19,6 +19,7 @@ from flaskr.utils import PagingUtils
 from flaskr.server import UserServer
 from flaskr.server import ProblemServer
 from flaskr.server import ContestServer
+from flaskr.server import CommonServer
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -188,8 +189,6 @@ def saveProblem():
         error = "describe is empty."
 
     userId = session.get("id_user")
-    # print("problemId:{}".format(problemId))
-    # print(type(problemId))
     isUpdate = False if problemId == "-1" or problemId == None else True
     if error is None:
         db = MysqlUtils.MyPyMysqlPool()
@@ -324,6 +323,7 @@ def saveContest():
             isSuccess = ContestServer.updateContest(db,contest)
         else:
             isSuccess = ContestServer.insertContest(db,contest)
+            contestId = CommonServer.selectIdentity(db)
         if isSuccess:
             flash('{} contest info successfully!'.format("Created" if isUpdate is False else "Update"),'success')
         else:
@@ -333,7 +333,8 @@ def saveContest():
 
     if error is None:
         return jsonify({
-            "result":"success"
+            "result":"success",
+            "id_contest":contestId
         })
     flash(error,'danger')
     return jsonify({
@@ -381,7 +382,7 @@ def editProblemSet():
         existingProblems = ContestServer.getExistingProblems(db,id_contest)
     problemList = ProblemServer.getProblemList(db,1,10000000)
     db.dispose()
-    return render_template("admin/editProblemSet.html",id_contest=id_contest,existingProblems=existingProblems,problemList=problemList)
+    return render_template("admin/editProblemSet.html",existingProblems=existingProblems,problemList=problemList)
 
 @bp.route("/saveProblemSet",methods=["POST"])
 def saveProblemSet():
@@ -389,8 +390,6 @@ def saveProblemSet():
     deleteList = json.loads(request.form.get("deleteList"))
     updateList = json.loads(request.form.get("updateList"))
     db = MysqlUtils.MyPyMysqlPool()
-
-    print(id_contest,deleteList,updateList)
 
     error = None
     probCnt = {}

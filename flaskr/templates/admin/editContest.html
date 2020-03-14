@@ -145,7 +145,7 @@
             },
             success:function(response){
                 if(response["result"] == "success"){
-                    saveProblemSet();
+                    saveProblemSet(response["id_contest"]);
                 }
             },
             complete:function(){

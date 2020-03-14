@@ -12,5 +12,8 @@
         {% if (time.seconds%3600)//60 != 0 %}
             {{(time.seconds%3600)//60}}mimutes
         {% endif %}
+        {% if time.seconds < 60 %}
+            0mimutes
+        {% endif %}
     {% endif %}
 {% endmacro %}
