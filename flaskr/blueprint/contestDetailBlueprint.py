@@ -52,6 +52,10 @@ def showProblemList(currentPage=1):
     if problems != []:
         for problem in problems:
             problemId = problem["id_contest_problem"]
+            if session.get("contestId") == 1:
+                problems[idx]["serial"] = idx+1+(currentPage-1)*session.get("pageSize")
+            else:
+                problems[idx]["serial"] = chr(ord('A')+idx)
             problems[idx]["accepted_count"] = ProblemServer.getProblemAcceptedCount(db,problemId)
             problems[idx]["submit_count"] = ProblemServer.getProblemSubmitCount(db,problemId)
             idx += 1

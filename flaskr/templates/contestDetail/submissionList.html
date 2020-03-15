@@ -1,34 +1,62 @@
-<table class="table table-hover border-0">
-  <thead class="text-black-50">
-    <tr>
-      <td scope="col">Run ID</td>
-      <td scope="col">Submit Time</td>
-      <td scope="col">Judge Status</td>
-      <td scope="col">Problem</td>
-      <td scope="col">Language</td>
-      <td scope="col">Run time(ms)</td>
-      <td scope="col">Run Memory(kb)</td>
-      <td scope="col">User</td>
-    </tr>
-  </thead>
-  <tbody>
-      {% if session.get("totalPage_sub") != 0 %}
-      {% for submission in submissions %}
-      <tr class="tr_link" onclick="showSubDetail({{submission['id_solution']}});">
-        <td>#{{submission["id_solution"]}}</td>
-        <td>{{submission["submit_time"]}}</td>
-        <td>{{submission["judge_status"]}}</td>
-        <td>{{submission["id_problem"]}}
-        </td>
-        <td>{{submission["name_language"]}}</td>
-        <td>{{submission["run_time"]}}</td>
-        <td>{{submission["run_memory"]}}</td>
-        <td>{{submission["username"]}}</td>
-      </tr>
-      {% endfor %}
-      {% endif %}
-  </tbody>
-</table>
+<div class="row">
+  <div class="col-md-1">
+    <span class="font-italic">Run ID</span>
+  </div>
+  <div class="col-md-2">
+    <span class="font-italic">Submit Time</span>
+  </div>
+  <div class="col-md-2">
+    <span class="font-italic">Judge Status</span>
+  </div>
+  <div class="col-md-1">
+    <span class="font-italic">Problem</span>
+  </div>
+  <div class="col-md-1">
+    <span class="font-italic">Language</span>
+  </div>
+  <div class="col-md-2">
+    <span class="font-italic">Run time(ms)</span>
+  </div>
+  <div class="col-md-2">
+    <span class="font-italic">Run Memory(kb)</span>
+  </div>
+  <div class="col-md-1">
+    <span class="font-italic">User</span>
+  </div>
+</div>
+<hr/>
+
+{% for submission in submissions %}
+<div class="row">
+  <div class="col-md-1">
+    <span class="text-muted">
+      <a href="#" onclick="showSubDetail({{submission['id_solution']}});">#{{submission["id_solution"]}}</a>
+    </span>
+  </div>
+  <div class="col-md-2">
+    <span class="text-muted">{{submission["submit_time"]}}</span>
+  </div>
+  <div class="col-md-2">
+    <span class="text-muted">{{submission["judge_status"]}}</span>
+  </div>
+  <div class="col-md-1">
+    <span class="text-muted">{{submission["id_problem"]}}</span>
+  </div>
+  <div class="col-md-1">
+    <span class="text-muted">{{submission["name_language"]}}</span>
+  </div>
+  <div class="col-md-2">
+    <span class="text-muted">{{submission["run_time"]}}</span>
+  </div>
+  <div class="col-md-2">
+    <span class="text-muted">{{submission["run_memory"]}}</span>
+  </div>
+  <div class="col-md-1">
+    <span class="text-muted">{{submission["username"]}}</span>
+  </div>
+</div>
+<hr/>
+{% endfor %}
 {% import "macro/page.html" as pg %}
 {{ pg.page(session.get("currentPage"),session.get("totalPage"),'/contestDetail/showSubmissionList','#contestContent') }}
 <script>

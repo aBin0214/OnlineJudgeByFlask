@@ -1,30 +1,44 @@
-<table class="table table-hover border-0">
-    <thead class="text-black-50">
-        <tr>
-            <td scope="col">Solved</td>
-            <td scope="col">Label</td>
-            <td scope="col">Title</td>
-            <td scope="col">Radio(AC/ALL)</td>
-        </tr>
-    </thead>
-    <tbody>
-        {% for problem in problems %}
-        <tr class="tr_link"
-            onclick="window.location.href = '../../proDetail/problemDetail/'+{{problem['id_contest_problem']}}">
-            <th scope="row"></th>
-            <td>{{problem["id_problem"]}}</td>
-            <td>{{problem["title"]}}</td>
-            <td>
-                {%if problem["accepted_count"] == 0%}
-                0%
-                {%else%}
-                {{problem["accepted_count"]/problem["submit_count"]}}%
-                {%endif%}
-                ({{problem["accepted_count"]}}/{{problem["submit_count"]}})
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-md-1">
+        <span class="font-italic">Solved</span>
+    </div>
+    <div class="col-md-1">
+        <span class="font-italic">Label</span>
+    </div>
+    <div class="col-md-8">
+        <span class="font-italic">Title</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">Radio(AC/ALL)</span>
+    </div>
+</div>
+<hr />
+{% for problem in problems %}
+<div class="row">
+    <div class="col-md-1">
+        <span class="text-muted"></span>
+    </div>
+    <div class="col-md-1">
+        <span class="text-muted">{{problem["serial"]}}</span>
+    </div>
+    <div class="col-md-8">
+        <span class="text-muted">
+            <a
+                href="{{url_for('proDetail.problemDetail',proNo=problem['id_contest_problem'])}}">{{problem["title"]}}</a>
+        </span>
+    </div>
+    <div class="col-md-2">
+        <span class="text-muted">
+            {%if problem["accepted_count"] == 0%}
+            0%
+            {%else%}
+            {{problem["accepted_count"]/problem["submit_count"]}}%
+            {%endif%}
+            ({{problem["accepted_count"]}}/{{problem["submit_count"]}})
+        </span>
+    </div>
+</div>
+<hr />
+{% endfor %}
 {% import "macro/page.html" as pg %}
 {{ pg.page(session.get("currentPage"),session.get("totalPage"),'/contestDetail/showProblemList','#contestContent') }}

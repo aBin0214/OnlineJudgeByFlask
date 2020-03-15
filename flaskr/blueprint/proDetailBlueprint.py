@@ -53,7 +53,7 @@ def submitCode():
         if id_language != -1:
             solution = {}
             solution["id_user"] = id_user
-            solution["id_contest_problem"] = proNo
+            solution["id_contest_problem"] = request.form.get("proNo")
             solution["id_language"] = id_language
             solution["submit_content"] = inputCode
             if ProblemServer.insertSolution(db,solution):

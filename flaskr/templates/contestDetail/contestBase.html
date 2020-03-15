@@ -40,7 +40,7 @@
     </div>
     <div class="nav flex-column nav-pills mb-4 shadow card border-0" role="tablist">
       <a class="nav-link active" href="#" role="tab" id="showProblemList" onclick="showContestContent('showProblemList');">Problems</a>
-        {%if session.get("contestId_pro") == 1 %}
+        {%if session.get("contestId") == 1 %}
           <a class="nav-link" href="#" role="tab" id="showRanklist" onclick="showContestContent('showRanklist');">Ranklist</a>
         {%else%}
           <a class="nav-link" href="#" role="tab" id="showCurRanklist" onclick="showContestContent('showCurRanklist');">Ranklist</a>
@@ -48,7 +48,7 @@
       <a class="nav-link" href="#" role="tab" id="showSubmissionList" onclick="showContestContent('showSubmissionList');">Submissions</a>
     </div>
     {% block extraSidebar%}
-      {% if session.get("contestId_pro") == 1 %}
+      {% if session.get("contestId") == 1 %}
         <script>
         $(function(){
           $.ajax({
@@ -76,6 +76,7 @@
     showContestContent("showProblemList");
   });
   function showContestContent(tag){
+    console.log(tag);
     var urlList = new Array("showProblemList","showRanklist","showCurRanklist","showSubmissionList");
     for(var url of urlList){
       if(url === tag){
