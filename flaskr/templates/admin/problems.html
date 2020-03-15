@@ -4,13 +4,16 @@
 </div>
 <div class="row customTableTop">
     <div class="col-md-1">
-        <span class="font-italic">ProblemId</span>
+        <span class="font-italic">ProbId</span>
     </div>
     <div class="col-md-4">
         <span class="font-italic">Title</span>
     </div>
     <div class="col-md-2">
         <span class="font-italic">Created By</span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-italic">State</span>
     </div>
     <div class="col-md-3 ml-auto">
         <span class="font-italic">Options</span>
@@ -28,12 +31,24 @@
         <div class="col-md-2">
             <span class="text-muted">{{problem["username"]}}</span>
         </div>
+        <div class="col-md-2">
+            {% if problem["isPublish"] %}
+                <span class="badge badge-primary" id="publish_state_{{problem['id_problem']}}">Publish</span>
+            {% else %}
+                <span class="badge badge-secondary" id="publish_state_{{problem['id_problem']}}">UnPublish</span>
+            {% endif %}
+        </div>
         <div class="col-md-3 ml-auto">
             <a href="#" class="badge badge-pill badge-info" onclick="showReportDetail({{problem['id_problem']}});">report</a>
             <a href="#" class="badge badge-pill badge-warning" onclick="updateProblem({{problem['id_problem']}});">updateProblem</a>
-            <a href="#" class="badge badge-pill badge-warning">updateData</a>
+            <a href="#" class="badge badge-pill badge-warning" onclick="editData({{problem['id_problem']}});">editData</a>
+            {% if problem["isPublish"] %}
+                <a href="#" class="badge badge-pill badge-danger" id="publish_{{problem['id_problem']}}" onclick="publishProblem({{problem['id_problem']}});" tag="publish">unpublish</a>
+            {% else %}
+                <a href="#" class="badge badge-pill badge-danger" id="publish_{{problem['id_problem']}}" onclick="publishProblem({{problem['id_problem']}});" tag="unpublish">publish</a>
+            {% endif %}
             <a href="#" class="badge badge-pill badge-danger" onclick="deleteProblem({{problem['id_problem']}});">delete</a>
-        </div>
+            </div>
     </div>
     <hr class="customTableItemHr"/>
 {% endfor%}
@@ -92,7 +107,6 @@
 </script>
 <script>
     function updateProblem(problemId){
-        console.log(problemId);
 
         $.ajax({
             url: $SCRIPT_ROOT + "/admin/updateProblem",
@@ -117,6 +131,58 @@
                 $("#popUpBox").html(response);
                 $("#DeleteComfirm").modal("show");
             },
+        });
+    }
+</script>
+<script>
+    function editData(problemId){
+        $.ajax({
+            url: $SCRIPT_ROOT + "/admin/editData",
+            type: "POST",
+            data:{
+                "id_problem":problemId
+            },
+            success: function(response){
+                $("#managementContent").html(response);
+            }
+        });
+    }
+</script>
+<script>
+    function publishProblem(problemId){
+        isPublish =  $("#publish_"+problemId).attr("tag") === "publish"?"true":"false";
+        $.ajax({
+            url: $SCRIPT_ROOT + "/admin/publishProblem",
+            type: "POST",
+            data:{
+                "id_problem":problemId,
+                "isPublish":isPublish
+            },
+            success:function(response){
+                if(response["result"] === "failure"){
+                    return ;
+                }
+                if(isPublish === "true"){
+                    $("#publish_state_"+problemId).text("Unpublish");
+                    $("#publish_state_"+problemId).attr("class","badge badge-secondary");
+                    $("#publish_"+problemId).text("publish");
+                    $("#publish_"+problemId).attr('tag',"unpublish");
+                }else if(isPublish === "false"){
+                    $("#publish_state_"+problemId).text("Publish");
+                    $("#publish_state_"+problemId).attr("class","badge badge-primary");
+                    $("#publish_"+problemId).text("unpublish");
+                    $("#publish_"+problemId).attr('tag',"publish");
+                }
+            },
+            complete:function(){
+                $.ajax({
+                    url: $SCRIPT_ROOT + '/base/showFlash',
+                    success: function (response) {
+                        $('#showFlash').html(response);
+                        $('.toast').toast('show')
+                    }
+                })
+            }
         });
     }
 </script>

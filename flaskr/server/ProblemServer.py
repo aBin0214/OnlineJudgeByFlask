@@ -32,6 +32,15 @@ def deleteProblem(db,problemId):
         current_app.logger.error("delete problem failure !")
     return True if res !=0 and res != False else False
 
+def unpublishProblem(db,problemId):
+    sql = "DELETE FROM contest_problem WHERE id_problem = '{}';".format(problemId)
+    res = 0
+    try:
+        res = db.delete(sql)
+    except:
+        current_app.logger.error("uppublish problem failure !")
+    return True if res !=0 and res != False else False
+
 def getProblemById(db,problemId):
     sql = "SELECT id_problem,title,time_limit,mem_limit " \
         "FROM problem "\
@@ -155,3 +164,15 @@ def insertSolution(db,solution):
         current_app.logger.error("Solution insert failure!")
         return False
 
+def judgeProblemPublish(db,problemId):
+    sql = "SELECT id_contest_problem FROM contest_problem "\
+        "WHERE id_contest = 1 " \
+        "AND id_problem = '{}' limit 1".format(problemId)
+    res = None
+    try:
+        res = db.get_one(sql)
+    except:
+        current_app.logger.error("judge problem is publish failure!")
+    if res is None or res is False:
+        return False
+    return True

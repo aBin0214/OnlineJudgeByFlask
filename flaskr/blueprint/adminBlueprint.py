@@ -127,6 +127,9 @@ def problems(currentPage=1):
     PagingUtils.Paging(currentPage, ProblemServer.getProblemCount(db))
 
     problemList = ProblemServer.getProblemList(db, session.get('currentPage'), session.get('pageSize'))
+    for problem in problemList:
+        problem["isPublish"] = ProblemServer.judgeProblemPublish(db,problem["id_problem"])
+
     db.dispose()
     return render_template("admin/problems.html",problemList=problemList)
 
@@ -249,6 +252,34 @@ def deleteProblem():
             return jsonify({
                 "result":"failure"
             })
+
+@bp.route("/publishProblem",methods=["POST"])
+def publishProblem():
+    db = MysqlUtils.MyPyMysqlPool()
+    id_problem = request.form.get("id_problem")
+    isPublish = request.form.get("isPublish")
+    print("isPublish",isPublish)
+    isSuccess = False
+    if isPublish == "true":
+        isSuccess = ProblemServer.unpublishProblem(db,id_problem)
+    elif isPublish == "false":
+        isSuccess = ContestServer.insertContestProblem(db,1,id_problem)
+    db.dispose()
+    if isSuccess is False:
+        flash("{} problem failure.".format("unpublish" if isPublish == "true" else "publish"),"danger")
+        return jsonify({
+            "result":"failure"
+        })
+    flash("{} problem success.".format("unpublish" if isPublish == "true" else "publish"),"success")
+    return jsonify({
+        "result":"success"
+    })
+
+@bp.route("/editData",methods=["POST"])
+def editData():
+    db = MysqlUtils.MyPyMysqlPool()
+    db.dispose()
+    return render_template("admin/editData.html")
 
 @bp.route("/contests",methods=["POST","GET"])
 @bp.route("/contests/<int:currentPage>",methods=["POST","GET"])

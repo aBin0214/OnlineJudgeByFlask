@@ -1,0 +1,65 @@
+<div class="my-4">
+    <span class="font-weight-bold">Edit Data</span>
+    <button type="button" class="btn btn-secondary float-right" onclick="setManagementContent('problems');">Back</button>
+</div>
+<div class="media">
+    <a href="#" onclick="addData();"><img src="{{url_for('static',filename='img/add.png')}}" width="24rem"
+            height="24rem"></a>
+    <span class="font-italic col-md-5 text-center ml-1">Input</span>
+    <span class="col-md-5 font-italic text-center ml-2">Output</span>
+    <span class="col-md-1 font-italic text-center ml-2">Serial</span>
+</div>
+<div id="dataList">
+    <div class="media mt-2 data" style="display: none;" tag="dataExample">
+        <a href="#" class="removeData"><img src="{{url_for('static',filename='img/del.png')}}" class="mt-2 ml-1"
+                width="17rem" height="17rem"></a>
+        <textarea class="form-control col-md-5 pr-2 ml-2" rows="3"></textarea>
+        <textarea class="form-control col-md-5 pr-2 ml-2" rows="3"></textarea>
+        <label class="col-md-1 pr-2 ml-2 text-center dataSerial"></label>
+    </div>
+</div>
+<button type="button" class="btn btn-success float-right mt-4">Submit</button>
+<script>
+    function addData() {
+        $new = $("[tag='dataExample']").clone(true);
+        $new.removeAttr("style");
+        $new.removeAttr("tag");
+        $new.children("label.dataSerial").text("#"+(getValidCount()+1))
+        $("#dataList").append($new);
+    }
+
+    $(function () {
+        $("a.removeData").click(function () {
+            $(this).parent().attr("tag", "delete");
+            $(this).parent().attr("style", "display:none;");
+            serailReset();
+        });
+        var hasData = false;
+        if(!hasData){
+            addData();
+        }
+    });
+
+    
+    function serailReset() {
+        $idx = 1;
+        $("div.data").each(function () {
+            if ($(this).attr("tag") === "dataExample" || $(this).attr("tag") === "delete") {
+                return;
+            }
+            $(this).children("label.dataSerial").text("#"+$idx);
+            $idx += 1;
+        });
+    }
+
+    function getValidCount() {
+        $idx = 0;
+        $("div.data").each(function () {
+            if ($(this).attr("tag") === "dataExample" || $(this).attr("tag") === "delete") {
+                return;
+            }
+            $idx++;
+        });
+        return $idx;
+    }
+</script>
