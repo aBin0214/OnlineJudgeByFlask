@@ -6,7 +6,7 @@
     <span class="font-italic">Submit Time</span>
   </div>
   <div class="col-md-2">
-    <span class="font-italic">Judge Status</span>
+    <span class="font-italic">Judge State</span>
   </div>
   <div class="col-md-1">
     <span class="font-italic">Problem</span>
@@ -37,10 +37,17 @@
     <span class="text-muted">{{submission["submit_time"]}}</span>
   </div>
   <div class="col-md-2">
-    <span class="text-muted">{{submission["judge_status"]}}</span>
+    <span class="text-muted">
+      {% import "macro/judgeState.html" as state %}
+      {{state.show(submission["judge_status"])}}
+    </span>
   </div>
   <div class="col-md-1">
-    <span class="text-muted">{{submission["id_problem"]}}</span>
+    <span class="text-muted">
+      <a href="{{url_for('proDetail.problemDetail',proNo=submission['id_contest_problem'])}}">
+        {{submission["id_problem"]}}
+      </a>
+  </span>
   </div>
   <div class="col-md-1">
     <span class="text-muted">{{submission["name_language"]}}</span>
@@ -52,7 +59,11 @@
     <span class="text-muted">{{submission["run_memory"]}}</span>
   </div>
   <div class="col-md-1">
-    <span class="text-muted">{{submission["username"]}}</span>
+    <span class="text-muted">
+      <a href="{{url_for('user.userIndex',userId = submission['id_user'])}}">
+        {{submission["username"]}}
+      </a>
+    </span>
   </div>
 </div>
 <hr/>

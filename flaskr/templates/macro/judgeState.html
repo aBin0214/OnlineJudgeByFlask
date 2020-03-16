@@ -1,0 +1,12 @@
+{% macro show(result) -%}
+{% if result == "Accepted" %}
+    <span class="badge badge-success">
+{% elif result == "Queuing" or result == "Compiling" or result == "Submit" %}
+    <span class="badge badge-secondary">
+{% elif result == "System Error" %}
+    <span class="badge badge-warning">
+{% else %}
+    <span class="badge badge-danger">
+{% endif %}
+{{result}}</span>
+{% endmacro %}

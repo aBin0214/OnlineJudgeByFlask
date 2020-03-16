@@ -27,11 +27,16 @@
         <tbody>
           <tr>
             <td id="submit_time">{{submission["submit_time"]}}</td>
-            <td id="judge_status">{{submission["judge_status"]}}</td>
+            <td id="judge_status">
+              {% import "macro/judgeState.html" as state %}
+              {{state.show(submission["judge_status"])}}
+            </td>
             <td id="name_language">{{submission["name_language"]}}</td>
             <td id="run_time">{{submission["run_time"]}}</td>
             <td id="run_memory">{{submission["run_memory"]}}</td>
-            <td id="is_share">{{is_share}}</td>
+            <td id="is_share">
+              <!-- <input class="form-check-input" type="checkbox"> -->
+            </td>
           </tr>
         </tbody>
       </table>
