@@ -10,6 +10,7 @@ __init__.py有两个作用：
 import os
 import sys
 from flask import Flask
+from compile import *
 
 def create_app(test_config=None):
     """
@@ -32,13 +33,16 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    #backstage judger start
+    judger_main.judger_start()
+
     from flaskr.utils import LoggerUtils
     LoggerUtils.init_logger()
 
     from flaskr.blueprint import authBlueprint
     app.register_blueprint(authBlueprint.bp)
 
-    from flaskr.blueprint import homeBlueprint
+    from flaskr.blueprint import homeBlueprint 
     app.register_blueprint(homeBlueprint.bp)
     app.add_url_rule('/', endpoint='index')
 

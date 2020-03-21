@@ -2,7 +2,9 @@
 # coding=utf-8
 
 import os
-import sys_config
+
+
+from compile import sys_config
 
 
 def check_dangerous_code(id_solution, language):
@@ -13,8 +15,9 @@ def check_dangerous_code(id_solution, language):
     :return:
     """
     cfg = sys_config.Config()
+    dirname = os.path.dirname(os.path.abspath(__file__))
     if language in ['python2', 'python3']:
-        with open(cfg.work_dir+"/{}/main.py".format(id_solution), 'r', encoding='utf-8') as file:
+        with open(dirname+"/"+cfg.work_dir+"/{}/main.py".format(id_solution), 'r', encoding='utf-8') as file:
             code = file.readlines()
         support_modules = [
             're',  # 正则表达式
@@ -52,10 +55,10 @@ def check_dangerous_code(id_solution, language):
     if language in ['gcc', 'g++']:
         code = []
         if language == "gcc":
-            with open(cfg.work_dir + "/{}/main.c".format(id_solution), 'r', encoding='utf-8') as file:
+            with open(dirname+"/"+cfg.work_dir + "/{}/main.c".format(id_solution), 'r', encoding='utf-8') as file:
                 code = file.read()
         else:
-            with open(cfg.work_dir + "/{}/main.cpp".format(id_solution), 'r', encoding='utf-8') as file:
+            with open(dirname+"/"+cfg.work_dir + "/{}/main.cpp".format(id_solution), 'r', encoding='utf-8') as file:
                 code = file.read()
         if code.find('system') >= 0:
             return False
@@ -66,7 +69,7 @@ def check_dangerous_code(id_solution, language):
 #            return False
 #        return True
     if language == 'go':
-        with open(cfg.work_dir + "/{}/main.go".format(id_solution), 'r', encoding='utf-8') as file:
+        with open(dirname+"/"+cfg.work_dir + "/{}/main.go".format(id_solution), 'r', encoding='utf-8') as file:
             code = file.read()
         danger_package = [
             'os', 'path', 'net', 'sql', 'syslog', 'http', 'mail', 'rpc', 'smtp', 'exec', 'user',

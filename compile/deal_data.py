@@ -2,8 +2,9 @@
 # coding=utf-8
 
 import os
-import sys_config
 import logging
+
+from compile import sys_config
 
 
 def clean_work_dir(solution_id):
@@ -22,7 +23,8 @@ def get_data_count(problem_id):
     获得测试数据的个数信息
     """
     cfg = sys_config.Config()
-    full_path = os.path.join(cfg.data_dir, str(problem_id))
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(dirname+"/"+cfg.data_dir, str(problem_id))
     try:
         files = os.listdir(full_path)
     except OSError as e:

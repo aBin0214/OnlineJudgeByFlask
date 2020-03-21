@@ -227,6 +227,18 @@ def getRanklist(db,contestId):
         return []
     return ranklist
 
+def getCurRanklist(db,contestId):
+    sql = "select id_solution,u.id_user,u.username,cp.id_contest_problem,state,c.start_time " \
+    "from online_judge.solution as s,online_judge.contest_problem as cp, " \
+    "online_judge.contest as c,online_judge.user as u " \
+    "where cp.id_contest_problem = s.id_contest_problem " \
+    "and cp.id_contest = c.id_contest " \
+    "and s.id_user = u.id_user " \
+    "and s.submit_time >= c.start_time " \
+    "and s.submit_time <= c.end_time " \
+    "and cp.id_contest = '{}' " \
+    "order by s.submit_time".format(contestId)
+
 def getProblemCount(db,contestId,problemTag):
     sql = ""
     if problemTag == "All":

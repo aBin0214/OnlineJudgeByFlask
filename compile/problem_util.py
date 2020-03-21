@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import mysql_DBUtils
+from compile import mysql_DBUtils
 
 
 def update_problem_state(id_solution, state):

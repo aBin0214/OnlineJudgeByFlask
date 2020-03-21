@@ -4,9 +4,9 @@
 import logging
 import threading
 
-import deal_data
-import run_problem
-import problem_util
+from compile import deal_data
+from compile import run_problem
+from compile import problem_util
 
 
 def worker(que, db_lock):
@@ -19,7 +19,7 @@ def worker(que, db_lock):
     while True:
         logger = logging.getLogger("sys_logger")
         if que.empty() is True:  # 队列为空，空闲
-            logger.info("%s idle" % threading.current_thread().name)
+            logger.debug("%s idle" % threading.current_thread().name)
         task = que.get()  # 获取任务，如果队列为空则阻塞
         solution_id = task['solution_id']
         problem_id = task['problem_id']

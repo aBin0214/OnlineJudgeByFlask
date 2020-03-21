@@ -3,8 +3,9 @@
 
 import subprocess
 import os
-import sys_config
 import logging
+
+from compile import sys_config
 
 
 def execute_compile(solution_id, language):
@@ -16,7 +17,8 @@ def execute_compile(solution_id, language):
         """
     language = language.lower()
     cfg = sys_config.Config()
-    dir_work = os.path.join(cfg.work_dir, str(solution_id))
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    dir_work = os.path.join(dirname+"/"+cfg.work_dir, str(solution_id))
     build_cmd = {
         "gcc": "gcc main.c -o main -Wall -lm -O2 -std=c99 --static -DONLINE_JUDGE",
         "g++": "g++ main.cpp -O2 -Wall -lm --static -DONLINE_JUDGE -o main",

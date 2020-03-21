@@ -4,15 +4,14 @@
 import os
 import logging
 
-import mysql_DBUtils
-import sys_config
+from compile import mysql_DBUtils
+from compile import sys_config
 
 
 def get_code(solution_id, pro_lang):
     """
     从数据库获取代码并写入work目录下对应的文件
     :param solution_id:
-    :param problem_id:
     :param pro_lang:
     :return:
     """
@@ -40,9 +39,10 @@ def get_code(solution_id, pro_lang):
         logger.error("cannot get code of run_id {}".format(solution_id))
         return False
     cfg = sys_config.Config()
+    dirname = os.path.dirname(os.path.abspath(__file__))
     try:
         work_path = os.path.join(
-            cfg.work_dir,
+            dirname+"/"+cfg.work_dir,
             str(solution_id))
         os.mkdir(work_path)
     except OSError as e:
@@ -51,7 +51,7 @@ def get_code(solution_id, pro_lang):
             return False
     try:
         real_path = os.path.join(
-            cfg.work_dir,
+            dirname+"/"+cfg.work_dir,
             str(solution_id),
             file_name[pro_lang])
     except KeyError as e:
@@ -74,4 +74,4 @@ def get_code(solution_id, pro_lang):
 
 
 if __name__ == '__main__':
-    get_code(1, 1, "gcc")
+    get_code(1, "gcc")

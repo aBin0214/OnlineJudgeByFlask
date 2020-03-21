@@ -2,13 +2,15 @@
 # coding=utf-8
 
 import logging
-import protect
+
 import threading
 
-import problem_util
-import check_dangerous_code
-import compile_program
-import judge_main
+from compile import protect
+from compile import problem_util
+from compile import problem_util
+from compile import check_dangerous_code
+from compile import compile_program
+from compile import judge_main
 
 
 def run(problem_id, solution_id, language, data_count, db_lock):

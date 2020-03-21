@@ -4,8 +4,8 @@
 import logging
 import os
 
-import protect
-import sys_config
+from compile import protect
+from compile import sys_config
 
 
 def judge_result(problem_id, solution_id, data_num):

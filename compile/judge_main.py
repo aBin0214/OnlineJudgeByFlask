@@ -3,9 +3,9 @@
 
 import logging
 
-import protect
-import judge_result
-import judge_one
+from compile import protect
+from compile import judge_result
+from compile import judge_one
 
 
 def judge(solution_id, problem_id, data_count, time_limit,

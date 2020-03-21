@@ -2,11 +2,12 @@
 # -*- coding:utf-8 -*-
 
 import time
-
-import mysql_DBUtils
-import get_code
-import problem_util
 import logging
+
+from compile import mysql_DBUtils
+from compile import get_code
+from compile import problem_util
+
 
 
 def put_task_into_queue(que, db_lock):
