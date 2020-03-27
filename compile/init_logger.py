@@ -23,7 +23,7 @@ def init_logger(name):
 
     stream_handler = logging.StreamHandler()
 
-    log_dir_name = "logs"
+    log_dir_name = "compile/logs"
     make_dir(log_dir_name)
     log_file_name = 'backstage-' + time.strftime('%Y-%m-%d', time.localtime(time.time())) + '.log'
     log_file_str = log_dir_name + os.sep + log_file_name

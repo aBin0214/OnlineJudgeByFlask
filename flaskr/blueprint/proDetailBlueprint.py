@@ -76,7 +76,7 @@ def problemReport():
     db = MysqlUtils.MyPyMysqlPool()
     proNo = request.form.get("id_problem")
     graphType = request.form.get("graphType")
-    print(proNo,graphType)
+    # print(proNo,graphType)
     if graphType == "simple":
         graph = getSampleGraph(db,proNo)
     elif graphType == "statistics":

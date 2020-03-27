@@ -181,7 +181,7 @@ if __name__ == '__main__':
     mysql = MyPyMysqlPool()
     sqlAll = "select * from user;"
     result = mysql.get_all(sqlAll)
-    print(result)
+    # print(result)
     # 释放资源
     mysql.dispose()
 

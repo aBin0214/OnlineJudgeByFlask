@@ -44,6 +44,6 @@ if __name__ == "__main__":
         return 0;
     }
     """
-    print(CodeHighlight.codeTranslate(code,"c"))
+    # print(CodeHighlight.codeTranslate(code,"c"))
     # print(CodeHighlight.getStyleCss())
     print()
