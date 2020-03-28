@@ -44,7 +44,10 @@ def showProblemList(currentPage=1):
 
     PagingUtils.Paging(currentPage,ContestServer.getProblemCount(db,session.get("contestId"),session.get("problemTag")))
 
-    problemTag = session.get("problemTag")
+    if session.get("contestId") == 1:
+        problemTag = session.get("problemTag")
+    else:
+        problemTag = "All"
     problems = ContestServer.getProblemsByTag(db,session.get("contestId"),currentPage,problemTag,session.get("pageSize"))
     
     idx = 0
@@ -81,10 +84,23 @@ def showRanklist(currentPage=1):
     return render_template("contestDetail/ranklist.html",ranklist=ranklist)
 
 @bp.route("/showCurRanklist")
-def showCurRanklist():
+@bp.route("/showCurRanklist/<int:currentPage>")
+def showCurRanklist(currentPage=1):
     db = MysqlUtils.MyPyMysqlPool()
+    
+    problemTag = "All"
+    problems = ContestServer.getProblemsByTag(db,session.get("contestId"),currentPage,problemTag,session.get("pageSize"))
+    idx = 0
+    if problems != []:
+        for problem in problems:
+            problems[idx]["serial"] = chr(ord('A')+idx)
+            idx += 1
+
+    curRanklist = ContestServer.getCurRanklist(db,session.get("contestId"))
+    print(curRanklist)
+
     db.dispose()
-    return render_template("contestDetail/curRanklist.html")
+    return render_template("contestDetail/curRanklist.html",problems=problems,curRanklist=curRanklist)
 
 @bp.route("/showSubmissionList")
 @bp.route("/showSubmissionList/<int:currentPage>")

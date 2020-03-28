@@ -11,5 +11,48 @@
   <div class="col-md-1">
     <span class="font-italic">Time</span>
   </div>
+  <div class="col-md-8 row">
+    {% for problem in problems %}
+      <div class="col-md-1 text-center">
+        <span class="font-italic">{{problem['serial']}}</span>
+      </div>
+    {% endfor %}
+  </div>
 </div>
 <hr/>
+{% for userState in curRanklist %}
+<div class="row" style="min-height: 2.7rem;">
+  <div class="col-md-1">
+      <span class="text-muted">#{{userState["rank"]}}</span>
+  </div>
+  <div class="col-md-1">
+      <span class="text-muted">{{userState["username"]}}</span>
+  </div>
+  <div class="col-md-1">
+      <span class="text-muted">{{userState["solveCnt"]}}</span>
+  </div>
+  <div class="col-md-1">
+    <span class="text-muted">{{userState["time"]}}</span>
+  </div>
+  <div class="col-md-8 row">
+    {% for problem in problems %}
+      {% if userState['probs'][problem['id_contest_problem']] %}
+        <div class="col-md-1 p-0 text-center">
+          {% if userState['probs'][problem['id_contest_problem']]['duration'] %}
+            <span class="text-success">{{userState['probs'][problem['id_contest_problem']]['duration']}}</span><br/>
+          {% endif %}
+          {% if userState['probs'][problem['id_contest_problem']]["wrongCnt"] != 0  %}
+            {% if userState['probs'][problem['id_contest_problem']]['successTime'] %}
+              <span class="text-success" style="font-size: small;">(+{{userState['probs'][problem['id_contest_problem']]['wrongCnt']+1}})</span>
+            {% else %}
+              <span class="text-danger">+{{userState['probs'][problem['id_contest_problem']]['wrongCnt']}}</span>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endif%}
+    {% endfor %}
+  </div>
+</div>
+<hr/>
+{% endfor %}
+

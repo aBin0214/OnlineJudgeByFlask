@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import datetime
+
 from flask import current_app
 from flaskr.utils import MysqlUtils
 
@@ -228,7 +230,7 @@ def getRanklist(db,contestId):
     return ranklist
 
 def getCurRanklist(db,contestId):
-    sql = "select id_solution,u.id_user,u.username,cp.id_contest_problem,state,c.start_time " \
+    sql = "select id_solution,u.id_user,u.username,cp.id_contest_problem,state,c.start_time,s.submit_time " \
     "from online_judge.solution as s,online_judge.contest_problem as cp, " \
     "online_judge.contest as c,online_judge.user as u " \
     "where cp.id_contest_problem = s.id_contest_problem " \
@@ -238,6 +240,48 @@ def getCurRanklist(db,contestId):
     "and s.submit_time <= c.end_time " \
     "and cp.id_contest = '{}' " \
     "order by s.submit_time".format(contestId)
+    print(sql)
+    contestSolutionList = None
+    try:
+        contestSolutionList = db.get_all(sql)
+    except:
+        current_app.logger.error("get contest-{} solution list failure !".format(contestId))
+    if contestSolutionList is None or contestSolutionList is False:
+        return []
+    userRank = {}
+    #统计出比赛的实时排名
+    for solution in contestSolutionList:
+        userState = userRank.setdefault(solution['id_user'],{"username":solution['username'],"solveCnt":0,"time":0,"probs":{}})
+        if solution["state"] in [7,8,12]:#表示系统错误，队列中，提交状态
+            continue
+        userProb = userState["probs"].setdefault(solution["id_contest_problem"],{"wrongCnt":0,"successTime":None,"duration":None})
+        if solution['state'] == 11:#如果Accepted
+            seconds = (solution["submit_time"]-solution["start_time"]).total_seconds()
+            hours = seconds // 3600
+            minutes = (seconds % 3600) // 60
+            seconds = seconds % 60
+            if userProb["successTime"] is None:
+                userProb["successTime"] = solution["submit_time"]
+                userProb["duration"] = "{hours}:{minutes}:{seconds}".format(hours=str(int(hours)).zfill(2),minutes=str(int(minutes)).zfill(2),seconds=str(int(seconds)).zfill(2))
+                userState["time"] += userProb["wrongCnt"]*20
+                userState["time"] += max(0,round((solution["submit_time"]-solution["start_time"]).total_seconds()/60))
+                userState['solveCnt'] += 1
+            elif solution["submit_time"] < userProb["successTime"]:
+                userProb["duration"] = "{hours}:{minutes}:{seconds}".format(hours=str(int(hours)).zfill(2),minutes=str(int(minutes)).zfill(2),seconds=str(int(seconds)).zfill(2))
+                userState["time"] -= max(0,round((userProb["successTime"]-solution["start_time"]).total_seconds()/60))
+                userProb["successTime"] = solution["submit_time"]
+        else:
+            if userProb["successTime"] is None:
+                userProb["wrongCnt"] += 1
+            elif solution["submit_time"] < userProb["successTime"]:
+                userProb["wrongCnt"] += 1
+                userState["time"] += 20
+    #对计算好的排名结果进行排序
+    curRankList = []
+    for userId in userRank.keys():
+        userRank[userId].setdefault("id_user",userId)
+        curRankList.append(userRank[userId])
+    return curRankList
 
 def getProblemCount(db,contestId,problemTag):
     sql = ""

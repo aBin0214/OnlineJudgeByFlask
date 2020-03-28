@@ -15,8 +15,8 @@
             <option value="{{problem['title']}}">{{problem["id_problem"]}}</option>
             {% endfor %}
         </select>
-        <input type="text" class="form-control col-md-7 pr-2 ml-2 text-center probTitle" readonly value="A+B">
-        <input type="text" class="form-control col-md-2 pr-2 ml-2 text-center probSerial" readonly value="A">
+        <input type="text" class="form-control col-md-7 pr-2 ml-2 text-center probTitle" readonly>
+        <input type="text" class="form-control col-md-2 pr-2 ml-2 text-center probSerial" readonly>
     </div>
 </div>
 <script>
@@ -48,7 +48,7 @@
             $(this).parent().children("input.probTitle").val($(this).val());
         });
         $existingProblems = {{existingProblems | tojson | safe}};
-        var hasProb = false;
+        /*var hasProb = false;
         for ($problem of $existingProblems) {
             if(!hasProb){
                 hasProb = true;
@@ -57,6 +57,9 @@
         }
         if(!hasProb){
             addProb(-1, 1);
+        }*/
+        for ($problem of $existingProblems) {
+            addProb($problem["id_contest_problem"], $problem["id_problem"])
         }
     });
 
