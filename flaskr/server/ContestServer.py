@@ -240,7 +240,6 @@ def getCurRanklist(db,contestId):
     "and s.submit_time <= c.end_time " \
     "and cp.id_contest = '{}' " \
     "order by s.submit_time".format(contestId)
-    print(sql)
     contestSolutionList = None
     try:
         contestSolutionList = db.get_all(sql)
@@ -281,6 +280,16 @@ def getCurRanklist(db,contestId):
     for userId in userRank.keys():
         userRank[userId].setdefault("id_user",userId)
         curRankList.append(userRank[userId])
+    for i in range(len(curRankList)):
+        for j in range(i+1,len(curRankList)):
+            if curRankList[i]["solveCnt"] < curRankList[j]["solveCnt"] or (curRankList[i]["solveCnt"] == curRankList[j]["solveCnt"] and curRankList[i]["time"] > curRankList[j]["time"]):
+                tmp = curRankList[j]
+                curRankList[j] = curRankList[i]
+                curRankList[i] = tmp
+    idx = 1
+    for rankItem in curRankList:
+        rankItem["rank"] = idx
+        idx += 1
     return curRankList
 
 def getProblemCount(db,contestId,problemTag):

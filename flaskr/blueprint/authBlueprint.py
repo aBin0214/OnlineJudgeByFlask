@@ -78,6 +78,7 @@ def login():
         session['id_user'] = user['id_user']
         session["username"] = user['username']
         session['password'] = user['password']
+        session["is_admin"] = True if user["is_admin"] == 1 else False
         db.dispose()
         flash('Login successfully!','success')
         return jsonify({
@@ -112,7 +113,9 @@ def logout():
     """
     登出
     """
-    session.clear()
+    session['id_user'] = None
+    session["username"] = None
+    session['password'] = None
     flash("Log Out Success.","success")
     return jsonify({
         "result":"success"

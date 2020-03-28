@@ -97,7 +97,6 @@ def showCurRanklist(currentPage=1):
             idx += 1
 
     curRanklist = ContestServer.getCurRanklist(db,session.get("contestId"))
-    print(curRanklist)
 
     db.dispose()
     return render_template("contestDetail/curRanklist.html",problems=problems,curRanklist=curRanklist)

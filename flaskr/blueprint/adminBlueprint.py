@@ -281,6 +281,10 @@ def editData():
     db.dispose()
     return render_template("admin/editData.html")
 
+@bp.route("/saveData",methods=["POST"])
+def saveData():
+    pass
+
 @bp.route("/contests",methods=["POST","GET"])
 @bp.route("/contests/<int:currentPage>",methods=["POST","GET"])
 def contests(currentPage=1):
