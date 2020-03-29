@@ -13,18 +13,20 @@
     <div class="media mt-2 data" style="display: none;" tag="dataExample">
         <a href="#" class="removeData"><img src="{{url_for('static',filename='img/del.png')}}" class="mt-2 ml-1"
                 width="17rem" height="17rem"></a>
-        <textarea class="form-control col-md-5 pr-2 ml-2" rows="3"></textarea>
-        <textarea class="form-control col-md-5 pr-2 ml-2" rows="3"></textarea>
+        <textarea class="form-control col-md-5 pr-2 ml-2 dataInput" rows="3"></textarea>
+        <textarea class="form-control col-md-5 pr-2 ml-2 dataOutput" rows="3"></textarea>
         <label class="col-md-1 pr-2 ml-2 text-center dataSerial"></label>
     </div>
 </div>
-<button type="button" class="btn btn-success float-right mt-4">Submit</button>
+<button type="button" class="btn btn-success float-right mt-4" onclick="saveDataList({{id_problem}});">Submit</button>
 <script>
-    function addData() {
+    function addData(input="",output="") {
         $new = $("[tag='dataExample']").clone(true);
         $new.removeAttr("style");
         $new.removeAttr("tag");
-        $new.children("label.dataSerial").text("#"+(getValidCount()+1))
+        $new.children("label.dataSerial").text("#"+(getValidCount()+1));
+        $new.children("textarea.dataInput").text(input);
+        $new.children("textarea.dataOutput").text(output);
         $("#dataList").append($new);
     }
 
@@ -34,8 +36,15 @@
             $(this).parent().attr("style", "display:none;");
             serailReset();
         });
-        var hasData = false;
-        if(!hasData){
+        $hasData = false;
+        $existingDatas = {{existingDatas | tojson | safe}};
+        console.log($existingDatas);
+        for ($data of $existingDatas) {
+            $hasData = true;
+            addData($data["input"], $data["output"])
+        }
+        console.log($hasData);
+        if(!$hasData){
             addData();
         }
     });
@@ -61,5 +70,39 @@
             $idx++;
         });
         return $idx;
+    }
+
+    function saveDataList(id_problem){
+        dataList = []
+        $("div.data").each(function () {
+            if ($(this).attr("tag") === "dataExample") {
+                return ;
+            }
+            dataList.push({
+                "serial":$(this).children("label.dataSerial").text().substr(1),
+                "input":$(this).children("textarea.dataInput").val(),
+                "output":$(this).children("textarea.dataOutput").val(),
+            });
+        });
+        $SCRIPT_ROOT = {{request.script_root|tojson|safe}};
+        $.ajax({
+            url: $SCRIPT_ROOT+"/admin/saveData",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                "id_problem":id_problem,
+                "dataList":JSON.stringify(dataList)
+            },
+            traditional: true,
+            complete:function(){
+                $.ajax({
+                    url: $SCRIPT_ROOT + '/base/showFlash',
+                    success: function (response) {
+                        $('#showFlash').html(response);
+                        $('.toast').toast('show')
+                    }
+                })
+            }
+        });
     }
 </script>

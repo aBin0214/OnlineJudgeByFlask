@@ -2,42 +2,43 @@
 # -*- coding:utf-8 -*-
 
 import os
+import shutil
 
-# from flaskr.utils import MysqlUtils
+from flaskr.utils import MysqlUtils
 
-# def saveProblemDescribe(problemId,describe):
-#     dirname = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
-#     dirname += "/problemDescribe/{}".format(problemId)
-#     if not os.path.exists(dirname):
-#         os.makedirs(dirname)
-#     with open(dirname+"/describe.md","w") as file:
-#         file.write(describe)
+def saveProblemDescribe(problemId,describe):
+    dirname = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
+    dirname += "/problemDescribe/{}".format(problemId)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+    with open(dirname+"/describe.md","w") as file:
+        file.write(describe)
 
-# def readProblemDescribe(problemId):
-#     dirname = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
-#     dirname += "/problemDescribe/{}/describe.md".format(problemId)
-#     if not os.path.isfile(dirname) or not os.path.exists(dirname):
-#         return {
-#             "content":""
-#         }
-#     content = ""
-#     with open(dirname,"r") as file:
-#         content = file.read()
-#     return {
-#         "content":content
-#     }
+def readProblemDescribe(problemId):
+    dirname = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
+    dirname += "/problemDescribe/{}/describe.md".format(problemId)
+    if not os.path.isfile(dirname) or not os.path.exists(dirname):
+        return {
+            "content":""
+        }
+    content = ""
+    with open(dirname,"r") as file:
+        content = file.read()
+    return {
+        "content":content
+    }
 
 def readProblemData(problemId):
     dirname = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
     dirname += "/compile/problem/{}/".format(problemId)
     if not os.path.exists(dirname):
-        return
+        return []
     files = os.listdir(dirname)
     idx = 1
     dataMap = {}
     for item in files:
         idx = item[5]
-        data = dataMap.setdefault(int(item[5]),{"":"","output":""})
+        data = dataMap.setdefault(int(item[5]),{"input":"","output":""})
         if item.endswith(".in") and item.startswith("data"):
             with open(dirname+item,'r') as file:
                 data["input"] = file.read()
@@ -65,20 +66,20 @@ def updateProblemData(problemId,idx,inOut,content):
     with open(filename,'w') as file:
         file.write(content)
 
-def deleteProblemData(problemId,idx):
+# def deleteProblemData(problemId,idx):
+#     dirname = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
+#     dirname += "/compile/problem/{}/".format(problemId)
+#     if not os.path.exists(dirname):
+#         return 
+#     inputName = dirname + "data_{}.in".format(idx)
+#     outputName = dirname + "data_{}.out".format(idx)
+#     if os.path.exists(inputName):
+#         os.remove(inputName)
+#     if os.path.exists(outputName):
+#         os.remove(outputName)
+
+def deleteProblemData(problemId):
     dirname = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
     dirname += "/compile/problem/{}/".format(problemId)
-    if not os.path.exists(dirname):
-        return 
-    inputName = dirname + "data_{}.in".format(idx)
-    outputName = dirname + "data_{}.out".format(idx)
-    if os.path.exists(inputName):
-        os.remove(inputName)
-    if os.path.exists(outputName):
-        os.remove(outputName)
-
-if __name__ == "__main__":
-    # deleteProblemData(1,1)
-    # updateProblemData(2,1,True,"111 3333")
-    # updateProblemData(2,1,False,"3444")
-    readProblemData(1)
+    if os.path.exists(dirname):
+        shutil.rmtree(dirname, ignore_errors=True)

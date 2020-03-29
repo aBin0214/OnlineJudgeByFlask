@@ -258,7 +258,6 @@ def publishProblem():
     db = MysqlUtils.MyPyMysqlPool()
     id_problem = request.form.get("id_problem")
     isPublish = request.form.get("isPublish")
-    print("isPublish",isPublish)
     isSuccess = False
     if isPublish == "true":
         isSuccess = ProblemServer.unpublishProblem(db,id_problem)
@@ -277,13 +276,22 @@ def publishProblem():
 
 @bp.route("/editData",methods=["POST"])
 def editData():
-    db = MysqlUtils.MyPyMysqlPool()
-    db.dispose()
-    return render_template("admin/editData.html")
+    id_problem = request.form.get("id_problem")
+    existingDatas = ProblemUtils.readProblemData(id_problem)
+    return render_template("admin/editData.html",existingDatas=existingDatas,id_problem=id_problem)
 
 @bp.route("/saveData",methods=["POST"])
 def saveData():
-    pass
+    id_problem = request.form.get("id_problem")
+    dataList = json.loads(request.form.get("dataList"))
+    ProblemUtils.deleteProblemData(id_problem)
+    for data in dataList:
+        ProblemUtils.updateProblemData(id_problem,data["serial"],True,data["input"])
+        ProblemUtils.updateProblemData(id_problem,data["serial"],False,data["output"])
+    flash("update problem-{}'s data success.".format(id_problem),"success")
+    return jsonify({
+        "result":"success"
+    })
 
 @bp.route("/contests",methods=["POST","GET"])
 @bp.route("/contests/<int:currentPage>",methods=["POST","GET"])
