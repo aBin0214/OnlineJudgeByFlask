@@ -29,6 +29,13 @@ def get_result_des():
         result_des[val["name_result"]] = val["id_result_des"]
     return result_des
 
+def write_compile_result(solution_id,reuslt):
+    mysql = mysql_DBUtils.MyPyMysqlPool()
+    sql = "update solution set compile_result = '{1}' where id_solution = {0}".format(solution_id, reuslt)
+    mysql.update(sql)
+    mysql.dispose()
+    
+
 
 
 

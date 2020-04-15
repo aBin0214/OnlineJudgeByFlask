@@ -6,6 +6,7 @@ import os
 import logging
 
 from compile import sys_config
+from compile import problem_util
 
 
 def execute_compile(solution_id, language):
@@ -44,8 +45,10 @@ def execute_compile(solution_id, language):
         stderr=subprocess.PIPE)
     out, err = p.communicate()  # 获取编译错误信息
     write_error(dir_work, out, err)
+    problem_util.write_compile_result(solution_id,out.decode()+"\n"+err.decode())
     if p.returncode == 0:  # 返回值为0,编译成功
         logger.info("solution_id({}) compile success".format(solution_id))
+        problem_util.write_compile_result(solution_id,"compile success")
         return True
     logger.info("solution_id({}) compile failure".format(solution_id))
     return False

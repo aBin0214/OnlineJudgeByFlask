@@ -31,12 +31,7 @@
     </div>
     <div class="col-md-2">
         <span class="text-muted">
-            {%if problem["accepted_count"] == 0%}
-            0%
-            {%else%}
-            {{problem["accepted_count"]/problem["submit_count"]}}%
-            {%endif%}
-            ({{problem["accepted_count"]}}/{{problem["submit_count"]}})
+            {{problem["radio"]}}({{problem["accepted_count"]}}/{{problem["submit_count"]}})
         </span>
     </div>
 </div>

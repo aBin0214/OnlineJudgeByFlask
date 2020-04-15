@@ -61,6 +61,10 @@ def showProblemList(currentPage=1):
                 problems[idx]["serial"] = chr(ord('A')+idx)
             problems[idx]["accepted_count"] = ProblemServer.getProblemAcceptedCount(db,problemId)
             problems[idx]["submit_count"] = ProblemServer.getProblemSubmitCount(db,problemId)
+            if problems[idx]["submit_count"] == 0:
+                problems[idx]["radio"] = "0%"
+            else:
+                problems[idx]["radio"] = "{0:.2%}".format( problems[idx]["accepted_count"]/problems[idx]["submit_count"])
             idx += 1
 
     db.dispose()
@@ -117,6 +121,7 @@ def showSubmissionDetail(solutionId):
     submission = ContestServer.getOneSubmission(db,solutionId)
     db.dispose()
     if submission != {}:
+        submission['hl_compile_result'] = CodeHighlightUtils.CodeHighlight.codeTranslate(submission['compile_result'],submission['monaco_editor_val'])
         submission['hl_code'] = CodeHighlightUtils.CodeHighlight.codeTranslate(submission['submit_content'],submission['monaco_editor_val'])
     return render_template("contestDetail/submissionDetail.html",submission=submission)
 

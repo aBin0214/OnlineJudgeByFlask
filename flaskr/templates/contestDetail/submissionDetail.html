@@ -40,6 +40,17 @@
           </tr>
         </tbody>
       </table>
+      <span class="text-info">Compile Result</span>
+      <div id="hl_compile_result">
+        <script>
+            $(function(){
+              $hl_compile_result = {{ submission['hl_compile_result']|tojson|safe }};
+              $("#hl_compile_result").html($hl_compile_result);
+            });
+        </script>
+      </div>
+      <span class="text-info">Submit code</span>&nbsp;&nbsp;
+      <a href="#" id="copy_btn"><span>Copy Code</span></a>
       <div id="hl_code">
           <script>
               $(function(){

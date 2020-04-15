@@ -192,7 +192,7 @@ def getSubmissions(db,contestId,currentPage,pageSize):
 
 def getOneSubmission(db,solutionId):
     sql = 'select id_solution,submit_time,res.name_result as judge_status,cp.id_problem,cp.id_contest_problem,\
-    lang.name_language,lang.monaco_editor_val,s.run_time,s.run_memory,u.username,u.id_user,\
+    lang.name_language,lang.monaco_editor_val,compile_result,s.run_time,s.run_memory,u.username,u.id_user,\
     s.is_share,s.submit_content\
     from solution as s,user as u,result_des as res,\
     contest_problem as cp,pro_language as lang\
