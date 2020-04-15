@@ -18,7 +18,6 @@ from compile import worker
 def start_work_thread(cfg,queue,dbLock):
     """
     开启工作线程
-    :return:
     """
     for i in range(cfg.queue_size):  # 需要修改
         t = threading.Thread(target=worker.worker, name="worker", args=(queue, dbLock,))
@@ -29,7 +28,6 @@ def start_work_thread(cfg,queue,dbLock):
 def start_get_task(queue,dbLock):
     """
     开启获取任务线程
-    :return:
     """
     t = threading.Thread(target=producer.put_task_into_queue, name="get_task", args=(queue, dbLock,))
     t.deamon = True # 设置为守护进程
@@ -39,7 +37,6 @@ def start_get_task(queue,dbLock):
 def check_thread():
     """
     检测评测程序是否存在,小于config规定数目则启动新的
-    :return:
     """
     cfg = sys_config.Config()
     protect.low_level()
@@ -59,7 +56,6 @@ def check_thread():
 def start_protect():
     """
     开启守护进程
-    :return:
     """
     protect.low_level()
     t = threading.Thread(target=check_thread, name="check_thread")
@@ -70,7 +66,6 @@ def start_protect():
 def judger_start():
     """
     整个程序的主函数
-    :return:
     """
     cfg = sys_config.Config()
     queue = Queue(cfg.queue_size)

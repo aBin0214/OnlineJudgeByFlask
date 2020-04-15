@@ -16,12 +16,6 @@ from compile import judge_main
 def run(problem_id, solution_id, language, data_count, db_lock):
     """
     运行程序
-    :param problem_id:
-    :param solution_id:
-    :param language:
-    :param data_count:
-    :param db_lock:
-    :return:
     """
     protect.low_level()
     db_lock.acquire()

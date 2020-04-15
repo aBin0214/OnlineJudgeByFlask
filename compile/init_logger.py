@@ -16,8 +16,6 @@ def make_dir(make_dir_path):
 def init_logger(name):
     """
     初始化logger
-    :param name:
-    :return:
     """
     logger = logging.getLogger(name)
 

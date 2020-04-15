@@ -10,7 +10,6 @@ def low_level():
     """
     降低程序运行权限，防止恶意代码
     如果发现有恶意程序，退出当前程序
-    :return:
     """
     try:
         os.setuid(int(os.popen("id -u %s" % "nobody").read()))

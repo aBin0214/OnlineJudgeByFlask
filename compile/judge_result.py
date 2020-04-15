@@ -11,10 +11,6 @@ from compile import sys_config
 def judge_result(problem_id, solution_id, data_num):
     """
     对输出数据进行评测
-    :param problem_id:
-    :param solution_id:
-    :param data_num:
-    :return:
     """
     protect.low_level()
     logger = logging.getLogger("sys_logger")

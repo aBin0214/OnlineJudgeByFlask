@@ -11,11 +11,8 @@ from compile import problem_util
 
 def execute_compile(solution_id, language):
     """
-        对称需进行编译
-        :param solution_id:
-        :param language:
-        :return:
-        """
+    对称需进行编译
+    """
     language = language.lower()
     cfg = sys_config.Config()
     dirname = os.path.dirname(os.path.abspath(__file__))

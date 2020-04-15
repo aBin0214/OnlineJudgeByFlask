@@ -14,13 +14,6 @@ def judge_one_mem_time(
         solution_id, problem_id, data_num, time_limit, mem_limit, language):
     """
     评测一组数据
-    :param solution_id:
-    :param problem_id:
-    :param data_num:
-    :param time_limit:
-    :param mem_limit:
-    :param language:
-    :return:
     """
     protect.low_level()
     logger = logging.getLogger("sys_logger")
@@ -89,12 +82,8 @@ def judge_one_mem_time(
         'memorylimit': mem_limit,  # in KB
     }
     protect.low_level()
-    # cur = cdll.LoadLibrary('./lorun/lib/lorun.so')  # 加载本地的.so文件
-    # rst = cur.lorun.run(run_cfg)
     input_data.close()
     temp_out_data.close()
-    # logger.debug(rst)
-    # return rst
 
 
 if __name__ == '__main__':

@@ -12,9 +12,6 @@ from compile import problem_util
 def worker(que, db_lock):
     """
     工作线程，循环扫描队列，获得评判任务并执行
-    :param db_lock:
-    :param que:
-    :return:
     """
     while True:
         logger = logging.getLogger("sys_logger")
@@ -23,7 +20,6 @@ def worker(que, db_lock):
         task = que.get()  # 获取任务，如果队列为空则阻塞
         solution_id = task['solution_id']
         problem_id = task['problem_id']
-        # contest_problem_id = task["contest_problem_id"]
         language = task['pro_lang']
         data_count = deal_data.get_data_count(task['problem_id'])  # 获取测试数据的个数
         logger.info("judging %s" % solution_id)
@@ -38,6 +34,4 @@ def worker(que, db_lock):
         logger.info(result["solution_id"]+result["result"])
         problem_util.update_problem_state(result["solution_id"], result["result"])  # 将结果写入数据库
         db_lock.release()
-        # if config.auto_clean:  # 清理work目录
-        #     clean_work_dir(result['solution_id'])
         que.task_done()  # 一个任务完成

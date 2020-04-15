@@ -14,13 +14,15 @@ def put_task_into_queue(que, db_lock):
     """
     循环扫描数据库,将任务添加到队列
     """
+    is_first = True
     while True:
         que.join()  # 阻塞程序,直到队列里面的任务全部完成
         sql = "select id_solution,id_problem,s.id_contest_problem,name_language\
                 from solution as s,pro_language as pl,contest_problem as cp \
                 where s.id_language = pl.id_language \
                 and  s.id_contest_problem = cp.id_contest_problem \
-                and state = 12;"
+                and state = {};".format(12 if is_first == False else 8)
+        is_first = False
         mysql = mysql_DBUtils.MyPyMysqlPool()
         db_lock.acquire()
         data = mysql.get_all(sql)
@@ -40,12 +42,6 @@ def put_task_into_queue(que, db_lock):
                 db_lock.acquire()
                 ret = get_code.get_code(id_solution, name_language)
                 db_lock.release()
-            # if ret is False:
-            #     db_lock.acquire()
-            #     # update_solution_state(solution_id, 11)
-            #     db_lock.release()
-            #     # clean_work_dir(solution_id)
-            #     continue
             task = {
                 "solution_id": id_solution,
                 "problem_id": id_problem,

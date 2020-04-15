@@ -10,8 +10,6 @@ from compile import sys_config
 def clean_work_dir(solution_id):
     """
     清理word目录，删除临时文件
-    :param solution_id:
-    :return:
     """
     # dir_name = os.path.join(config.work_dir, str(solution_id))
     # shutil.rmtree(dir_name)

@@ -36,8 +36,6 @@ class Config(object):
     def open_yaml_file(f_name):
         """
         打开yaml格式的文件
-        :param f_name:
-        :return:
         """
         try:
             # 获取当前脚本所在文件夹路径
@@ -54,7 +52,6 @@ class Config(object):
     def get_mysql_info(self):
         """
         返回mysql的配置信息
-        :return:
         """
         file = Config.open_yaml_file(self.file_name)
         config = yaml.load(file.read(), Loader=yaml.FullLoader)
@@ -63,7 +60,6 @@ class Config(object):
     def get_problem_info(self):
         """
         获得题目的工作路径和测试数据的路径
-        :return:
         """
         file = Config.open_yaml_file(self.file_name)
         config = yaml.load(file.read(), Loader=yaml.FullLoader)
@@ -72,7 +68,6 @@ class Config(object):
     def get_thread_info(self):
         """
         获得工作队列的相关数量
-        :return:
         """
         file = Config.open_yaml_file(self.file_name)
         config = yaml.load(file.read(), Loader=yaml.FullLoader)

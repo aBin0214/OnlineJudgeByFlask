@@ -10,9 +10,6 @@ from compile import sys_config
 def check_dangerous_code(id_solution, language):
     """
     检查当前程序是否有危险的代码
-    :param id_solution:
-    :param language:
-    :return:
     """
     cfg = sys_config.Config()
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -63,11 +60,6 @@ def check_dangerous_code(id_solution, language):
         if code.find('system') >= 0:
             return False
         return True
-#    if language == 'java':
-#        code = file('/work/%s/Main.java'%solution_id).read()
-#        if code.find('Runtime.')>=0:
-#            return False
-#        return True
     if language == 'go':
         with open(dirname+"/"+cfg.work_dir + "/{}/main.go".format(id_solution), 'r', encoding='utf-8') as file:
             code = file.read()
