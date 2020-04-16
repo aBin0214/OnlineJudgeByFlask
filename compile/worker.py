@@ -32,6 +32,7 @@ def worker(que, db_lock):
         logger.info("%s result %s" % (result['solution_id'], result['result']))
         db_lock.acquire()
         logger.info(result["solution_id"]+result["result"])
-        problem_util.update_problem_state(result["solution_id"], result["result"])  # 将结果写入数据库
+        print(result)
+        problem_util.update_problem_state(result["solution_id"], result["result"],result["run_time"],result["run_memory"])  # 将结果写入数据库
         db_lock.release()
         que.task_done()  # 一个任务完成

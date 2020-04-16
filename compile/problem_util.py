@@ -4,9 +4,9 @@
 from compile import mysql_DBUtils
 
 
-def update_problem_state(id_solution, state):
+def update_problem_state(id_solution, state,run_time=0,run_memory=0):
     mysql = mysql_DBUtils.MyPyMysqlPool()
-    sql = "update solution set state = {1} where id_solution = {0}".format(id_solution, state)
+    sql = "update solution set state = {1},run_time={2},run_memory={3} where id_solution = {0}".format(id_solution, state,run_time,run_memory)
     mysql.update(sql)
     mysql.dispose()
 

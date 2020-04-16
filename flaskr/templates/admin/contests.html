@@ -9,7 +9,7 @@
     <div class="col-md-3">
         <span class="font-italic">Title</span>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-3">
         <span class="font-italic">Duration</span>
     </div>
     <div class="col-md-2">
@@ -29,7 +29,7 @@
         <div class="col-md-3">
             <span class="text-muted">{{contest["title"]}}</span>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <span class="font-weight-light">
                 {% import "macro/timeDelta.html" as td %}
                 {{ td.duration(contest['start_time'],contest['end_time']) }}

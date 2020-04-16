@@ -20,8 +20,28 @@ def judge(solution_id, problem_id, data_count, time_limit,
         time_limit = time_limit * 2
         mem_limit = mem_limit * 2
     for i in range(data_count):
-        # 得到程序的运行时间,目前尚未实现
-
+        # 得到程序的运行结果、运行时间、运行内存
+        ret = judge_one.judge_result_mem_time(
+            solution_id,
+            problem_id,
+            i + 1,
+            time_limit,
+            mem_limit,
+            language)
+        # {'cpu_time': 1, 'real_time': 2, 'memory': 1437696, 'signal': 0, 'exit_code': 0, 'error': 0, 'result': 0}
+        if ret['result'] != 0:
+            program_info['result'] = result_code["Runtime Error"]
+            return program_info
+        if ret["real_time"] > time_limit:
+            program_info['result'] = result_code["Time Limit Exceeded"]
+            return program_info
+        if (ret['memory']+1023)//1024 > mem_limit:
+            program_info['result'] = result_code["Memory Limit Exceeded"]
+            return program_info
+        if ret["real_time"]>max_time:
+            max_time = ret['real_time']
+        if (ret['memory']+1023)//1024 > max_mem:
+            max_mem = (ret['memory']+1023)//1024
         # 判断程序的运行结果是否正确
         result = judge_result.judge_result(problem_id, solution_id, i + 1)
         logger = logging.getLogger("sys_logger")
@@ -41,6 +61,6 @@ def judge(solution_id, problem_id, data_count, time_limit,
             logger.error("judge did not get result")
     if program_info['result'] == 0:
         program_info['result'] = result_des['Wrong Answer']
-    program_info['take_time'] = max_time
-    program_info['take_memory'] = max_mem
+    program_info['run_time'] = max_time
+    program_info['run_memory'] = max_mem
     return program_info

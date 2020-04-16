@@ -6,16 +6,6 @@ import logging
 
 from compile import sys_config
 
-
-def clean_work_dir(solution_id):
-    """
-    清理word目录，删除临时文件
-    """
-    # dir_name = os.path.join(config.work_dir, str(solution_id))
-    # shutil.rmtree(dir_name)
-    pass
-
-
 def get_data_count(problem_id):
     """
     获得测试数据的个数信息

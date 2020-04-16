@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 
 from flaskr.utils import MysqlUtils
+import pymysql
 
 def insertProblem(db,problem):
     sql = "INSERT INTO problem (title,create_by, time_limit, mem_limit) VALUES ('{}','{}','{}','{}')" \
@@ -156,8 +157,8 @@ def getProSubmissions(db,idContestProblem):
 
 def insertSolution(db,solution):
     try:
-        sql = 'INSERT INTO solution (id_user,id_contest_problem,id_language,submit_content) VALUES (\'{}\',\'{}\',\'{}\',\'{}\')'\
-        .format(solution["id_user"], solution["id_contest_problem"],solution["id_language"],solution["submit_content"])
+        sql = r"INSERT INTO solution (id_user,id_contest_problem,id_language,submit_content) VALUES ('{}','{}','{}','{}')" \
+        .format(solution["id_user"], solution["id_contest_problem"],solution["id_language"],pymysql.escape_string(solution["submit_content"]))
         db.insert(sql)
         return True
     except:

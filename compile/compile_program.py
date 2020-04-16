@@ -21,14 +21,14 @@ def execute_compile(solution_id, language):
         "gcc": "gcc main.c -o main -Wall -lm -O2 -std=c99 --static -DONLINE_JUDGE",
         "g++": "g++ main.cpp -O2 -Wall -lm --static -DONLINE_JUDGE -o main",
         "java": "javac Main.java",
-        "ruby": "reek main.rb",
-        "perl": "perl -c main.pl",
-        "pascal": 'fpc main.pas -O2 -Co -Ct -Ci',
-        "go": '/opt/golang/bin/go build -ldflags "-s -w"  main.go',
-        "lua": 'luac -o main main.lua',
         "python2": 'python2 -m py_compile main.py',
         "python3": 'python3 -m py_compile main.py',
-        "haskell": "ghc -o main main.hs",
+        # "ruby": "reek main.rb",
+        # "perl": "perl -c main.pl",
+        # "pascal": 'fpc main.pas -O2 -Co -Ct -Ci',
+        # "go": '/opt/golang/bin/go build -ldflags "-s -w"  main.go',
+        # "lua": 'luac -o main main.lua',
+        # "haskell": "ghc -o main main.hs",
     }
     logger = logging.getLogger("sys_logger")
     if language not in build_cmd.keys():

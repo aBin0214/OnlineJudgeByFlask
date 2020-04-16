@@ -25,12 +25,15 @@ def getLogList(dirname,typeFilter=[".log"]):
                     "path":apath
                 })
                 cnt += 1
-    result.reverse()
+    result.sort(key=accordingDate,reverse=True)
     idx = 1
     for item in result:
         item["id_log"] = idx
         idx += 1
     return result
+
+def accordingDate(listTemp):
+    return listTemp["filename"]
 
 def readLog(filePath):
     if not os.path.isfile(filePath) or not os.path.exists(filePath):
