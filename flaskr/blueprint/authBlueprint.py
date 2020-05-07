@@ -116,6 +116,7 @@ def logout():
     session['id_user'] = None
     session["username"] = None
     session['password'] = None
+    session["is_admin"] = None
     flash("Log Out Success.","success")
     return jsonify({
         "result":"success"

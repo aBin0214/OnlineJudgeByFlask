@@ -177,3 +177,6 @@ def judgeProblemPublish(db,problemId):
     if res is None or res is False:
         return False
     return True
+
+def judgeUserSolvedProblem(db,userId,id_contest_problem):
+    pass

@@ -65,6 +65,8 @@ def showProblemList(currentPage=1):
                 problems[idx]["radio"] = "0%"
             else:
                 problems[idx]["radio"] = "{0:.2%}".format( problems[idx]["accepted_count"]/problems[idx]["submit_count"])
+            # if session.get("id_user") is not None:
+            #     problems[idx]["user_{}".format(session.get("id_user"))] = ProblemServer.judgeUserSolvedProblem(db,session.get("id_user"),problemId)
             idx += 1
 
     db.dispose()
